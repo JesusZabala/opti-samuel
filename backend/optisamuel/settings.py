@@ -45,7 +45,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'receta_visual',
     'cita',
-    'cliente'
+    'cliente',
+    'pedido',
+    'auditoria',
+    
 ]
 
 MIDDLEWARE = [
