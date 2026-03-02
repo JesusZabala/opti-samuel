@@ -47,8 +47,7 @@ INSTALLED_APPS = [
     'cita',
     'cliente',
     'pedido',
-    'auditoria',
-    
+    'auditoria',   
 ]
 
 MIDDLEWARE = [
