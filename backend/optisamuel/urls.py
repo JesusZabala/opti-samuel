@@ -23,5 +23,4 @@ urlpatterns = [
     path('api/cita/', include('cita.urls')),
     path('api/cliente/', include('cliente.urls')),
     path('api/auditoria/', include('auditoria.urls'))
-    
 ]
