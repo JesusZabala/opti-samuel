@@ -1,0 +1,7 @@
+from rest_framework import routers
+from .views import PedidoViewSet
+
+router = routers.DefaultRouter()
+router.register('', PedidoViewSet)
+
+urlpatterns = router.urls

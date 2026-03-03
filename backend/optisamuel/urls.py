@@ -22,5 +22,6 @@ urlpatterns = [
     path('api/recetas/', include('receta_visual.urls')),
     path('api/cita/', include('cita.urls')),
     path('api/cliente/', include('cliente.urls')),
-    path('api/auditoria/', include('auditoria.urls'))
+    path('api/auditoria/', include('auditoria.urls')),
+    path('api/pedido/', include('pedido.urls')),
 ]
