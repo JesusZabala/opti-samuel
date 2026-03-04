@@ -8,6 +8,7 @@ class Cita(models.Model):
         CANCELADA = 'C', 'Cancelada'
         COMPLETADA = 'COM', 'Completada'
         RECETA_REGISTRADA = 'RR', 'Receta Registrada'
+        NO_ASISTIO = 'NA', 'No asistio'
 
     fecha = models.DateTimeField()
     motivo = models.CharField(max_length=255, blank=False, null=False)
