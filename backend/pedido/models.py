@@ -1,13 +1,8 @@
 from django.db import models
 from receta_visual.models import RecetaVisual
+from cliente.models import Cliente
 
 # Create your models here.
-
-class TipoPedido(models.Model):
-    descripcion = models.CharField(max_length=255, blank=False, null=False)
-    alias = models.CharField(max_length=255, blank=False, null=False)
-
-#Borre EstadoPedido y EstadoDetallePedido
 class TipoLente(models.Model):
     descripcion = models.CharField(max_length=255, blank=False, null=False)
     alias = models.CharField(max_length=255, blank=False, null=False)
@@ -54,10 +49,16 @@ class Pedido(models.Model):
         LISTO = 'L','Listo'
         ENTREGADO = 'EN', 'Entregado'
 
-    #tipo_pedido se puede borrar
-    tipo_pedido = models.ForeignKey(TipoPedido, on_delete=models.CASCADE, related_name='tipo_pedido')
+    class TipoPedido(models.TextChoices):
+        SOLO_LENTE = 'SL', 'Solo Lente'
+        SOLO_MONTURA = 'SM', 'Solo Montura'
+        COMPLETO = 'C', 'Completo'
+
+
+    tipo_pedido = models.CharField(max_length=2, choices=TipoPedido.choices, blank=False, null=False)
     estado_pedido = models.CharField(max_length=2, choices=EstadoPedido.choices, default=EstadoPedido.ENVIADO, blank=False, null=False)
-    receta_visual = models.ForeignKey(RecetaVisual, on_delete=models.CASCADE, related_name='receta')
+    receta_visual = models.ForeignKey(RecetaVisual, on_delete=models.CASCADE, related_name='receta', blank=True, null=True)
+    id_cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, null=True, blank=True)
     fecha_emision = models.DateTimeField()
     fecha_sistema = models.DateTimeField(auto_now_add=True)
     descripcion = models.CharField(max_length=255, blank=False, null=False)
@@ -68,8 +69,8 @@ class Pedido(models.Model):
 
 class DetallePedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='pedido')
-    montura = models.ForeignKey(Montura, on_delete=models.CASCADE, related_name='montura')
-    lente = models.ForeignKey(Lente, on_delete=models.CASCADE, related_name='lente')
+    montura = models.ForeignKey(Montura, on_delete=models.CASCADE, related_name='montura', null=True, blank=True)
+    lente = models.ForeignKey(Lente, on_delete=models.CASCADE, related_name='lente', null=True, blank=True)
     fecha_sistema = models.DateTimeField()
     fecha_completado = models.DateTimeField()
     

@@ -2,14 +2,7 @@ from rest_framework import serializers
 from .models import *
 from receta_visual.models import RecetaVisual
 from receta_visual.serializers import RecetaVisualSerializer
-
-class TipoPedidoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TipoPedido
-        fields = ['id','descripcion','alias']
-        read_only_fields = ('id',)
-
-
+from cliente.serializers import ClienteSerializer
 class TipoLenteSerializer(serializers.ModelSerializer):
     class Meta:
         model = TipoLente
@@ -71,12 +64,11 @@ class MonturaSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class PedidoSerializer(serializers.ModelSerializer):
-    tipo_pedido_data = TipoPedidoSerializer(source='tipo_pedido', read_only=True)
     receta_visual_data = RecetaVisualSerializer(source='receta_visual', read_only=True)
-
+    cliente_data = ClienteSerializer(source='cliente',read_only=True)
     class Meta:
         model = Pedido
-        fields = ['id','tipo_pedido','tipo_pedido_data','estado_pedido','receta_visual','receta_visual_data',
+        fields = ['id','tipo_pedido','estado_pedido','receta_visual','receta_visual_data','id_cliente','cliente_data',
                   'fecha_emision','fecha_sistema','descripcion','observacion','fecha_entrega','fecha_completado','fecha_entregado']
         read_only_fields = ('id',)
 
