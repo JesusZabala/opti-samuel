@@ -10,6 +10,7 @@ class Auditoria(models.Model):
         UPDATE = 'U', 'Update'
         DELETE = 'D', 'Delete'
 
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='auditorias')
     accion = models.CharField(max_length=1, choices=Accion.choices, blank=False, null=False)
     fecha = models.DateTimeField()
     modulo = models.TextField()
