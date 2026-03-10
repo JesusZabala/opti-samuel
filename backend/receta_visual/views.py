@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions
 from .models import RecetaVisual
 from .serializers import RecetaVisualSerializer
 from enum import Enum
+from authapp.permissions import HasRole
 
 # # Enum class de ejemplo
 # class Accion(Enum):
@@ -15,9 +16,11 @@ from enum import Enum
 
 # Create your views here.
 class RecetaVisualViewSet(viewsets.ModelViewSet):
+    permission_classes = [HasRole]
+    required_roles = ["Admin","optometrista"]
     queryset = RecetaVisual.objects.all()
     serializer_class = RecetaVisualSerializer
-    permission_classes = [permissions.AllowAny]
+    
 
     # Ver como declarar estos metodos para ser llamados en la URL de la API
     def create(self, request, *args, **kwargs):

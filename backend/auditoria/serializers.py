@@ -6,3 +6,4 @@ class AuditoriaSerializer(serializers.ModelSerializer):
         model = Auditoria
         fields = ['id','accion','fecha','modulo','objeto_anterior','objeto_nuevo','fecha_sistema']
         read_only_fields = ('id', 'fecha_sistema')
+        
