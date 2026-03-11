@@ -6,7 +6,7 @@ from authapp.permissions import HasRole
 # Create your views here.
 
 class CitaViewSet(viewsets.ModelViewSet):
-    permission_classess = [HasRole]
+    permission_classes = [HasRole]
     required_roles = ["Admin","recepcionista"]
     queryset = Cita.objects.all()
     serializer_class = CitaSerializer
