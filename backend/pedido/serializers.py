@@ -64,6 +64,7 @@ class MonturaSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 class PedidoSerializer(serializers.ModelSerializer):
+    
     receta_visual_data = RecetaVisualSerializer(source='receta_visual', read_only=True)
     cliente_data = ClienteSerializer(source='cliente',read_only=True)
     class Meta:
@@ -81,4 +82,33 @@ class DetallePedidoSerializer(serializers.ModelSerializer):
         model = DetallePedido
         fields = ['id','pedido','montura','lente','pedido_data','montura_data','lente_data','fecha_sistema','fecha_completado']
         read_only_fields = ('id',)
+
+    def validate(self,data):
+        tipo = data.get('tipo_pedido')
+        detalles = data.get('detalles_pedidos',[])
+        receta = data.get('receta_visual')
+
+        if tipo in ['SL','C'] and not receta:
+            raise serializers.ValidationError(
+                {"receta_visual": "Los pedidos de tipo Solo Lente o Completo requieren una receta visual."}
+            )
+        
+        for detalle in detalles:
+            montura = detalle.get('montura')
+            lente = detalle.get('lente')
+
+            if tipo == 'SL':
+                if montura: 
+                    raise serializers.ValidationError({"detalles_pedido": "No debe incluir montura para Solo Lente."})
+                if not lente: 
+                    raise serializers.ValidationError({"detalles_pedido": "Debe incluir un lente."})
+            elif tipo == 'SM':
+                if lente: 
+                    raise serializers.ValidationError({"detalles_pedido": "No debe incluir lente para Solo Montura."})
+                if not montura: 
+                    raise serializers.ValidationError({"detalles_pedido": "Debe incluir una montura."})
+            elif tipo == 'C':
+                if not montura or not lente:
+                    raise serializers.ValidationError({"detalles_pedido": "Debe incluir montura y lente para pedidos completos."})
+        return data
 

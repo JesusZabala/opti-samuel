@@ -16,6 +16,6 @@ class Cita(models.Model):
     estado_cita = models.CharField(max_length=3, choices=EstadoCita.choices,default=EstadoCita.AGENDADA, blank=False, null=False)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="cliente")
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="usuario", null=True, blank=True)
-    fecha_creacion = models.DateField(auto_now_add=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
 
 

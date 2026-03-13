@@ -20,7 +20,7 @@ class Cliente(models.Model):
     identificacion = models.CharField(max_length=20, null=False, blank=False)
     email = models.CharField(max_length=45, null=False, blank=False)
     telefono = models.CharField(max_length=45, null=False, blank=False)
-    tipo_cliente = models.CharField(max_length=1, choices=TipoCliente.choices, blank=False, null=False)
+    tipo_cliente = models.CharField(max_length=1, choices=TipoCliente.choices, default=EstadoCliente.ACTIVO, blank=False, null=False)
     estado_cliente = models.CharField(max_length=1, choices=EstadoCliente.choices, blank=False, null=False)
     genero = models.CharField(max_length=1, choices=Genero.choices, blank=False, null=False)
     registered_at = models.DateField(auto_now_add=True)
