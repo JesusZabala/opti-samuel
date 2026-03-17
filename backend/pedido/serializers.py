@@ -4,6 +4,7 @@ from receta_visual.models import RecetaVisual
 from receta_visual.serializers import RecetaVisualSerializer
 from cliente.serializers import ClienteSerializer
 from django.db import transaction
+from .utils import enviar_confirmacion_pedido
 class TipoLenteSerializer(serializers.ModelSerializer):
     class Meta:
         model = TipoLente
@@ -147,6 +148,15 @@ class PedidoSerializer(serializers.ModelSerializer):
             DetallePedido.objects.create(
                 pedido=pedido,
                 **detalle_data
+            )
+        
+        if pedido.cliente and pedido.cliente.email:
+            
+            enviar_confirmacion_pedido(
+                pedido.cliente.email,
+                pedido.cliente.nombre,
+                pedido.tipo_pedido,
+                pedido.descripcion
             )
 
         return pedido

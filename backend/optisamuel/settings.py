@@ -82,7 +82,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'optisamuel.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
@@ -152,3 +151,11 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': False,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'optisamuel6@gmail.com'  
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')

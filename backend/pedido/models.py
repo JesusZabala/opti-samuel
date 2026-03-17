@@ -72,12 +72,3 @@ class DetallePedido(models.Model):
     fecha_sistema = models.DateTimeField(auto_now_add=True)
     fecha_completado = models.DateTimeField(null=True, blank=True)
     
-    
-
-    
-
-
-
-    
-
-    

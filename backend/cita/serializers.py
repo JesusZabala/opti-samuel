@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Cita
 from cliente.serializers import ClienteSerializer
+from .utils import enviar_confirmacion_cita
 
 class CitaSerializer(serializers.ModelSerializer):
     cliente_data = ClienteSerializer(source='cliente', read_only=True)
@@ -23,6 +24,17 @@ class CitaSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         cita = Cita.objects.create(**validated_data)
+        
+        if cita.cliente and cita.cliente.email:
+            try:
+                fecha_formateada = cita.fecha.strftime('%d/%m/%Y %I:%M %p')
+                enviar_confirmacion_cita(
+                    cita.cliente.email,
+                    cita.cliente.nombre,
+                    fecha_formateada
+                )
+            except Exception as e:
+                print(f"No se pudo enviar el correo: {e}")
         return cita
 
     
