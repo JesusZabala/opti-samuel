@@ -5,6 +5,10 @@ from receta_visual.serializers import RecetaVisualSerializer
 from cliente.serializers import ClienteSerializer
 from django.db import transaction
 from .utils import enviar_confirmacion_pedido
+from datetime import timedelta
+from django.utils import timezone
+
+
 class TipoLenteSerializer(serializers.ModelSerializer):
     class Meta:
         model = TipoLente
@@ -136,9 +140,10 @@ class PedidoSerializer(serializers.ModelSerializer):
         detalle_data = validated_data.pop('detalle')
         receta = validated_data.get('receta_visual')
 
-        # Si el pedido tiene receta, extraemos el cliente directamente de ella.
-        # Esto funciona tanto para recetas internas (con cita) como externas (sin cita),
-        # ya que en RecetaVisual ya aseguramos que el campo 'cliente' esté lleno.
+        if not self.validated_data.get('fecha_entrega'):
+            validated_data['fecha_entrega'] = timezone.now() + timedelta(hours=48)
+
+
         if receta:
             validated_data['cliente'] = receta.cliente
 

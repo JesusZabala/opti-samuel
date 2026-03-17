@@ -36,3 +36,42 @@ def enviar_confirmacion_pedido(email_cliente, nombre_cliente, tipo_pedido, descr
         )
     except Exception as e:
         print(f"Error al enviar correo de pedido: {e}")
+
+
+def enviar_confirmacion_listo(cliente_email, nombre_cliente, pedido_id):
+    subject = 'Tu pedido esta listo! - Optica OptiSamuel C.A.'
+
+    message = f"Hola {nombre_cliente}, buenas noticias! Tu pedido #{pedido_id} ya esta listo para ser retirado en nuestra optica"
+
+    html_message = f"""
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px;">
+            <h1 style="color: #27ae60; text-align: center;">¡Tus lentes están listos! 👓✨</h1>
+            <p style="font-size: 1.1em;">Hola <strong>{nombre_cliente}</strong>,</p>
+            <p>Nos complace informarte que el proceso de laboratorio ha terminado y tu <strong>Pedido #{pedido_id}</strong> ya se encuentra en nuestra óptica.</p>
+            
+            <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; text-align: center; border-left: 5px solid #27ae60;">
+                <p style="margin: 0; font-weight: bold; color: #2c3e50;">¡Ya puedes pasar a retirarlos!</p>
+            </div>
+
+            <p style="margin-top: 20px;">Recuerda traer tu comprobante (físico o digital) al momento del retiro.</p>
+            
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+            <p style="font-size: 0.85em; color: #7f8c8d; text-align: center;">
+                Gracias por confiar en <strong>Opti-Samuel</strong>.<br>
+                Si tienes alguna duda, puedes contactarnos respondiendo a este correo.
+            </p>
+        </div>
+    """
+
+    try:
+        send_mail(
+            subject,
+            message,
+            settings.EMAIL_HOST_USER,
+            [cliente_email],
+            fail_silently=False,
+            html_message=html_message
+        )
+        print(f"Notificacion de listo enviada a: {cliente_email}")
+    except Exception as e:
+        print(f"Error al enviar correo de pedido listo: {e}")
