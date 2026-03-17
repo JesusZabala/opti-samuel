@@ -14,7 +14,7 @@ class Cita(models.Model):
     motivo = models.CharField(max_length=255, blank=False, null=False)
     motivo_cancelacion = models.CharField(max_length=255, blank=True, null=True)
     estado_cita = models.CharField(max_length=3, choices=EstadoCita.choices,default=EstadoCita.AGENDADA, blank=False, null=False)
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="cliente")
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="citas_del_cliente")
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="usuario", null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 

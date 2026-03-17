@@ -24,8 +24,8 @@ class LenteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lente
-        fields = ['id', 'tipo_lente','tipo_tratamiento','tipo_lente_data','tipo_tratamiento_data', 
-                  'sku_lente','dimension_lente']
+        fields = ['id', 'tipo_lente','tipo_tratamiento','tipo_lente_data','tipo_tratamiento_data'
+                ]
         read_only_fields = ('id',)
 
 class ModeloMonturaSerializer(serializers.ModelSerializer):
@@ -80,13 +80,13 @@ class PedidoSerializer(serializers.ModelSerializer):
     detalle = DetallePedidoSerializer(write_only=True)
     
     receta_visual_data = RecetaVisualSerializer(source='receta_visual', read_only=True)
-    cliente_data = ClienteSerializer(source='id_cliente', read_only=True)
+    cliente_data = ClienteSerializer(source='cliente', read_only=True)
 
     class Meta:
         model = Pedido
         fields = [
             'id', 'tipo_pedido', 'estado_pedido', 'receta_visual', 'receta_visual_data',
-            'id_cliente', 'cliente_data', 'fecha_emision', 'fecha_sistema', 
+            'cliente', 'cliente_data', 'fecha_emision', 'fecha_sistema', 
             'descripcion', 'observacion', 'fecha_entrega', 'fecha_completado', 
             'fecha_entregado', 'detalle'
         ]
@@ -96,6 +96,7 @@ class PedidoSerializer(serializers.ModelSerializer):
         tipo = data.get('tipo_pedido')
         detalle = data.get('detalle')
         receta = data.get('receta_visual')
+        cliente = data.get('cliente')
 
         if not detalle:
             raise serializers.ValidationError({"detalle": "Faltan los datos del producto (montura/lente)."})
@@ -103,22 +104,25 @@ class PedidoSerializer(serializers.ModelSerializer):
         montura = detalle.get('montura')
         lente = detalle.get('lente')
 
+        # Lógica Solo Lente (SL): Receta + Lente
         if tipo == 'SL': 
             if not receta:
                 raise serializers.ValidationError({"receta_visual": "Para Solo Lente es obligatoria la receta."})
-            if montura:
-                raise serializers.ValidationError({"detalle": "Un pedido Solo Lente no debe llevar montura."})
             if not lente:
                 raise serializers.ValidationError({"detalle": "Debe seleccionar un lente."})
+            if montura:
+                raise serializers.ValidationError({"detalle": "Un pedido Solo Lente no debe llevar montura."})
 
+        # Lógica Solo Montura (SM): Cliente + Montura
         elif tipo == 'SM': 
-            if lente:
-                raise serializers.ValidationError({"detalle": "Un pedido Solo Montura no debe llevar lentes."})
+            if not cliente and not receta:
+                raise serializers.ValidationError({"cliente": "Para Solo Montura debe especificar el cliente."})
             if not montura:
                 raise serializers.ValidationError({"detalle": "Debe seleccionar una montura."})
-            if not data.get('id_cliente'):
-                raise serializers.ValidationError({"id_cliente": "Para Solo Montura debe especificar el cliente."})
+            if lente:
+                raise serializers.ValidationError({"detalle": "Un pedido Solo Montura no debe llevar lentes."})
 
+        # Lógica Pedido Completo (C): Receta + Montura + Lente
         elif tipo == 'C': 
             if not receta:
                 raise serializers.ValidationError({"receta_visual": "Para un pedido completo es obligatoria la receta."})
@@ -128,14 +132,14 @@ class PedidoSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        
         detalle_data = validated_data.pop('detalle')
+        receta = validated_data.get('receta_visual')
 
-        if not validated_data.get('id_cliente') and validated_data.get('receta_visual'):
-            receta = validated_data.get('receta_visual')
-            cliente_de_la_cita = receta.cita.cliente
-
-            validated_data['id_cliente'] = cliente_de_la_cita
+        # Si el pedido tiene receta, extraemos el cliente directamente de ella.
+        # Esto funciona tanto para recetas internas (con cita) como externas (sin cita),
+        # ya que en RecetaVisual ya aseguramos que el campo 'cliente' esté lleno.
+        if receta:
+            validated_data['cliente'] = receta.cliente
 
         with transaction.atomic():
             pedido = Pedido.objects.create(**validated_data)

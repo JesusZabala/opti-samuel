@@ -13,7 +13,7 @@ class CitaViewSet(viewsets.ModelViewSet):
     queryset = Cita.objects.all()
     serializer_class = CitaSerializer
 
-    def post(self,request):
+    def create(self,request):
         serializer = CitaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         cita = serializer.save()

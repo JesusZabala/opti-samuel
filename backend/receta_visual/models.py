@@ -1,9 +1,11 @@
 from django.db import models
 from cita.models import Cita
+from cliente.models import Cliente
 
 
 class RecetaVisual(models.Model):
-    cita = models.ForeignKey(Cita, on_delete=models.CASCADE, related_name='cita')
+    cita = models.ForeignKey(Cita, on_delete=models.CASCADE, related_name='cita', null=True, blank=True)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='recetas_del_cliente',null=True,blank=True)
     observaciones = models.CharField(max_length=255, blank=False, null=False)
     fecha_sistema = models.DateField(auto_now=True)
     fecha_creacion = models.DateField(auto_now_add=True)

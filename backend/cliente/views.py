@@ -13,7 +13,7 @@ class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
     lookup_field = 'identificacion'
 
-    def post(self, request):
+    def create(self, request):
         serializer = ClienteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         cliente = serializer.save()

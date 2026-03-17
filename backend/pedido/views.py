@@ -13,7 +13,7 @@ class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
     
-    def post(self, request):
+    def create(self, request):
         serializer = PedidoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         pedido = serializer.save()

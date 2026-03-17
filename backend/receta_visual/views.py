@@ -24,7 +24,7 @@ class RecetaVisualViewSet(viewsets.ModelViewSet):
     serializer_class = RecetaVisualSerializer
     
 
-    def post(self,request):
+    def create(self,request):
         serializer = RecetaVisualSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         receta_visual = serializer.save()
