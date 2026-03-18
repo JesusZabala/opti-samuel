@@ -7,9 +7,16 @@ class TipoLente(models.Model):
     descripcion = models.CharField(max_length=255, blank=False, null=False)
     alias = models.CharField(max_length=255, blank=False, null=False)
 
+
+    def __str__(self):
+        return self.descripcion
+
 class TipoTratamiento(models.Model):
     descripcion = models.CharField(max_length=255, blank=False, null=False)
     alias = models.CharField(max_length=255, blank=False, null=False)
+
+    def __str__(self):
+        return self.descripcion
 
 class Lente(models.Model):
     tipo_lente = models.ForeignKey(TipoLente, on_delete=models.CASCADE, related_name='tipo_lente')
@@ -19,18 +26,30 @@ class ModeloMontura(models.Model):
     descripcion = models.CharField(max_length=255, blank=False, null=False)
     alias = models.CharField(max_length=255, blank=False, null=False)
 
+    def __str__(self):
+        return self.descripcion
+
 class ColorMontura(models.Model):
     descripcion = models.CharField(max_length=255, blank=False, null=False)
     alias = models.CharField(max_length=255, blank=False, null=False)
+
+    def __str__(self):
+        return self.descripcion
 
 class MarcaMontura(models.Model):
     descripcion = models.CharField(max_length=255, blank=False, null=False)
     alias = models.CharField(max_length=255, blank=False, null=False)
 
+    def __str__(self):
+        return self.descripcion
+
 class MedidasMontura(models.Model):
     sku_monturas = models.CharField(max_length=255, blank=False, null=False)
     largo = models.DecimalField(max_digits=10, decimal_places=2, blank=False, null=False)
     ancho = models.DecimalField(max_digits=10, decimal_places=2, blank=False, null=False)
+
+    def __str__(self):
+        return f"{self.sku_monturas} ({self.ancho} x {self.largo})"
 
 class Montura(models.Model):
     modelo = models.ForeignKey(ModeloMontura, on_delete=models.CASCADE, related_name='modelo')
