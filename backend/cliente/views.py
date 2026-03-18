@@ -13,14 +13,15 @@ class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
     lookup_field = 'identificacion'
 
-    def create(self, request):
-        serializer = ClienteSerializer(data=request.data)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        cliente = serializer.save()
+        self.perform_create(serializer)
 
+        headers = self.get_success_headers(serializer.data)
         return Response({
             "mensaje": "Cliente registrado correctamente",
-            "Cliente": ClienteSerializer(cliente).data
-        }, status=status.HTTP_201_CREATED)
+            "Cliente": serializer.data
+        }, status=status.HTTP_201_CREATED, headers=headers)
     
     

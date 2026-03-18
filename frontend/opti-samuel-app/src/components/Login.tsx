@@ -16,8 +16,11 @@ export const Login = () => {
         setError('')
         try{
             const data = await authService.login(username,password);
-            login(data.access);
-            navigate('/');
+            login(data.access_token);
+            localStorage.setItem('role', data.rol);
+            if (data.rol === 'superadmin' || data.rol === 'Admin') navigate('/admin');
+            else if (data.rol === 'recepcionista') navigate('/recepcion');
+            else if (data.rol === 'optometrista') navigate('/consultorio');
         }catch(err){
             setError('Usuario y contraseña incorrectos');
 

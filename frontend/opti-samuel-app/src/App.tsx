@@ -2,39 +2,77 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { Login } from './components/Login';
 import { ProtectedRoute } from './components/ProtectedRoute.tsx';
+import React from 'react';
 
 import './App.css';
+import { ConsultorioPanel } from './components/ConsultorioPanel.tsx';
+import { RecepcionPanel } from './components/RecepcionPanel.tsx';
+import { AdminPanel } from './components/AdminPanel.tsx';
+import { Children } from 'react';
 
-// Este componente será tu "Página de Inicio" real una vez logueado
-const Dashboard = () => (
-  <div className="p-10 text-center">
-    <h1 className="text-3xl font-bold text-blue-600">Panel de Control Opti-Samuel</h1>
-    <p className="mt-4 text-gray-600">Bienvenido al sistema de gestión de la óptica.</p>
-    <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div className="p-6 bg-white shadow rounded-lg border">Citas de hoy</div>
-      <div className="p-6 bg-white shadow rounded-lg border">Pedidos pendientes</div>
-      <div className="p-6 bg-white shadow rounded-lg border">Inventario</div>
-    </div>
-  </div>
-);
+const RoleRoute = ({children,allowedRoles}: {children:React.ReactNode,allowedRoles: string[]}) => {
+    const userRole = localStorage.getItem('role');
+
+    if(!allowedRoles.includes(userRole||'')){
+      return <Navigate to="/" replace/>
+    }
+    return <>{children}</>;
+}
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Si vas a /login, ves el componente de Login */}
+          {/* Ruta Publica */}
           <Route path="/login" element={<Login />} />
 
-          {/* Si vas a la raíz, el "guardia" revisa el token */}
+          {/* Rutas protegidas y segmentadas por rol */}
+          {/* Admin  */}
           <Route 
-            path="/" 
+            path="/admin" 
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <RoleRoute allowedRoles={['Admin','superadmin']}>
+                  <AdminPanel/>
+                  </RoleRoute>
               </ProtectedRoute>
             } 
           />
+          {/* Recepcionista */}
+          <Route
+          path="/recepcion"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={['recepcionista','superadmin']}>
+                <RecepcionPanel/>
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+          />
+
+          {/* Optometrista */}
+          <Route
+            path="/consultorio"
+            element={
+              <ProtectedRoute>
+                <RoleRoute allowedRoles={['optometrista','superadmin']}>
+                  <ConsultorioPanel/>
+
+                </RoleRoute>
+              </ProtectedRoute>
+            }
+            />
+
+          {/* Ruta de redirección inteligente al entrar a "/" */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <HomeRedirect/>
+              </ProtectedRoute>
+            }
+            />
 
           {/* Si escribes cualquier otra cosa, te devuelve al inicio */}
           <Route path="*" element={<Navigate to="/" />} />
@@ -42,6 +80,14 @@ function App() {
       </BrowserRouter>
     </AuthProvider>
   );
+}
+
+const HomeRedirect = () => {
+  const role = localStorage.getItem('role');
+  if (role === 'superadmin' || role === 'Admin') return <Navigate to="/admin" />;
+  if (role === 'recepcionista') return <Navigate to="/recepcion" />;
+  if (role === 'optometrista') return <Navigate to="/consultorio" />;
+  return <Navigate to="/login" />;
 }
 
 export default App;

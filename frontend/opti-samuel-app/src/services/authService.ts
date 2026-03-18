@@ -10,6 +10,8 @@ export const authService = {
             localStorage.setItem('token', response.data.access_token);
             localStorage.setItem('refresh', response.data.refresh_token)
             localStorage.setItem('role', response.data.rol)
+            localStorage.setItem('username', response.data.user)
+
         }
 
         return response.data
@@ -19,6 +21,6 @@ export const authService = {
         localStorage.removeItem('token');
         localStorage.removeItem('refresh');
         localStorage.removeItem('role');
-        
+        localStorage.removeItem('username');
     }
 }
