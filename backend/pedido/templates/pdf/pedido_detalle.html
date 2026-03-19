@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page { size: letter; margin: 1cm; }
+        body { font-family: Helvetica, Arial, sans-serif; color: #333; line-height: 1.4; }
+        
+        /* Encabezado */
+        .header { text-align: center; border-bottom: 3px solid #2980b6; padding-bottom: 10px; margin-bottom: 20px; }
+        .header h1 { margin: 0; color: #2980b6; font-size: 24pt; }
+        .header p { margin: 2px; font-size: 10pt; }
+
+        /* Bloques de Información */
+        .section-title { 
+            background-color: #2980b6; 
+            color: white; 
+            padding: 6px 10px; 
+            margin-top: 15px; 
+            font-weight: bold;
+            font-size: 11pt;
+            text-transform: uppercase;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background-color: #f2f2f2; font-weight: bold; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 10pt; }
+
+        .info-table td { border: none; text-align: left; padding: 4px; }
+        .text-left { text-align: left; }
+        
+        .footer { margin-top: 50px; text-align: center; font-size: 9pt; color: #666; }
+        .signature-space { margin-top: 40px; border-top: 1px solid #333; width: 200px; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>OPTI-SAMUEL</h1>
+        <p>RIF: J-12345678-9 | Teléfono: 0412-1234567</p>
+        <p><strong>ORDEN DE PEDIDO #{{ pedido.id }}</strong></p>
+        <p>Fecha de Emisión: {{ pedido.fecha_creacion|date:"d/m/Y" }}</p>
+    </div>
+
+    <div class="section-title">Información del Paciente</div>
+    <table class="info-table">
+        <tr>
+            <td><strong>Nombre:</strong> {{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }}</td>
+            <td><strong>Identificación:</strong> {{ pedido.cliente.identificacion }}</td>
+        </tr>
+        <tr>
+            <td><strong>Teléfono:</strong> {{ pedido.cliente.telefono }}</td>
+            <td><strong>Email:</strong> {{ pedido.cliente.email }}</td>
+        </tr>
+    </table>
+
+    <div class="section-title">Receta Visual / Fórmula</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Ojo</th>
+                <th>Esfera</th>
+                <th>Cilindro</th>
+                <th>Eje</th>
+                <th>Adición</th>
+                <th>D.P. (mm)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in pedido.receta_visual.rv_detalle.all %}
+            <tr>
+                <td><strong>{{ detalle.oculus.alias }}</strong> ({{ detalle.oculus.descripcion }})</td>
+                <td>{{ detalle.oculus.esfera }}</td>
+                <td>{{ detalle.oculus.cilindro }}</td>
+                <td>{{ detalle.oculus.eje }}°</td>
+                <td>{{ detalle.adicion|default:"0.00" }}</td>
+                <td>{{ detalle.distancia_pupilar }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No hay detalles de receta registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="section-title">Especificaciones del Pedido</div>
+    <table>
+        <thead>
+            <tr>
+                <th width="30%">Elemento</th>
+                <th width="70%">Descripción Detallada</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if pedido.tipo_pedido == 'SM' or pedido.tipo_pedido == 'C' %}
+            <tr>
+                <td><strong>Montura / Armazón</strong></td>
+                <td class="text-left">
+                    {% if pedido.detalle.montura %}
+                        {{ pedido.detalle.montura.marca }} - Modelo: {{ pedido.detalle.montura.modelo }} 
+                        (Color: {{ pedido.detalle.montura.color }})
+                    {% else %}
+                        Montura proporcionada por el cliente.
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+
+            {% if pedido.tipo_pedido == 'SL' or pedido.tipo_pedido == 'C' %}
+            <tr>
+                <td><strong>Cristales / Lentes</strong></td>
+                <td class="text-left">
+                    {% if pedido.detalle.lente %}
+                        {{ pedido.detalle.lente.material }} - Tratamiento: {{ pedido.detalle.lente.tratamiento }}
+                    {% else %}
+                        Pendiente por especificar cristales.
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <div class="section-title">Observaciones</div>
+    <div style="border: 1px solid #ddd; padding: 10px; min-height: 50px; font-size: 10pt;">
+        {{ pedido.observacion|default:"Sin observaciones adicionales." }}
+    </div>
+
+    <div class="footer">
+        <div style="margin-top: 60px;">
+            <div style="float: left; width: 45%;">
+                <div class="signature-space"></div>
+                <p>Firma del Optometrista</p>
+            </div>
+            <div style="float: right; width: 45%;">
+                <div class="signature-space"></div>
+                <p>Recibido por (Cliente)</p>
+            </div>
+            <div style="clear: both;"></div>
+        </div>
+        <p style="margin-top: 40px;"><em>"Tu visión es nuestra prioridad"</em></p>
+    </div>
+
+</body>
+</html>

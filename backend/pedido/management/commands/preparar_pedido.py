@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from pedido.models import Pedido
-from pedido.utils import enviar_confirmacion_listo
+from backend.pedido.utils.EmailUtils import enviar_confirmacion_listo
 
 class Command(BaseCommand):
     help = 'Cambia el estado de los pedidos a LISTO cuando llega su fecha de entrega'

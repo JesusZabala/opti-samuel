@@ -4,7 +4,7 @@ from receta_visual.models import RecetaVisual
 from receta_visual.serializers import RecetaVisualSerializer
 from cliente.serializers import ClienteSerializer
 from django.db import transaction
-from .utils import enviar_confirmacion_pedido
+from .utils.EmailUtils import enviar_confirmacion_pedido
 from datetime import timedelta
 from django.utils import timezone
 
