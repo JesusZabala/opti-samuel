@@ -7,8 +7,8 @@ from rest_framework.response import Response
 from rest_framework import status
 # Create your views here.
 class ClienteViewSet(viewsets.ModelViewSet):
-    permission_classes = [HasRole]
-    required_roles = ["Admin","recepcionista"]
+    # permission_classes = [HasRole]
+    # required_roles = ["Admin","recepcionista"]
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
     lookup_field = 'identificacion'

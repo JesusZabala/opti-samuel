@@ -3,9 +3,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
-
-from .serializers import LoginSerializer, get_user_role
-
+from django.contrib.auth.models import User
+from .serializers import LoginSerializer, get_user_role 
+from rest_framework import generics
+from .serializers import UserListSerializer
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -29,3 +30,8 @@ class LoginView(APIView):
             status=status.HTTP_200_OK,
         )
 
+class OptometristaListView(generics.ListAPIView):
+    # Filtramos usuarios que NO sean simples clientes (staff o con grupo)
+    # O mejor aún, filtramos por el grupo específico 'Optometrista'
+    queryset = User.objects.filter(groups__name='optometrista') 
+    serializer_class = UserListSerializer

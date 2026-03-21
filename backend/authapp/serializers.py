@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
-
+from django.contrib.auth.models import User
 def get_user_role(user) -> str:
     """
     Rol/perfil basado en el sistema por defecto de Django:
@@ -46,3 +46,12 @@ class LoginSerializer(serializers.Serializer):
         attrs["user"] = user
         return attrs
 
+class UserListSerializer(serializers.ModelSerializer):
+    rol = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name', 'rol']
+
+    def get_rol(self, obj):
+        return get_user_role(obj)

@@ -15,7 +15,7 @@ from rest_framework.decorators import action
 # Create your views here.
 
 class CitaViewSet(viewsets.ModelViewSet):
-    permission_classes = [HasRole]
+    # permission_classes = [HasRole]
     required_roles = ["Admin","recepcionista",'optometrista']
     queryset = Cita.objects.all()
     serializer_class = CitaSerializer
@@ -32,7 +32,47 @@ class CitaViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'], permission_classes=[HasRole], required_roles=["Admin", "recepcionista", "optometrista"])
     def obtener_dashboard_stats_global(self, request):
-        hoy = timezone.now().date()
+        hoy = timezone.localdate() # Fecha local correcta
+        
+        # 1. Cards (Superior)
+        citas_hoy_count = Cita.objects.filter(fecha__date=hoy, estado_cita='A').count()
+        
+        # Pacientes totales (o del mes si prefieres)
+        total_pacientes = Cliente.objects.count() 
+        
+        # Pedidos con estado 'E' (Entregado/Espera - revisa tu lógica de iniciales)
+        pedidos_pendientes = Pedido.objects.filter(estado_pedido='E').count()
+
+        # 2. Citas del día (Centro) - select_related evita 50 consultas a la DB
+        citas_hoy_qs = Cita.objects.filter(fecha__date=hoy).select_related('cliente').order_by('fecha')
+
+        lista_citas = [{
+            "paciente": f"{c.cliente.nombre} {c.cliente.apellido}" if c.cliente else "N/A",
+            "motivo": c.motivo,
+            "hora": c.fecha.strftime("%I:%M %p"),
+            "estado": c.get_estado_cita_display() 
+        } for c in citas_hoy_qs]
+
+        # 3. Órdenes Recientes (Derecha)
+        pedidos_qs = Pedido.objects.select_related('cliente').order_by('-fecha_emision')[:5]
+
+        lista_pedidos = [{
+            "nro_pedido": p.id,
+            "cliente": f"{p.cliente.nombre} {p.cliente.apellido}" if p.cliente else "N/A",
+            "tipo": p.get_tipo_pedido_display(),
+            "estado": p.get_estado_pedido_display()
+        } for p in pedidos_qs]
+
+        return Response({
+            "cards": {
+                "citas": citas_hoy_count,
+                "pacientes": total_pacientes,
+                "pedidos": pedidos_pendientes
+            },
+            "citas_detalladas": lista_citas,
+            "pedidos_recientes": lista_pedidos
+        })
+        hoy = timezone.localdate()
         
         # --- 1. CONTEOS PARA LAS CARDS (SUPERIOR) ---
         citas_hoy_count = Cita.objects.filter(
