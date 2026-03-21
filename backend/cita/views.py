@@ -1,15 +1,22 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from .models import Cita
+from django.contrib.auth.models import User, Group
+from django.utils import timezone
 from .serializers import CitaSerializer
 from authapp.permissions import HasRole
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from pedido.models import Pedido
+from cliente.models import Cliente
+from rest_framework.response import Response
+from rest_framework.decorators import action
 # Create your views here.
 
 class CitaViewSet(viewsets.ModelViewSet):
     permission_classes = [HasRole]
-    required_roles = ["Admin","recepcionista"]
+    required_roles = ["Admin","recepcionista",'optometrista']
     queryset = Cita.objects.all()
     serializer_class = CitaSerializer
 
@@ -22,4 +29,84 @@ class CitaViewSet(viewsets.ModelViewSet):
             "mensaje": "Cita registrada correctamente",
             "Cita": CitaSerializer(cita).data
         }, status=status.HTTP_201_CREATED)
+    
+    @action(detail=False, methods=['get'], permission_classes=[HasRole], required_roles=["Admin", "recepcionista", "optometrista"])
+    def obtener_dashboard_stats_global(self, request):
+        hoy = timezone.now().date()
         
+        # --- 1. CONTEOS PARA LAS CARDS (SUPERIOR) ---
+        citas_hoy_count = Cita.objects.filter(
+            fecha__date=hoy, 
+            estado_cita='A' 
+        ).count()
+
+        
+        nuevos_pacientes = Cliente.objects.filter(
+            id__gt=0 
+        ).count() 
+
+        pedidos_pendientes = Pedido.objects.filter(
+            estado_pedido='E' 
+        ).count()
+
+        # --- 2. LISTADO "HOY: CITAS" (CENTRO) ---
+        citas_hoy_qs = Cita.objects.filter(
+            fecha__date=hoy
+        ).select_related('cliente').order_by('fecha')
+
+        lista_citas = [{
+            "paciente": f"{c.cliente.nombre} {c.cliente.apellido}",
+            "motivo": c.motivo,
+            "hora": c.fecha.strftime("%I:%M %p"),
+            "estado": c.get_estado_cita_display() 
+        } for c in citas_hoy_qs]
+
+        # --- 3. LISTADO "ÓRDENES RECIENTES" (DERECHA) ---
+        pedidos_qs = Pedido.objects.select_related('cliente').order_by('-fecha_emision')[:5]
+
+        lista_pedidos = [{
+            "nro_pedido": p.id,
+            "cliente": f"{p.cliente.nombre} {p.cliente.apellido}",
+            "tipo": p.get_tipo_pedido_display(),
+            "estado": p.get_estado_pedido_display()
+        } for p in pedidos_qs]
+
+        return Response({
+            "cards": {
+                "citas": citas_hoy_count,
+                "pacientes": nuevos_pacientes,
+                "pedidos": pedidos_pendientes
+            },
+            "citas_detalladas": lista_citas,
+            "pedidos_recientes": lista_pedidos
+        })
+
+    @action(detail=False, methods=['get'])
+    def buscar_cliente(self, request):
+        query = request.query_params.get('q','')
+        if len(query) < 3:
+            return Response([])
+
+        clientes = Cliente.objects.filter(
+            identificacion__icontain=query
+        )[:10]
+
+        data = [{
+            "id": c.id,
+            "text": f"{c.identificacion} - {c.nombre} {c.apellido}"   
+        } for c in clientes]
+
+        return Response(data)
+    
+    @action(detail=False, methods=['get'])
+    def lista_optometrista(self, request):
+        optos = User.objects.filter(groups__name='optometrista')
+        data = [{
+            "id": u.id,
+            "nombre": f"{u.first_name} {u.last_name}" or u.username
+        } for u in optos]
+
+        return Response(data)    
+
+
+

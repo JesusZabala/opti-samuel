@@ -1,14 +1,17 @@
 from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import api_view, permission_classes, action
 from django.http import HttpResponse
 
 from .models import Pedido
 from .serializers import PedidoSerializer
 from authapp.permissions import HasRole
 from .utils.PdfUtils import render_to_pdf
-
+from django.utils import timezone
+from cliente.models import Cliente
+from cita.models import Cita
+from .models import *
 # Create your views here.
 
 class PedidoViewSet(viewsets.ModelViewSet):
@@ -51,3 +54,29 @@ class PedidoViewSet(viewsets.ModelViewSet):
             return response
         
         return Response({"error": "Error al generar el PDF"}, status=400)
+    
+    @action(detail=False, methods=['get'])
+    def obtener_catalogos(self, request):
+        
+        modelos = ModeloMontura.objects.all().values('id', 'descripcion')
+        colores = ColorMontura.objects.all().values('id', 'descripcion')
+        marcas = MarcaMontura.objects.all().values('id', 'descripcion')
+        medidas = MedidasMontura.objects.all().values('id', 'sku_monturas', 'largo', 'ancho')
+        
+        # Lentes
+        tipos_lente = TipoLente.objects.all().values('id', 'descripcion')
+        tratamientos = TipoTratamiento.objects.all().values('id', 'descripcion')
+
+        return Response({
+            "monturas": {
+                "modelos": list(modelos),
+                "colores": list(colores),
+                "marcas": list(marcas),
+                "medidas": list(medidas)
+            },
+            "lentes": {
+                "tipos": list(tipos_lente),
+                "tratamientos": list(tratamientos)
+            }
+        })
+

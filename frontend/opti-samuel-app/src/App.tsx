@@ -33,7 +33,7 @@ function App() {
             path="/admin" 
             element={
               <ProtectedRoute>
-                <RoleRoute allowedRoles={['Admin','superadmin']}>
+                  <RoleRoute allowedRoles={['Admin','superadmin']}>
                   <AdminPanel/>
                   </RoleRoute>
               </ProtectedRoute>
