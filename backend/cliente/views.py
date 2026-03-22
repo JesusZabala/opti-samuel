@@ -11,7 +11,7 @@ class ClienteViewSet(viewsets.ModelViewSet):
     # required_roles = ["Admin","recepcionista"]
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
-    lookup_field = 'identificacion'
+    # lookup_field = 'identificacion'
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

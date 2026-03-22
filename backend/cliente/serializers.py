@@ -9,12 +9,15 @@ class ClienteSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'registered_at')
 
     def validate_identificacion(self, value):
-        if Cliente.objects.filter(identificacion=value).exists(): # Corregido exists()
+        # Si estamos editando (self.instance existe), excluimos al cliente actual de la búsqueda
+        instance_id = self.instance.id if self.instance else None
+        if Cliente.objects.filter(identificacion=value).exclude(id=instance_id).exists():
             raise serializers.ValidationError("Ya la identificación está registrada")
         return value
 
-    def validate_email(self, value): # Cambiado de validate_gmail a validate_email por estándar
-        if Cliente.objects.filter(email=value).exists():
+    def validate_email(self, value):
+        instance_id = self.instance.id if self.instance else None
+        if Cliente.objects.filter(email=value).exclude(id=instance_id).exists():
             raise serializers.ValidationError("Este correo ya está registrado")
         return value
 

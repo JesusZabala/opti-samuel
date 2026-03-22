@@ -82,8 +82,12 @@ class DetallePedidoSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'pedido')
 
 class PedidoSerializer(serializers.ModelSerializer):
-    detalle = DetallePedidoSerializer(write_only=True)
+    detalle = serializers.JSONField(write_only=True)
     
+    # 2. Usamos esto para MOSTRAR la información en el GET (read_only)
+    # Importante: 'detalle_pedido' debe coincidir con el related_name en tu modelo DetallePedido
+    # Si no pusiste related_name, usa 'detallepedido_set'
+    info_detalle = DetallePedidoSerializer(source='detalles', many=True, read_only=True)
     receta_visual_data = RecetaVisualSerializer(source='receta_visual', read_only=True)
     cliente_data = ClienteSerializer(source='cliente', read_only=True)
 
@@ -93,7 +97,7 @@ class PedidoSerializer(serializers.ModelSerializer):
             'id', 'tipo_pedido', 'estado_pedido', 'receta_visual', 'receta_visual_data',
             'cliente', 'cliente_data', 'fecha_emision', 'fecha_sistema', 
             'descripcion', 'observacion', 'fecha_entrega', 'fecha_completado', 
-            'fecha_entregado', 'detalle'
+            'fecha_entregado', 'detalle','info_detalle'
         ]
         read_only_fields = ('id', 'fecha_sistema')
 
@@ -136,32 +140,93 @@ class PedidoSerializer(serializers.ModelSerializer):
 
         return data
 
+    # def create(self, validated_data):
+    #     detalle_data = validated_data.pop('detalle')
+    #     receta = validated_data.get('receta_visual')
+
+    #     if not self.validated_data.get('fecha_entrega'):
+    #         validated_data['fecha_entrega'] = timezone.now() + timedelta(hours=48)
+
+
+    #     if receta:
+    #         validated_data['cliente'] = receta.cliente
+
+    #     with transaction.atomic():
+    #         pedido = Pedido.objects.create(**validated_data)
+
+    #         DetallePedido.objects.create(
+    #             pedido=pedido,
+    #             **detalle_data
+    #         )
+        
+    #     if pedido.cliente and pedido.cliente.email:
+            
+    #         enviar_confirmacion_pedido(
+    #             pedido.cliente.email,
+    #             pedido.cliente.nombre,
+    #             pedido.tipo_pedido,
+    #             pedido.descripcion
+    #         )
+
+    #     return pedido
+
     def create(self, validated_data):
         detalle_data = validated_data.pop('detalle')
         receta = validated_data.get('receta_visual')
-
-        if not self.validated_data.get('fecha_entrega'):
-            validated_data['fecha_entrega'] = timezone.now() + timedelta(hours=48)
-
-
+        
+        # Si hay receta, asignamos el cliente automáticamente
         if receta:
             validated_data['cliente'] = receta.cliente
 
+        # Si no viene fecha de entrega, ponemos 48h por defecto
+        if not validated_data.get('fecha_entrega'):
+            validated_data['fecha_entrega'] = timezone.now() + timedelta(hours=48)
+
         with transaction.atomic():
+            # 1. Creamos el Pedido base
             pedido = Pedido.objects.create(**validated_data)
 
+            # 2. Procesamos la Montura (si aplica)
+            montura_obj = None
+            if 'montura' in detalle_data and detalle_data['montura']:
+                m_data = detalle_data['montura']
+                # Usamos el sufijo _id para que Django acepte los números de React
+                montura_params = {
+                    'modelo_id': m_data.get('modelo'),
+                    'marca_id': m_data.get('marca'),
+                    'color_id': m_data.get('color'),
+                    'medidas_id': m_data.get('medidas'),
+                    'material': m_data.get('material', '')
+                }
+                # .get_or_create evita duplicados exactos en el inventario
+                montura_obj, _ = Montura.objects.get_or_create(**montura_params)
+
+            # 3. Procesamos el Lente (si aplica)
+            lente_obj = None
+            if 'lente' in detalle_data and detalle_data['lente']:
+                l_data = detalle_data['lente']
+                lente_params = {
+                    'tipo_lente_id': l_data.get('tipo_lente'),
+                    'tipo_tratamiento_id': l_data.get('tipo_tratamiento')
+                }
+                lente_obj, _ = Lente.objects.get_or_create(**lente_params)
+
+            # 4. Creamos el Detalle final con las FK correctas
             DetallePedido.objects.create(
                 pedido=pedido,
-                **detalle_data
-            )
-        
-        if pedido.cliente and pedido.cliente.email:
-            
-            enviar_confirmacion_pedido(
-                pedido.cliente.email,
-                pedido.cliente.nombre,
-                pedido.tipo_pedido,
-                pedido.descripcion
+                montura=montura_obj,
+                lente=lente_obj
             )
 
+        # 5. Envío de correo (Opcional)
+        if pedido.cliente and pedido.cliente.email:
+            try:
+                enviar_confirmacion_pedido(
+                    pedido.cliente.email, pedido.cliente.nombre, 
+                    pedido.tipo_pedido, pedido.descripcion
+                )
+            except Exception as e:
+                print(f"Error enviando email: {e}")
+
         return pedido
+            
