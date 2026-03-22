@@ -18,7 +18,7 @@ class RecetaVisualDetalleSerializer(serializers.ModelSerializer):
 
 
 class RecetaVisualSerializer(serializers.ModelSerializer):
-    rv_detalle_data = RecetaVisualDetalleSerializer(many=True)
+    rv_detalle_data = RecetaVisualDetalleSerializer(source='rv_detalle', many=True)
     cita_data = CitaSerializer(source='cita', read_only=True)
     cliente_data = ClienteSerializer(source='cliente', read_only=True)
     class Meta:
@@ -27,7 +27,7 @@ class RecetaVisualSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Extraemos los datos anidados de los detalles
-        detalles_data = validated_data.pop('rv_detalle_data')
+        detalles_data = validated_data.pop('rv_detalle')
         
         # Obtenemos los IDs que vienen del formulario (React)
         cita = validated_data.get('cita')
@@ -61,7 +61,7 @@ class RecetaVisualSerializer(serializers.ModelSerializer):
 
                 # Vinculamos el oculus con el detalle de la receta
                 RecetaVisualDetalle.objects.create(
-                    receta=receta,
+                    receta_visual=receta,
                     oculus=nuevo_oculus,
                     **detalle
                 )

@@ -83,10 +83,6 @@ class DetallePedidoSerializer(serializers.ModelSerializer):
 
 class PedidoSerializer(serializers.ModelSerializer):
     detalle = serializers.JSONField(write_only=True)
-    
-    # 2. Usamos esto para MOSTRAR la información en el GET (read_only)
-    # Importante: 'detalle_pedido' debe coincidir con el related_name en tu modelo DetallePedido
-    # Si no pusiste related_name, usa 'detallepedido_set'
     info_detalle = DetallePedidoSerializer(source='detalles', many=True, read_only=True)
     receta_visual_data = RecetaVisualSerializer(source='receta_visual', read_only=True)
     cliente_data = ClienteSerializer(source='cliente', read_only=True)

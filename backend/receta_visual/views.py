@@ -5,7 +5,7 @@ from .serializers import RecetaVisualSerializer
 from enum import Enum
 from authapp.permissions import HasRole
 from rest_framework import status
-
+from rest_framework import filters
 # # Enum class de ejemplo
 # class Accion(Enum):
 #     CREAR = "crear"
@@ -18,10 +18,14 @@ from rest_framework import status
 
 # Create your views here.
 class RecetaVisualViewSet(viewsets.ModelViewSet):
-    permission_classes = [HasRole]
-    required_roles = ["Admin","optometrista"]
+    # permission_classes = [HasRole]
+    # required_roles = ["Admin","optometrista"]
     queryset = RecetaVisual.objects.all()
     serializer_class = RecetaVisualSerializer
+
+    filter_backends = [filters.SearchFilter]
+    # Buscamos en el nombre y apellido del modelo relacionado 'cliente'
+    search_fields = ['cliente__nombre', 'cliente__apellido', 'cliente__identificacion']
     
 
     def create(self,request):
