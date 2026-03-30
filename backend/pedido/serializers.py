@@ -170,23 +170,23 @@ class PedidoSerializer(serializers.ModelSerializer):
         detalle_data = validated_data.pop('detalle')
         receta = validated_data.get('receta_visual')
         
-        # Si hay receta, asignamos el cliente automáticamente
         if receta:
             validated_data['cliente'] = receta.cliente
 
-        # Si no viene fecha de entrega, ponemos 48h por defecto
         if not validated_data.get('fecha_entrega'):
             validated_data['fecha_entrega'] = timezone.now() + timedelta(hours=48)
 
         with transaction.atomic():
-            # 1. Creamos el Pedido base
+
+            if receta:
+                receta.estado_receta = 'CP'
+                receta.save()
+
             pedido = Pedido.objects.create(**validated_data)
 
-            # 2. Procesamos la Montura (si aplica)
             montura_obj = None
             if 'montura' in detalle_data and detalle_data['montura']:
                 m_data = detalle_data['montura']
-                # Usamos el sufijo _id para que Django acepte los números de React
                 montura_params = {
                     'modelo_id': m_data.get('modelo'),
                     'marca_id': m_data.get('marca'),
@@ -194,10 +194,8 @@ class PedidoSerializer(serializers.ModelSerializer):
                     'medidas_id': m_data.get('medidas'),
                     'material': m_data.get('material', '')
                 }
-                # .get_or_create evita duplicados exactos en el inventario
                 montura_obj, _ = Montura.objects.get_or_create(**montura_params)
 
-            # 3. Procesamos el Lente (si aplica)
             lente_obj = None
             if 'lente' in detalle_data and detalle_data['lente']:
                 l_data = detalle_data['lente']
@@ -207,14 +205,12 @@ class PedidoSerializer(serializers.ModelSerializer):
                 }
                 lente_obj, _ = Lente.objects.get_or_create(**lente_params)
 
-            # 4. Creamos el Detalle final con las FK correctas
             DetallePedido.objects.create(
                 pedido=pedido,
                 montura=montura_obj,
                 lente=lente_obj
             )
 
-        # 5. Envío de correo (Opcional)
         if pedido.cliente and pedido.cliente.email:
             try:
                 enviar_confirmacion_pedido(
@@ -226,3 +222,4 @@ class PedidoSerializer(serializers.ModelSerializer):
 
         return pedido
             
+    

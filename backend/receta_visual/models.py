@@ -4,8 +4,14 @@ from cliente.models import Cliente
 
 
 class RecetaVisual(models.Model):
+
+    class EstadoReceta(models.TextChoices):
+        SIN_PEDIDO = 'SP', 'Sin Pedido'
+        CON_PEDIDO = 'CP', 'Con Pedido' 
+        
     cita = models.ForeignKey(Cita, on_delete=models.CASCADE, related_name='cita', null=True, blank=True)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='recetas_del_cliente',null=True,blank=True)
+    estado_receta = models.CharField(max_length=2, choices=EstadoReceta.choices,  default=EstadoReceta.SIN_PEDIDO, blank=False, null=False)
     observaciones = models.CharField(max_length=255, blank=False, null=False)
     fecha_sistema = models.DateField(auto_now=True)
     fecha_creacion = models.DateField(auto_now_add=True)

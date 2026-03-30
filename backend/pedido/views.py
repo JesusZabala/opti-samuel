@@ -33,28 +33,37 @@ class PedidoViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def descargar_pdf(self, request, pk=None):
         try:
+            # 1. Traemos el pedido con todas sus relaciones de una sola vez
             pedido = Pedido.objects.select_related('cliente', 'receta_visual').prefetch_related(
                 'detalles__montura__marca',
                 'detalles__montura__modelo',
                 'detalles__montura__color',
+                'detalles__montura__medidas',  # <-- Agregué 'medidas' que estaba en tus modelos
                 'detalles__lente__tipo_lente',
                 'detalles__lente__tipo_tratamiento',
                 'receta_visual__rv_detalle__oculus'
             ).get(pk=pk)
+            
         except Pedido.DoesNotExist:
             return Response({"error": "Pedido no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": f"Error de base de datos: {str(e)}"}, status=500)
 
+        # 2. Preparamos el contexto
         context = {'pedido': pedido}
-        pdf = render_to_pdf('pdf/pedido_completo.html', context)
         
-        if pdf:
-            response = HttpResponse(pdf, content_type='application/pdf')
+        # 3. Generamos el binario del PDF
+        pdf_content = render_to_pdf('pdf/pedido_detalle.html', context)
+        
+        if pdf_content:
             filename = f"Pedido_{pedido.id}_{pedido.cliente.identificacion}.pdf"
-            response['Content-Disposition'] = f"inline; filename={filename}"
+            
+            response = HttpResponse(pdf_content, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
             return response
         
-        return Response({"error": "Error al generar el PDF"}, status=400)
-    
+        return Response({"error": "No se pudo generar el archivo PDF"}, status=status.HTTP_400_BAD_REQUEST)
+        
     @action(detail=False, methods=['get'])
     def obtener_catalogos(self, request):
         

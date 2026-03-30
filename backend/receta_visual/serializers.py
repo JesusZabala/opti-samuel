@@ -23,7 +23,7 @@ class RecetaVisualSerializer(serializers.ModelSerializer):
     cliente_data = ClienteSerializer(source='cliente', read_only=True)
     class Meta:
         model = RecetaVisual
-        fields = ['id', 'cita','cita_data', 'cliente', 'cliente_data','rv_detalle_data', 'observaciones', 'fecha_sistema', 'fecha_creacion']
+        fields = ['id', 'cita','cita_data', 'cliente', 'cliente_data','rv_detalle_data', 'observaciones','estado_receta', 'fecha_sistema', 'fecha_creacion']
 
     def create(self, validated_data):
         # Extraemos los datos anidados de los detalles

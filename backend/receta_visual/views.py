@@ -6,15 +6,6 @@ from enum import Enum
 from authapp.permissions import HasRole
 from rest_framework import status
 from rest_framework import filters
-# # Enum class de ejemplo
-# class Accion(Enum):
-#     CREAR = "crear"
-#     ACTUALIZAR = "actualizar"
-#     BORRAR = "borrar"
-
-#     def __str__(self):
-#         return self.value
-    
 
 # Create your views here.
 class RecetaVisualViewSet(viewsets.ModelViewSet):
@@ -24,7 +15,6 @@ class RecetaVisualViewSet(viewsets.ModelViewSet):
     serializer_class = RecetaVisualSerializer
 
     filter_backends = [filters.SearchFilter]
-    # Buscamos en el nombre y apellido del modelo relacionado 'cliente'
     search_fields = ['cliente__nombre', 'cliente__apellido', 'cliente__identificacion']
     
 
