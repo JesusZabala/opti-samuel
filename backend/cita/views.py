@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from .models import Cita
+from datetime import datetime
 from django.contrib.auth.models import User, Group
 from django.utils import timezone
 from .serializers import CitaSerializer
@@ -12,6 +13,10 @@ from pedido.models import Pedido
 from cliente.models import Cliente
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+
 # Create your views here.
 
 class CitaViewSet(viewsets.ModelViewSet):
@@ -146,7 +151,36 @@ class CitaViewSet(viewsets.ModelViewSet):
             "nombre": f"{u.first_name} {u.last_name}" or u.username
         } for u in optos]
 
-        return Response(data)    
+        return Response(data)
 
+    @action(detail=False, methods=['get'])
+    def descargar_reporte(self, request):
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+
+        if not desde or not hasta:
+            return Response({"error": "Faltan las fechas desde/hasta"}, status=400)
+
+        citas = self.get_queryset().filter(fecha_creacion__date__range=[desde, hasta]).select_related('cliente').order_by('fecha_creacion')
+
+        context = {
+            'citas': citas,
+            'desde': desde,
+            'hasta': hasta,
+            'tipo_reporte': 'Registros de Citas',
+            'fecha_actual': datetime.now()
+        }
+
+        html_string = render_to_string('reportes/citas_reporte.html', context)
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="reporte_citas_{desde}.pdf"'
+        
+        pisa_status = pisa.CreatePDF(html_string, dest=response)
+
+        if pisa_status.err:
+            return Response({"error": "Error al generar PDF"}, status=500)
+            
+        return response
 
 

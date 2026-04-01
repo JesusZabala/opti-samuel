@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Recetas Visuales</title>
+    <style>
+        @page { size: letter; margin: 1cm; }
+        body { font-family: 'Helvetica', sans-serif; color: #333; font-size: 10px; }
+        .header { text-align: center; border-bottom: 2px solid #1a4731; margin-bottom: 20px; }
+        .title { color: #1a4731; font-size: 22px; margin: 0; }
+        .main-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .main-table th { background-color: #1a4731; color: white; padding: 6px; text-align: left; }
+        .main-table td { border-bottom: 1px solid #eee; padding: 6px; vertical-align: top; }
+        
+        /* Estilo para la sub-tabla de detalles internos */
+        .detalle-tabla { width: 100%; background-color: #f9f9f9; border: 1px solid #ddd; }
+        .detalle-tabla th { background-color: #eee; color: #333; font-size: 8px; padding: 2px; }
+        .detalle-tabla td { border: none; font-size: 9px; padding: 2px; text-align: center; }
+        
+        .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 8px; color: #999; }
+        .status { font-weight: bold; color: #1a4731; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">OPTI-SAMUEL</h1>
+        <p>REPORTE DE RECETAS VISUALES</p>
+        <p>Periodo: {{ desde }} al {{ hasta }}</p>
+    </div>
+
+    <table class="main-table">
+        <thead>
+            <tr>
+                <th width="15%">Fecha/Ref</th>
+                <th width="25%">Cliente</th>
+                <th width="60%">Fórmula Detallada (Oculus)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for receta in recetas %}
+            <tr>
+                <td>
+                    <strong>{{ receta.fecha_creacion|date:"d/m/Y" }}</strong><br>
+                    Cita: #{{ receta.cita.id|default:"S/N" }}<br>
+                    <span class="status">{{ receta.get_estado_receta_display }}</span>
+                </td>
+                <td>
+                    {{ receta.cliente.nombre }} {{ receta.cliente.apellido }}<br>
+                    <small>Obs: {{ receta.observaciones|truncatechars:50 }}</small>
+                </td>
+                <td>
+                    <table class="detalle-tabla">
+                        <thead>
+                            <tr>
+                                <th>Ojo (Alias)</th>
+                                <th>Esfera</th>
+                                <th>Cilindro</th>
+                                <th>Eje</th>
+                                <th>Adi.</th>
+                                <th>D.P.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detalle in receta.rv_detalle.all %}
+                            <tr>
+                                <td><strong>{{ detalle.oculus.alias }}</strong></td>
+                                <td>{{ detalle.oculus.esfera }}</td>
+                                <td>{{ detalle.oculus.cilindro }}</td>
+                                <td>{{ detalle.oculus.eje }}°</td>
+                                <td>{{ detalle.adicion }}</td>
+                                <td>{{ detalle.distancia_pupilar }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" style="text-align: center; padding: 20px;">No hay registros para este periodo.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        Generado el {{ fecha_actual|date:"d/m/Y H:i" }} - Opti-Samuel Management System
+    </div>
+</body>
+</html>

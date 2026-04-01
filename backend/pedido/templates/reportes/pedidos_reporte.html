@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page { size: letter landscape; margin: 1cm; }
+        body { font-family: Helvetica, sans-serif; font-size: 9px; color: #333; }
+        .header { text-align: center; border-bottom: 2px solid #1a4731; margin-bottom: 10px; }
+        .title { color: #1a4731; font-size: 18px; margin: 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background-color: #1a4731; color: white; padding: 5px; text-align: left; }
+        td { border-bottom: 1px solid #eee; padding: 5px; vertical-align: top; }
+        .tipo-badge { font-weight: bold; padding: 2px 4px; background: #f0f0f0; border-radius: 3px; }
+        .item-box { margin-bottom: 3px; font-size: 8px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">OPTI-SAMUEL</h1>
+        <p>REPORTE DE PEDIDOS - {{ desde }} al {{ hasta }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="10%">Fecha</th>
+                <th width="15%">Cliente</th>
+                <th width="10%">Tipo/Estado</th>
+                <th width="35%">Detalle de Productos</th>
+                <th width="30%">Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in pedidos %}
+            <tr>
+                <td>{{ pedido.fecha_emision|date:"d/m/Y" }}</td>
+                <td>{{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }}</td>
+                <td>
+                    <span class="tipo-badge">{{ pedido.get_tipo_pedido_display }}</span><br>
+                    <small>{{ pedido.get_estado_pedido_display }}</small>
+                </td>
+                <td>
+                    {% for detalle in pedido.detalles.all %}
+                        {% if detalle.montura %}
+                        <div class="item-box">
+                            <strong>Montura:</strong> {{ detalle.montura.marca.descripcion }} - 
+                            {{ detalle.montura.modelo.descripcion }} ({{ detalle.montura.color.descripcion }})
+                        </div>
+                        {% endif %}
+                        
+                        {% if detalle.lente %}
+                        <div class="item-box">
+                            <strong>Lente:</strong> {{ detalle.lente.tipo_lente.descripcion }}<br>
+                            <strong>Trat.:</strong> {{ detalle.lente.tipo_tratamiento.descripcion }}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td><small>{{ pedido.observacion|default:"Sin observaciones" }}</small></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" style="text-align:center">No hay pedidos en este rango.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

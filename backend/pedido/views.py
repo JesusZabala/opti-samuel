@@ -3,7 +3,10 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, action
 from django.http import HttpResponse
-
+from rest_framework.decorators import action
+from xhtml2pdf import pisa
+from django.template.loader import render_to_string
+from datetime import datetime
 from .models import Pedido
 from .serializers import PedidoSerializer
 from authapp.permissions import HasRole
@@ -33,12 +36,12 @@ class PedidoViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def descargar_pdf(self, request, pk=None):
         try:
-            # 1. Traemos el pedido con todas sus relaciones de una sola vez
+            
             pedido = Pedido.objects.select_related('cliente', 'receta_visual').prefetch_related(
                 'detalles__montura__marca',
                 'detalles__montura__modelo',
                 'detalles__montura__color',
-                'detalles__montura__medidas',  # <-- Agregué 'medidas' que estaba en tus modelos
+                'detalles__montura__medidas',  
                 'detalles__lente__tipo_lente',
                 'detalles__lente__tipo_tratamiento',
                 'receta_visual__rv_detalle__oculus'
@@ -89,3 +92,49 @@ class PedidoViewSet(viewsets.ModelViewSet):
             }
         })
 
+    @action(detail=False, methods=['get'])
+    def descargar_reporte(self, request):
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+
+        if not desde or not hasta:
+            return Response({"error": "Faltan las fechas desde/hasta"}, status=400)
+        
+        pedidos = self.get_queryset().filter(
+            fecha_emision__range=[desde,hasta]
+        ).select_related(
+            'cliente',
+            'receta_visual'
+        ).prefetch_related(
+            'detalles__montura__modelo',
+            'detalles__montura__marca',
+            'detalles__montura__color',
+            'detalles__lente__tipo_lente',
+            'detalles__lente__tipo_tratamiento'
+        ).order_by('-fecha_emision')
+
+        context = {
+            'pedidos': pedidos,
+            'desde': desde,
+            'hasta': hasta,
+            'tipo_reporte': "Reporte General de Pedidos",
+            'fecha_actual': datetime.now()
+        }
+
+        try:
+            html_string = render_to_string('reportes/pedidos_reporte.html', context)
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="reporte_pedidos_{desde}_al_{hasta}.pdf"'
+
+            pisa_status = pisa.CreatePDF(html_string, dest=response)
+
+            if pisa_status.err:
+                return HttpResponse('Error al generar el PDF de pedidos', status=500)
+            
+            return response
+        except Exception as e:
+            print(f"Error en Reporte Pedidos: {str(e)}")
+            return HttpResponse(f"Error interno: {str(e)}", status=500)
+
+        
+    
