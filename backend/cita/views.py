@@ -36,7 +36,8 @@ class CitaViewSet(viewsets.ModelViewSet):
         # selected_cita.fecha = date()
         # current_cita = selected_cita.save() # objeto nuevo
 
-        # prepararAuditoria o guardarAuditoria
+        # prepararAuditoria o guardarAuditoria pasa solamente por parametro objeto nuevo y objeto anterior
+        # en caso del create objeto anterior seria json vacio
 
         return Response({
             "mensaje": "Cita registrada correctamente",
