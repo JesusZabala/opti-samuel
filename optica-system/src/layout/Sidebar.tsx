@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import logo from '../assets/logo.png';
-import type { Role } from '../types/roles';
+import { Role } from '../types/roles';
 
 import {
   LayoutDashboard,
@@ -366,14 +366,14 @@ const Sidebar = ({ role, onLogout }: SidebarProps) => {
       <div className='p-10 flex flex-col items-center border-b border-white/10 bg-[#163d2a]'>
         <img src={logo} alt='Opti Samuel' className='w-44 mb-6' />
         <Badge className='flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold uppercase tracking-wider'>
-          {role === 'administrador' ? <ShieldCheck size={14} /> : role === 'optometrista' ? <Eye size={14} /> : <UserCircle size={14} />}
+          {role === Role.ADMINISTRADOR ? <ShieldCheck size={14} /> : role === Role.OPTOMETRISTA ? <Eye size={14} /> : <UserCircle size={14} />}
           {role}
         </Badge>
       </div>
 
-      {role === 'recepcionista' && <RecepcionMenu openMenu={openMenu} setOpenMenu={setOpenMenu} />}
-      {role === 'optometrista' && <OptometristaMenu openMenu={openMenu} setOpenMenu={setOpenMenu} />}
-      {role === 'administrador' && <AdministradorMenu openMenu={openMenu} setOpenMenu={setOpenMenu} />}
+      {role === Role.RECEPCIONISTA && <RecepcionMenu openMenu={openMenu} setOpenMenu={setOpenMenu} />}
+      {role === Role.OPTOMETRISTA && <OptometristaMenu openMenu={openMenu} setOpenMenu={setOpenMenu} />}
+      {role === Role.ADMINISTRADOR && <AdministradorMenu openMenu={openMenu} setOpenMenu={setOpenMenu} />}
 
       <div className='p-6 border-t border-white/10'>
         <button onClick={onLogout} className='flex items-center justify-center gap-3 w-full p-4 bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white rounded-2xl transition-all font-bold uppercase text-xs tracking-widest border border-red-500/20'>

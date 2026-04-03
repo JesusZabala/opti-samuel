@@ -15,8 +15,8 @@ from datetime import datetime
 
 # Create your views here.
 class RecetaVisualViewSet(viewsets.ModelViewSet):
-    # permission_classes = [HasRole]
-    # required_roles = ["Admin","optometrista"]
+    permission_classes = [HasRole]
+    required_roles = ["superadmin", "optometrista"]
     queryset = RecetaVisual.objects.all()
     serializer_class = RecetaVisualSerializer
 

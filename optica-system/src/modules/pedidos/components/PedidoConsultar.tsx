@@ -289,7 +289,11 @@ export default function PedidoConsultar() {
                     {/* ACCIONES */}
                     <div className="flex gap-2 w-full md:w-auto">
                       <Button 
-                        onClick={() => descargarFacturaPDF(p.id)} 
+                        onClick={() => {
+                          void descargarFacturaPDF(p.id).catch(() =>
+                            alert("No se pudo descargar el PDF. Verifica tu sesión.")
+                          );
+                        }} 
                         variant="outline"
                         className="border-2 border-red-100 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl px-4 flex gap-2 font-bold"
                       >
@@ -323,7 +327,11 @@ export default function PedidoConsultar() {
                </div>
                <div className="flex gap-3">
                  <Button 
-                    onClick={() => descargarFacturaPDF(detalle.id)} 
+                    onClick={() => {
+                      void descargarFacturaPDF(detalle.id).catch(() =>
+                        alert("No se pudo descargar el PDF. Verifica tu sesión.")
+                      );
+                    }} 
                     variant="outline"
                     className="rounded-xl border-2 border-red-500 text-red-500 font-bold hover:bg-red-50"
                   >

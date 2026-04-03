@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status, viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView as SimpleJWTTokenRefreshView
 from django.contrib.auth.models import User
 from .serializers import LoginSerializer, get_user_role 
 from rest_framework import generics
@@ -11,10 +12,9 @@ from .permissions import HasRole
 
 
 class EmpleadoViewSet(viewsets.ModelViewSet):
-    # permission_classes = [HasRole]
-    # required_roles = ["Admin", "superadmin"]
+    permission_classes = [HasRole]
+    required_roles = ["superadmin"]
 
-    # queryset = User.objects.exclude(is_superuser=True)
     queryset = User.objects.all()
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
@@ -44,8 +44,13 @@ class LoginView(APIView):
         )
 
 class OptometristaListView(generics.ListAPIView):
-    # Filtramos usuarios que NO sean simples clientes (staff o con grupo)
-    # O mejor aún, filtramos por el grupo específico 'Optometrista'
-    queryset = User.objects.filter(groups__name='optometrista') 
+    permission_classes = [HasRole]
+    required_roles = ["superadmin", "recepcionista", "optometrista"]
+    queryset = User.objects.filter(groups__name='optometrista')
     serializer_class = UserListSerializer
+
+
+class TokenRefreshView(SimpleJWTTokenRefreshView):
+    """Renueva access; el refresh va en el body (no requiere Bearer)."""
+    permission_classes = [AllowAny]
 

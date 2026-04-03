@@ -61,7 +61,7 @@ export default function ModuloReportes() {
     try {
       switch (modulo){
         case "clientes":
-          descargarReportesClientesPDF(desde, hasta);
+          await descargarReportesClientesPDF(desde, hasta);
           break;
         case "citas":
           await generarReporteCitasPDF(desde, hasta);

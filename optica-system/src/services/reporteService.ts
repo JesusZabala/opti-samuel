@@ -1,11 +1,21 @@
 import api from "@/api/axiosConfig";
 
-export const descargarReportesClientesPDF = (desde: string, hasta: string) => {
-    const baseURL = api.defaults.baseURL;
-    const url = `${baseURL}cliente/descargar_reporte/?desde=${desde}&hasta=${hasta}`;
-
-    window.location.href = url;
-}
+/** Descarga con Bearer (axios); no usar window.location porque no envía el JWT. */
+export const descargarReportesClientesPDF = async (desde: string, hasta: string): Promise<void> => {
+    const response = await api.get("cliente/descargar_reporte/", {
+        params: { desde, hasta },
+        responseType: "blob",
+    });
+    const blob = new Blob([response.data], { type: "application/pdf" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `Reporte_Clientes_${desde}_al_${hasta}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+};
 
 export const generarReporteCitasPDF = async (desde: string, hasta: string) => {
     try {

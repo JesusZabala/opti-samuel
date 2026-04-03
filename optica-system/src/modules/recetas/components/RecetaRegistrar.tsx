@@ -344,7 +344,25 @@ export default function RecetaRegistrar() {
     try {
       await registrarRecetaCompleta(payload);
       alert("Receta registrada con éxito en Opti-Samuel");
-      window.location.reload();
+      setFormData({
+        cita: null,
+        cliente: null,
+        observaciones: "",
+        od: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
+        oi: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
+      });
+      setSeleccionadoId(null);
+      setBusqueda("");
+      setClientesFiltrados([]);
+      if (modo === "CITA") {
+        api
+          .get("cita/")
+          .then((res) => {
+            const completadas = res.data.filter((c: { estado_cita: string }) => c.estado_cita === "COM");
+            setCitasCompletadas(completadas);
+          })
+          .catch(() => console.error("Error al recargar citas"));
+      }
     } catch (err) {
       alert("Error al guardar la receta. Revisa los permisos.");
     } finally {

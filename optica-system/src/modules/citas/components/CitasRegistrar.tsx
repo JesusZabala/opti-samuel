@@ -204,8 +204,9 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Calendar, Clock, CheckCircle2 } from "lucide-react";
+import { Search, Calendar } from "lucide-react";
 import api from "@/api/axiosConfig";
+import { combineFechaHoraForApi } from "@/modules/citas/utils/combineFechaHora";
 
 export default function CitaRegistrar() {
   const [loading, setLoading] = useState(false);
@@ -229,8 +230,8 @@ export default function CitaRegistrar() {
     cliente: null as number | null,
     fecha: "",
     hora: "",
-    motivo_consulta: "",
-    estado_cita: "PEN",
+    motivo: "",
+    estado_cita: "A",
   });
 
   // Búsqueda de clientes
@@ -262,9 +263,25 @@ export default function CitaRegistrar() {
 
     setLoading(true);
     try {
-      await api.post("cita/", formData);
+      const fecha = combineFechaHoraForApi(formData.fecha, formData.hora);
+      await api.post("cita/", {
+        cliente: formData.cliente,
+        fecha,
+        motivo: formData.motivo,
+        estado_cita: formData.estado_cita,
+      });
       alert("Cita registrada con éxito");
-      window.location.reload();
+      setFormData({
+        cliente: null,
+        fecha: "",
+        hora: "",
+        motivo: "",
+        estado_cita: "A",
+      });
+      setSeleccionadoId(null);
+      setNombreSeleccionado("");
+      setBusqueda("");
+      setClientesFiltrados([]);
     } catch (err) {
       alert("Error al guardar la cita.");
     } finally {
@@ -407,7 +424,7 @@ export default function CitaRegistrar() {
                 className="w-full p-6 border-2 rounded-[1.5rem] bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#1a4731] outline-none transition-all border-gray-100 shadow-inner font-medium" 
                 rows={2}
                 placeholder="Indique brevemente el motivo..."
-                onChange={(e) => setFormData({...formData, motivo_consulta: e.target.value})}
+                onChange={(e) => setFormData({...formData, motivo: e.target.value})}
               />
             </div>
 

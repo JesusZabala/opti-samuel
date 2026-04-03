@@ -1,7 +1,6 @@
 from django.urls import path, include
-from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.routers import DefaultRouter
-from .views import LoginView, OptometristaListView, EmpleadoViewSet
+from .views import LoginView, OptometristaListView, EmpleadoViewSet, TokenRefreshView
 
 router = DefaultRouter()
 router.register(r'gestion-empleados', EmpleadoViewSet, basename='empleados')

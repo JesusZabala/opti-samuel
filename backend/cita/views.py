@@ -6,7 +6,6 @@ from django.contrib.auth.models import User, Group
 from django.utils import timezone
 from .serializers import CitaSerializer
 from authapp.permissions import HasRole
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from pedido.models import Pedido
@@ -20,8 +19,8 @@ from xhtml2pdf import pisa
 # Create your views here.
 
 class CitaViewSet(viewsets.ModelViewSet):
-    # permission_classes = [HasRole]
-    required_roles = ["Admin","recepcionista",'optometrista']
+    permission_classes = [HasRole]
+    required_roles = ["superadmin", "recepcionista", "optometrista"]
     queryset = Cita.objects.all()
     serializer_class = CitaSerializer
 
@@ -30,12 +29,21 @@ class CitaViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         cita = serializer.save()
 
+        # cita = fecha -> hoy 10 am objeto anterior
+        # cita = fecha -> hoy 2 pm objeto nuevo
+
+        # selected_cita = Cita.objects.filter(id = 1) # objeto anterior
+        # selected_cita.fecha = date()
+        # current_cita = selected_cita.save() # objeto nuevo
+
+        # prepararAuditoria o guardarAuditoria
+
         return Response({
             "mensaje": "Cita registrada correctamente",
             "Cita": CitaSerializer(cita).data
         }, status=status.HTTP_201_CREATED)
     
-    @action(detail=False, methods=['get'], permission_classes=[HasRole], required_roles=["Admin", "recepcionista", "optometrista"])
+    @action(detail=False, methods=['get'], permission_classes=[HasRole], required_roles=["superadmin", "recepcionista", "optometrista"])
     def obtener_dashboard_stats_global(self, request):
         hoy = timezone.localdate() # Fecha local correcta
         

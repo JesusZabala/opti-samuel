@@ -12,8 +12,8 @@ from django.template.loader import render_to_string
 from xhtml2pdf import pisa
 # Create your views here.
 class ClienteViewSet(viewsets.ModelViewSet):
-    # permission_classes = [HasRole]
-    # required_roles = ["Admin","recepcionista"]
+    permission_classes = [HasRole]
+    required_roles = ["superadmin", "recepcionista"]
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
     # lookup_field = 'identificacion'

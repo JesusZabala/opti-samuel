@@ -8,7 +8,7 @@ from authapp.permissions import HasRole
 
 class AuditoriaViewSet(viewsets.ModelViewSet):
     permission_classes = [HasRole]
-    required_roles = ["Admin"]
+    required_roles = ["superadmin"]
     queryset = Auditoria.objects.all()
     serializer_class = AuditoriaSerializer
 

@@ -18,8 +18,8 @@ from .models import *
 # Create your views here.
 
 class PedidoViewSet(viewsets.ModelViewSet):
-    # permission_classes = [HasRole]
-    # required_roles = ["Admin","optometrista"]
+    permission_classes = [HasRole]
+    required_roles = ["superadmin", "optometrista"]
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
     

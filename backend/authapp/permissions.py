@@ -14,13 +14,13 @@ class HasRole(BasePermission):
     message = "No tienes permisos para realizar esta acción."
 
     def has_permission(self, request, view):
-        required_roles = getattr(view, "required_roles", None)
-        if not required_roles:
-            return True
-
         user = getattr(request, "user", None)
         if not user or not user.is_authenticated:
             return False
+
+        required_roles = getattr(view, "required_roles", None)
+        if not required_roles:
+            return True
 
         if getattr(user, "is_superuser", False):
             return True

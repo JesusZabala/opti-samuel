@@ -280,8 +280,8 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
-  Search, User, FileText, Glasses, Layers, 
-  CheckCircle2, ShoppingCart, X, AlertCircle 
+  Search, User, Glasses, Layers, 
+  ShoppingCart, X, AlertCircle 
 } from "lucide-react";
 import { descargarFacturaPDF, obtenerCatalogos, registrarPedido, type PedidoInput } from "@/services/pedidoService";
 import { obtenerClientes, type Cliente } from "@/services/clienteService";
@@ -298,7 +298,7 @@ export default function PedidoRegistrar() {
   const [busqueda, setBusqueda] = useState("");
   const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [, setSuccess] = useState("");
 
   const [formData, setFormData] = useState({
     receta: "", 
@@ -398,8 +398,21 @@ export default function PedidoRegistrar() {
 
       const res = await registrarPedido(payload);
       setSuccess("¡Pedido registrado con éxito!");
-      if (res?.id) descargarFacturaPDF(res.id);
-      setTimeout(() => window.location.reload(), 2000);
+      if (res?.id) await descargarFacturaPDF(res.id);
+      limpiarCliente();
+      setFormData({
+        receta: "",
+        tipo_lente: "",
+        tipo_tratamiento: "",
+        modelo: "",
+        marca: "",
+        color: "",
+        medidas: "",
+        material: "",
+        descripcion: "",
+        observacion: "",
+      });
+      setTipoPedido("C");
     } catch (err: any) {
       setError(typeof err === 'string' ? err : "Error al registrar el pedido");
     } finally {

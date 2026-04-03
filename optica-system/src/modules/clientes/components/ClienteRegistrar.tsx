@@ -56,7 +56,7 @@ export default function ClienteRegistrar() {
     setMessage("");
 
     try {
-      const nuevoCliente = await registrarCliente(cliente);
+      await registrarCliente(cliente);
       setMessage("¡Cliente registrado exitosamente!");
       
       setCliente({ 

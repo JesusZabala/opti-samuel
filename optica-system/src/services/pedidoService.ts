@@ -26,11 +26,21 @@ export const registrarPedido = async (datos: PedidoInput) => {
     }
 };
 
-export const descargarFacturaPDF = (pedidoId: number) => {
-    const baseURL = api.defaults.baseURL;
-    const url = `${baseURL}pedido/${pedidoId}/descargar_pdf/`;
-    window.location.href = url;
-}
+/** Descarga con Bearer (axios); no usar window.location porque no envía el JWT. */
+export const descargarFacturaPDF = async (pedidoId: number): Promise<void> => {
+    const response = await api.get(`pedido/${pedidoId}/descargar_pdf/`, {
+        responseType: "blob",
+    });
+    const blob = new Blob([response.data], { type: "application/pdf" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `Pedido_${pedidoId}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+};
 
 
 export const obtenerPedido = async () => {

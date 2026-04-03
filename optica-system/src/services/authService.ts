@@ -1,26 +1,49 @@
-import api from "../api/axiosConfig";
-// import { LoginCredentials } from "../types/auth";
+import api from '@/api/axiosConfig';
+import { authStorage } from '@/auth/authStorage';
+import type { Role } from '@/types/roles';
+import { mapApiRoleToRole } from '@/auth/mapRole';
+
+export interface LoginResponse {
+  access_token: string;
+  refresh_token: string;
+  email: string;
+  rol: string;
+  user: string;
+}
 
 export const authService = {
-    login: async (username: string ,password: string) => {
-        // const {username, password} = credentials;
-        const response = await api.post('auth/login/', {username, password});
+  login: async (username: string, password: string): Promise<{ role: Role }> => {
+    authStorage.clear();
+    const response = await api.post<LoginResponse>('auth/login/', { username, password });
+    const data = response.data;
 
-        if(response.data.access){
-            localStorage.setItem('token', response.data.access_token);
-            localStorage.setItem('refresh', response.data.refresh_token)
-            localStorage.setItem('role', response.data.rol)
-            localStorage.setItem('username', response.data.user)
+    authStorage.setSession({
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      rol: data.rol,
+      user: data.user,
+    });
 
-        }
-
-        return response.data
-    },
-
-    logout: () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('refresh');
-        localStorage.removeItem('role');
-        localStorage.removeItem('username');
+    const role = mapApiRoleToRole(data.rol);
+    if (!role) {
+      authStorage.clear();
+      throw new Error(
+        `El rol "${data.rol}" no tiene acceso a este sistema. Se requiere recepcionista, optometrista o superadmin.`
+      );
     }
-}
+
+    return { role };
+  },
+
+  logout: () => {
+    authStorage.clear();
+  },
+
+  /** Restaura rol desde localStorage si hay tokens guardados (tras F5). */
+  restoreRoleFromStorage: (): Role | null => {
+    const token = authStorage.getAccessToken();
+    const rol = authStorage.getRol();
+    if (!token || !rol) return null;
+    return mapApiRoleToRole(rol);
+  },
+};

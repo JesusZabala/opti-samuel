@@ -1,4 +1,4 @@
-import type { Role } from "../types/roles";
+import { Role } from "../types/roles";
 
 export interface MenuItem {
   name: string;
@@ -10,31 +10,31 @@ export const menuItems: MenuItem[] = [
   {
     name: "Clientes",
     path: "/clientes",
-    roles: ["recepcionista", "administrador"],
+    roles: [Role.RECEPCIONISTA, Role.ADMINISTRADOR],
   },
   {
     name: "Citas",
     path: "/citas",
-    roles: ["recepcionista", "optometrista", "administrador"],
+    roles: [Role.RECEPCIONISTA, Role.OPTOMETRISTA, Role.ADMINISTRADOR],
   },
   {
     name: "Recetas",
     path: "/recetas",
-    roles: ["optometrista", "administrador"],
+    roles: [Role.OPTOMETRISTA, Role.ADMINISTRADOR],
   },
   {
     name: "Pedidos",
     path: "/pedidos",
-    roles: ["optometrista", "administrador"],
+    roles: [Role.OPTOMETRISTA, Role.ADMINISTRADOR],
   },
   {
     name: "Reportes",
     path: "/reportes",
-    roles: ["administrador"],
+    roles: [Role.ADMINISTRADOR],
   },
   {
     name: "Empleados",
     path: "/empleados",
-    roles: ["administrador"],
+    roles: [Role.ADMINISTRADOR],
   },
 ];
