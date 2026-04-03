@@ -1,12 +1,25 @@
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from .serializers import LoginSerializer, get_user_role 
 from rest_framework import generics
-from .serializers import UserListSerializer
+from .serializers import UserListSerializer, EmployeeCreateUpdateSerializer
+from .permissions import HasRole
+
+
+class EmpleadoViewSet(viewsets.ModelViewSet):
+    # permission_classes = [HasRole]
+    # required_roles = ["Admin", "superadmin"]
+
+    # queryset = User.objects.exclude(is_superuser=True)
+    queryset = User.objects.all()
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return EmployeeCreateUpdateSerializer
+        return UserListSerializer
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -35,3 +48,4 @@ class OptometristaListView(generics.ListAPIView):
     # O mejor aún, filtramos por el grupo específico 'Optometrista'
     queryset = User.objects.filter(groups__name='optometrista') 
     serializer_class = UserListSerializer
+

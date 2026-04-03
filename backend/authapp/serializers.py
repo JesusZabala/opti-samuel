@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 def get_user_role(user) -> str:
     """
     Rol/perfil basado en el sistema por defecto de Django:
@@ -51,7 +51,53 @@ class UserListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'rol']
+        fields = ['id', 'username', 'first_name', 'last_name', 'rol','is_active','email']
 
     def get_rol(self, obj):
         return get_user_role(obj)
+
+class EmployeeCreateUpdateSerializer(serializers.ModelSerializer):
+    rol = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, required=False)
+
+    username = serializers.CharField(min_length=4, max_length=20, required=True)
+
+    class Meta:
+        model = User
+        fields = ['id','username','password','first_name','last_name','email','rol','is_active']
+
+    def create(self, validated_data):
+        rol_name = validated_data.pop('rol')
+        password = validated_data.pop('password', None)
+
+        #1. Crear usuario
+        user = User.objects.create_user(**validated_data)
+        
+        if password:
+            user.set_password(password)
+            user.save()
+
+        # 2 asignar el rol
+        grupo, _ = Group.objects.get_or_create(name=rol_name)
+        user.groups.add(grupo)
+
+        return user
+
+    def update(self, instance, validated_data):
+        rol_name = validated_data.pop('rol', None)
+        password = validated_data.pop('password', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if password:
+            instance.set_password(password)
+        
+        instance.save()
+
+        if rol_name:
+            instance.groups.clear() # Quitamos roles anteriores
+            grupo, _ = Group.objects.get_or_create(name=rol_name)
+            instance.groups.add(grupo)
+
+        return instance
