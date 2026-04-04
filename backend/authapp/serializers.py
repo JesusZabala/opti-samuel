@@ -66,6 +66,19 @@ class EmployeeCreateUpdateSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id','username','password','first_name','last_name','email','rol','is_active']
 
+    def validate_username(self, value):
+        qs = User.objects.filter(username__iexact=value)
+
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+
+        if qs.exists():
+            raise serializers.ValidationError("Este nombre de usuario ya se encuentra registrado.")
+
+        if " " in value:
+            raise serializers.ValidationError("El nombre de usuario no puede contener espacios.")
+
+        return value
     def create(self, validated_data):
         rol_name = validated_data.pop('rol')
         password = validated_data.pop('password', None)

@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from pedido.models import Pedido
 from cliente.models import Cliente
+from receta_visual.models import RecetaVisual
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.http import HttpResponse
@@ -44,95 +45,142 @@ class CitaViewSet(viewsets.ModelViewSet):
             "Cita": CitaSerializer(cita).data
         }, status=status.HTTP_201_CREATED)
     
-    @action(detail=False, methods=['get'], permission_classes=[HasRole], required_roles=["superadmin", "recepcionista", "optometrista"])
+    # @action(detail=False, methods=['get'], permission_classes=[HasRole], required_roles=["superadmin", "recepcionista", "optometrista"])
+    # def obtener_dashboard_stats_global(self, request):
+    #     hoy = timezone.localdate() # Fecha local correcta
+        
+    #     # 1. Cards (Superior)
+    #     citas_hoy_count = Cita.objects.filter(fecha__date=hoy, estado_cita='A').count()
+        
+    #     # Pacientes totales (o del mes si prefieres)
+    #     total_pacientes = Cliente.objects.count() 
+        
+    #     # Pedidos con estado 'E' (Entregado/Espera - revisa tu lógica de iniciales)
+    #     pedidos_pendientes = Pedido.objects.filter(estado_pedido='E').count()
+
+    #     # 2. Citas del día (Centro) - select_related evita 50 consultas a la DB
+    #     citas_hoy_qs = Cita.objects.filter(fecha__date=hoy).select_related('cliente').order_by('fecha')
+
+    #     lista_citas = [{
+    #         "paciente": f"{c.cliente.nombre} {c.cliente.apellido}" if c.cliente else "N/A",
+    #         "motivo": c.motivo,
+    #         "hora": c.fecha.strftime("%I:%M %p"),
+    #         "estado": c.get_estado_cita_display() 
+    #     } for c in citas_hoy_qs]
+
+    #     # 3. Órdenes Recientes (Derecha)
+    #     pedidos_qs = Pedido.objects.select_related('cliente').order_by('-fecha_emision')[:5]
+
+    #     lista_pedidos = [{
+    #         "nro_pedido": p.id,
+    #         "cliente": f"{p.cliente.nombre} {p.cliente.apellido}" if p.cliente else "N/A",
+    #         "tipo": p.get_tipo_pedido_display(),
+    #         "estado": p.get_estado_pedido_display()
+    #     } for p in pedidos_qs]
+
+    #     return Response({
+    #         "cards": {
+    #             "citas": citas_hoy_count,
+    #             "pacientes": total_pacientes,
+    #             "pedidos": pedidos_pendientes
+    #         },
+    #         "citas_detalladas": lista_citas,
+    #         "pedidos_recientes": lista_pedidos
+    #     })
+    #     hoy = timezone.localdate()
+        
+    #     # --- 1. CONTEOS PARA LAS CARDS (SUPERIOR) ---
+    #     citas_hoy_count = Cita.objects.filter(
+    #         fecha__date=hoy, 
+    #         estado_cita='A' 
+    #     ).count()
+
+        
+    #     nuevos_pacientes = Cliente.objects.filter(
+    #         id__gt=0 
+    #     ).count() 
+
+    #     pedidos_pendientes = Pedido.objects.filter(
+    #         estado_pedido='E' 
+    #     ).count()
+
+    #     # --- 2. LISTADO "HOY: CITAS" (CENTRO) ---
+    #     citas_hoy_qs = Cita.objects.filter(
+    #         fecha__date=hoy
+    #     ).select_related('cliente').order_by('fecha')
+
+    #     lista_citas = [{
+    #         "paciente": f"{c.cliente.nombre} {c.cliente.apellido}",
+    #         "motivo": c.motivo,
+    #         "hora": c.fecha.strftime("%I:%M %p"),
+    #         "estado": c.get_estado_cita_display() 
+    #     } for c in citas_hoy_qs]
+
+    #     # --- 3. LISTADO "ÓRDENES RECIENTES" (DERECHA) ---
+    #     pedidos_qs = Pedido.objects.select_related('cliente').order_by('-fecha_emision')[:5]
+
+    #     lista_pedidos = [{
+    #         "nro_pedido": p.id,
+    #         "cliente": f"{p.cliente.nombre} {p.cliente.apellido}",
+    #         "tipo": p.get_tipo_pedido_display(),
+    #         "estado": p.get_estado_pedido_display()
+    #     } for p in pedidos_qs]
+
+    #     return Response({
+    #         "cards": {
+    #             "citas": citas_hoy_count,
+    #             "pacientes": nuevos_pacientes,
+    #             "pedidos": pedidos_pendientes
+    #         },
+    #         "citas_detalladas": lista_citas,
+    #         "pedidos_recientes": lista_pedidos
+    #     })
+
+    @action(detail=False, methods=['get'], permission_classes=[HasRole], 
+        required_roles=["superadmin", "recepcionista", "optometrista"])
     def obtener_dashboard_stats_global(self, request):
-        hoy = timezone.localdate() # Fecha local correcta
-        
-        # 1. Cards (Superior)
-        citas_hoy_count = Cita.objects.filter(fecha__date=hoy, estado_cita='A').count()
-        
-        # Pacientes totales (o del mes si prefieres)
-        total_pacientes = Cliente.objects.count() 
-        
-        # Pedidos con estado 'E' (Entregado/Espera - revisa tu lógica de iniciales)
-        pedidos_pendientes = Pedido.objects.filter(estado_pedido='E').count()
-
-        # 2. Citas del día (Centro) - select_related evita 50 consultas a la DB
-        citas_hoy_qs = Cita.objects.filter(fecha__date=hoy).select_related('cliente').order_by('fecha')
-
-        lista_citas = [{
-            "paciente": f"{c.cliente.nombre} {c.cliente.apellido}" if c.cliente else "N/A",
-            "motivo": c.motivo,
-            "hora": c.fecha.strftime("%I:%M %p"),
-            "estado": c.get_estado_cita_display() 
-        } for c in citas_hoy_qs]
-
-        # 3. Órdenes Recientes (Derecha)
-        pedidos_qs = Pedido.objects.select_related('cliente').order_by('-fecha_emision')[:5]
-
-        lista_pedidos = [{
-            "nro_pedido": p.id,
-            "cliente": f"{p.cliente.nombre} {p.cliente.apellido}" if p.cliente else "N/A",
-            "tipo": p.get_tipo_pedido_display(),
-            "estado": p.get_estado_pedido_display()
-        } for p in pedidos_qs]
-
-        return Response({
-            "cards": {
-                "citas": citas_hoy_count,
-                "pacientes": total_pacientes,
-                "pedidos": pedidos_pendientes
-            },
-            "citas_detalladas": lista_citas,
-            "pedidos_recientes": lista_pedidos
-        })
         hoy = timezone.localdate()
         
-        # --- 1. CONTEOS PARA LAS CARDS (SUPERIOR) ---
-        citas_hoy_count = Cita.objects.filter(
-            fecha__date=hoy, 
-            estado_cita='A' 
-        ).count()
+        # 1. Conteos para las Cards Superiores
+        citas_hoy_count = Cita.objects.filter(fecha__date=hoy, estado_cita='A').count()
+        total_pacientes = Cliente.objects.count()
+        total_recetas = RecetaVisual.objects.count() 
+        pedidos_pendientes = Pedido.objects.filter(estado_pedido='E').count()
 
+        # 2. Listado "Hoy: Citas" (Centro)
+        citas_hoy_qs = Cita.objects.filter(fecha__date=hoy).select_related('cliente').order_by('fecha')
         
-        nuevos_pacientes = Cliente.objects.filter(
-            id__gt=0 
-        ).count() 
-
-        pedidos_pendientes = Pedido.objects.filter(
-            estado_pedido='E' 
-        ).count()
-
-        # --- 2. LISTADO "HOY: CITAS" (CENTRO) ---
-        citas_hoy_qs = Cita.objects.filter(
-            fecha__date=hoy
-        ).select_related('cliente').order_by('fecha')
-
         lista_citas = [{
-            "paciente": f"{c.cliente.nombre} {c.cliente.apellido}",
-            "motivo": c.motivo,
-            "hora": c.fecha.strftime("%I:%M %p"),
-            "estado": c.get_estado_cita_display() 
+            "name": f"{c.cliente.nombre} {c.cliente.apellido}" if c.cliente else "N/A",
+            "type": c.motivo,
+            "time": c.fecha.strftime("%I:%M %p"),
+            "status": c.get_estado_cita_display()
         } for c in citas_hoy_qs]
 
-        # --- 3. LISTADO "ÓRDENES RECIENTES" (DERECHA) ---
-        pedidos_qs = Pedido.objects.select_related('cliente').order_by('-fecha_emision')[:5]
+        # 3. Actividad Reciente (Derecha)
+        clientes_qs = Cliente.objects.order_by('-id')[:3]
+        lista_clientes = [{"name": f"{cl.nombre} {cl.apellido}"} for cl in clientes_qs]
 
+        # 4. Seguimiento de Trabajos (Lógica de pedidos)
+        pedidos_qs = Pedido.objects.select_related('cliente').order_by('-fecha_emision')[:4]
         lista_pedidos = [{
-            "nro_pedido": p.id,
-            "cliente": f"{p.cliente.nombre} {p.cliente.apellido}",
-            "tipo": p.get_tipo_pedido_display(),
-            "estado": p.get_estado_pedido_display()
+            "id": p.id,
+            "paciente": f"{p.cliente.nombre} {p.cliente.apellido}" if p.cliente else "N/A",
+            "producto": p.get_tipo_pedido_display(),
+            "estado": p.get_estado_pedido_display(),
+            "codigo_estado": p.estado_pedido, 
         } for p in pedidos_qs]
 
         return Response({
-            "cards": {
+            "stats": {
                 "citas": citas_hoy_count,
-                "pacientes": nuevos_pacientes,
-                "pedidos": pedidos_pendientes
+                "nuevos": total_pacientes,
+                "pedidos": pedidos_pendientes,
+                "recetas": total_recetas 
             },
-            "citas_detalladas": lista_citas,
-            "pedidos_recientes": lista_pedidos
+            "citasHoy": lista_citas,
+            "clientesRecientes": lista_clientes,
+            "pedidosRecientes": lista_pedidos
         })
 
     @action(detail=False, methods=['get'])

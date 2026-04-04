@@ -193,7 +193,7 @@ export default function CitaForm({
             <option value="">Seleccionar especialista...</option>
             {optometristas && optometristas.map((o: any, i: number) => (
               <option key={o.id || i} value={o.id}>
-                {o.first_name || o.username} {o.last_name || ""}
+                Dr. {o.first_name || o.username} {o.last_name || ""}
               </option>
             ))}
           </select>

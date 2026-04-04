@@ -159,7 +159,7 @@ const handleUpdate = async () => {
               
               {/* NOMBRES */}
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-wider ml-1">Primer Nombre</label>
+                <label className="text-xs font-black text-gray-400 uppercase tracking-wider ml-1">Nombre</label>
                 <Input 
                   value={editando.first_name || ""} 
                   onChange={(e) => handleEditChange("first_name", e.target.value)}
@@ -169,7 +169,7 @@ const handleUpdate = async () => {
 
               {/* APELLIDOS */}
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-wider ml-1">Apellidos</label>
+                <label className="text-xs font-black text-gray-400 uppercase tracking-wider ml-1">Apellido</label>
                 <Input 
                   value={editando.last_name || ""} 
                   onChange={(e) => handleEditChange("last_name", e.target.value)}
@@ -198,8 +198,6 @@ const handleUpdate = async () => {
                 >
                   <option value="recepcionista">Recepcionista</option>
                   <option value="optometrista">Optometrista</option>
-                  <option value="Admin">Administrador</option>
-                  <option value="superadmin">Super Usuario</option>
                 </select>
               </div>
 
