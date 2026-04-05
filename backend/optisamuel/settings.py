@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'cliente',
     'pedido',   
     'authapp',
+    'django_rest_passwordreset',
     'auditoria.apps.AuditoriaConfig',
 ]
 
@@ -167,6 +168,10 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
+
+# DJANGO_REST_PASSWORDRESET_TOKEN_CONFIG = {
+#     "CLASS": "django_rest_passwordreset.models.ResetPasswordToken",
+# }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
