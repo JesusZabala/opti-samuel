@@ -1,14 +1,14 @@
 from django.shortcuts import render
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, filters, status
 from .models import Cliente
 from .serializers import ClienteSerializer
 from authapp.permissions import HasRole
 from rest_framework.response import Response
 from datetime import datetime
-from rest_framework import status
 from rest_framework.decorators import action
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+
 from xhtml2pdf import pisa
 # Create your views here.
 class ClienteViewSet(viewsets.ModelViewSet):
@@ -17,6 +17,8 @@ class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
     # lookup_field = 'identificacion'
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['^nombre', 'apellido', 'identificacion']
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

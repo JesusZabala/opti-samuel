@@ -47,6 +47,20 @@ export const buscarClientePorIdentificacion = async (identificacion: string): Pr
     }
 };
 
+export const buscarClientePorNombre = async (nombre: string): Promise<Cliente[]> => {
+    try {
+        // Usamos el parámetro ?search que provee Django REST Framework
+        const response = await api.get(`cliente/?search=${encodeURIComponent(nombre)}`);
+        
+        // El search suele devolver una lista, así que devolvemos el array completo
+        // Manejamos si viene paginado (results) o directo
+        return Array.isArray(response.data) ? response.data : (response.data.results || []);
+        
+    } catch (error: any) {
+        throw error.response?.data || "Error al buscar por nombre";
+    }
+};
+
 export const actualizarCliente = async (id: number, cambios: Partial<Cliente>): Promise<Cliente> => {
     try {
         const response = await api.patch(`cliente/${id}/`, cambios);

@@ -1,30 +1,4 @@
-// import { Input } from "@/components/ui/input"
 
-// export default function ClienteConsultar(){
-
-// return(
-
-// <div className="p-10">
-
-// <div className="bg-white p-10 rounded-3xl shadow-xl">
-
-// <h2 className="text-3xl font-black text-[#1a4731] mb-6">
-// Consultar Cliente
-// </h2>
-
-// <Input placeholder="Buscar por cédula o nombre" />
-
-// <div className="mt-8 border rounded-xl p-6 text-gray-500">
-// Aquí aparecerán los clientes
-// </div>
-
-// </div>
-
-// </div>
-
-// )
-
-// }
 
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";

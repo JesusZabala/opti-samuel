@@ -49,9 +49,9 @@ INSTALLED_APPS = [
     'receta_visual',
     'cita',
     'cliente',
-    'pedido',
-    'auditoria',   
+    'pedido',   
     'authapp',
+    'auditoria.apps.AuditoriaConfig',
 ]
 
 MIDDLEWARE = [
@@ -63,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'auditoria.middleware.AuditoriaMiddleware',
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
