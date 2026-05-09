@@ -49,6 +49,11 @@ class OptometristaListView(generics.ListAPIView):
     queryset = User.objects.filter(groups__name='optometrista')
     serializer_class = UserListSerializer
 
+class UsersListView(generics.ListAPIView):
+    permission_classes = [HasRole]
+    required_roles = ["superadmin", "recepcionista", "optometrista"]
+    queryset = User.objects.filter()
+    serializer_class = UserListSerializer
 
 class TokenRefreshView(SimpleJWTTokenRefreshView):
     """Renueva access; el refresh va en el body (no requiere Bearer)."""
