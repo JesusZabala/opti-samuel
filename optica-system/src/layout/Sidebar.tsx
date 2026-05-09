@@ -11,6 +11,7 @@ import {
   Package,
   BarChart3,
   UserCog,
+  ShieldAlert,
   LogOut,
   ShieldCheck,
   UserCircle,
@@ -329,6 +330,10 @@ const AdministradorMenu = ({ openMenu, setOpenMenu }: { openMenu: string | null;
 
         <NavLink to='/reportes' className={({ isActive }) => menuClass(isActive)}>
           <BarChart3 size={18} /> Reportes
+        </NavLink>
+
+        <NavLink to='/auditoria' className={({ isActive }) => menuClass(isActive)}>
+          <ShieldAlert size={18} /> Auditoría
         </NavLink>
 
         <button

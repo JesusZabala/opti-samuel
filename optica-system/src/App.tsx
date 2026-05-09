@@ -23,10 +23,12 @@ import EmpleadoRegistrar from "@modules/empleados/components/EmpleadoRegistrar";
 import EmpleadoConsultar from "@modules/empleados/components/EmpleadoConsultar";
 import EmpleadoEditar from "@modules/empleados/components/EmpleadoEditar";
 import ModuloReportes from "./modules/reportes/components/Reportes";
+import Auditoria from "./modules/auditoria/components/Auditoria";
 import { authService } from "@/services/authService";
 import { setUnauthorizedHandler } from "@/auth/authEvents";
 import { authStorage } from "@/auth/authStorage";
 import { roleCanAccessPath } from "@/auth/routeAccess";
+
 
 /** Evita mostrar la landing tras F5 si ya hay sesión o el usuario pasó a login. */
 const SKIP_LANDING_KEY = "optisamuel_skip_landing";
@@ -105,6 +107,9 @@ function AuthenticatedApp({
 
             {/* REPORTES */}
             <Route path="/reportes" element={<ModuloReportes/>} />
+
+            {/* AUDITORÍA */}
+            <Route path="/auditoria" element={<Auditoria />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

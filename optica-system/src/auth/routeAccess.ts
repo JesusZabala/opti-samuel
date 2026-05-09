@@ -27,9 +27,13 @@ export function roleCanAccessPath(role: Role, pathname: string): boolean {
     return role === Role.OPTOMETRISTA || role === Role.ADMINISTRADOR;
   }
 
-  if (p.startsWith('/empleados') || p.startsWith('/reportes')) {
-    return role === Role.ADMINISTRADOR;
-  }
+  if (
+  p.startsWith('/empleados') ||
+  p.startsWith('/reportes') ||
+  p.startsWith('/auditoria')
+) {
+  return role === Role.ADMINISTRADOR;
+}
 
   return false;
 }
