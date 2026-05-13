@@ -1,9 +1,10 @@
+
 // import { useState, useEffect } from "react";
 // import { Input } from "@/components/ui/input";
 // import { Button } from "@/components/ui/button";
 // import { Loader2 } from "lucide-react";
 // import { obtenerAuditoria, type AuditoriaRegistro } from "@/services/auditoriaService";
-// import { obtenerUsuarios, type UserList } from "@/services/userService"; // Importamos tu nuevo servicio
+// import { obtenerUsuarios, type UserList } from "@/services/userService";
 
 // export default function Auditoria() {
 //   /* ---------------- ESTADOS ---------------- */
@@ -15,14 +16,13 @@
 
 //   const [todosLosRegistros, setTodosLosRegistros] = useState<AuditoriaRegistro[]>([]);
 //   const [registrosFiltrados, setRegistrosFiltrados] = useState<AuditoriaRegistro[]>([]);
-//   const [usuariosSistema, setUsuariosSistema] = useState<UserList[]>([]); // Estado para el selector dinámico
+//   const [usuariosSistema, setUsuariosSistema] = useState<UserList[]>([]);
 //   const [loading, setLoading] = useState(true);
 
 //   /* ---------------- CARGA INICIAL (PARALELA) ---------------- */
 //   useEffect(() => {
 //     const cargarDatosIniciales = async () => {
 //       try {
-//         // Cargamos auditoría y lista de usuarios al mismo tiempo
 //         const [dataAuditoria, dataUsuarios] = await Promise.all([
 //           obtenerAuditoria(),
 //           obtenerUsuarios(),
@@ -43,16 +43,10 @@
 //   /* ---------------- BUSCAR (FILTRADO LOCAL) ---------------- */
 //   const handleBuscar = () => {
 //     const filtrados = todosLosRegistros.filter((reg) => {
-//       // Coincidencia de Usuario por username
 //       const coincideUsuario = usuarioSeleccionado ? reg.usuario_nombre === usuarioSeleccionado : true;
-      
-//       // Coincidencia de Acción (C o U)
 //       const coincideAccion = accion ? reg.accion === accion : true;
-      
-//       // Coincidencia de Módulo
 //       const coincideModulo = moduloSeleccionado ? reg.modulo === moduloSeleccionado : true;
       
-//       // Filtro de fechas
 //       const fechaReg = reg.fecha_sistema.split('T')[0];
 //       const coincideDesde = fechaDesde ? fechaReg >= fechaDesde : true;
 //       const coincideHasta = fechaHasta ? fechaReg <= fechaHasta : true;
@@ -151,9 +145,11 @@
 //                 className="w-full h-12 rounded-xl border border-gray-300 px-4 outline-none focus:ring-2 focus:ring-green-500 bg-white shadow-sm"
 //               >
 //                 <option value="">Todos los módulos</option>
-//                 {[...new Set(todosLosRegistros.map(r => r.modulo))].map(m => (
-//                   <option key={m} value={m}>{m}</option>
-//                 ))}
+//                 {/* Módulos específicos solicitados */}
+//                 <option value="Cliente">Cliente</option>
+//                 <option value="Cita">Citas</option>
+//                 <option value="RecetaVisual">Receta Visual</option>
+//                 <option value="Pedido">Pedido</option>
 //               </select>
 //             </div>
 //           </div>
@@ -281,6 +277,31 @@ export default function Auditoria() {
     cargarDatosIniciales();
   }, []);
 
+  /* ---------------- LÓGICA DE COMPARACIÓN ---------------- */
+  const obtenerSoloCambios = (reg: AuditoriaRegistro) => {
+    const anterior = reg.objeto_anterior || {};
+    const nuevo = reg.objeto_nuevo || {};
+
+    // Si es creación ('C'), el anterior es vacío y el nuevo es completo
+    if (reg.accion === 'C') {
+      return { anterior: {}, nuevo };
+    }
+
+    // Si es edición ('U'), comparamos campos
+    const anteriorFiltrado: any = {};
+    const nuevoFiltrado: any = {};
+
+    Object.keys(nuevo).forEach((key) => {
+      // Si el valor cambió, lo guardamos en ambos objetos para comparar el rastro
+      if (JSON.stringify(nuevo[key]) !== JSON.stringify(anterior[key])) {
+        anteriorFiltrado[key] = anterior[key];
+        nuevoFiltrado[key] = nuevo[key];
+      }
+    });
+
+    return { anterior: anteriorFiltrado, nuevo: nuevoFiltrado };
+  };
+
   /* ---------------- BUSCAR (FILTRADO LOCAL) ---------------- */
   const handleBuscar = () => {
     const filtrados = todosLosRegistros.filter((reg) => {
@@ -315,8 +336,8 @@ export default function Auditoria() {
         <span className="text-[10px] font-mono bg-gray-100 p-1 rounded border block max-w-[150px] truncate cursor-help">
           {JSON.stringify(data)}
         </span>
-        <div className="hidden group-hover:block absolute z-50 bg-black text-white p-3 rounded-lg mt-1 text-[10px] max-w-xs break-all shadow-2xl border border-gray-700">
-          <pre className="whitespace-pre-wrap">{JSON.stringify(data, null, 2)}</pre>
+        <div className="hidden group-hover:block absolute z-50 bg-black text-white p-3 rounded-lg mt-1 text-[10px] min-w-[200px] max-w-xs break-all shadow-2xl border border-gray-700">
+          <pre className="whitespace-pre-wrap font-mono">{JSON.stringify(data, null, 2)}</pre>
         </div>
       </div>
     );
@@ -386,10 +407,9 @@ export default function Auditoria() {
                 className="w-full h-12 rounded-xl border border-gray-300 px-4 outline-none focus:ring-2 focus:ring-green-500 bg-white shadow-sm"
               >
                 <option value="">Todos los módulos</option>
-                {/* Módulos específicos solicitados */}
                 <option value="Cliente">Cliente</option>
-                <option value="Citas">Citas</option>
-                <option value="Receta Visual">Receta Visual</option>
+                <option value="Cita">Citas</option>
+                <option value="RecetaVisual">Receta Visual</option>
                 <option value="Pedido">Pedido</option>
               </select>
             </div>
@@ -432,35 +452,40 @@ export default function Auditoria() {
                     </td>
                   </tr>
                 ) : registrosFiltrados.length > 0 ? (
-                  registrosFiltrados.map((reg) => (
-                    <tr key={reg.id} className="hover:bg-green-50/30 transition-colors duration-150">
-                      <td className="px-6 py-4 font-bold text-gray-800">{reg.usuario_nombre}</td>
-                      <td className="px-6 py-4">
-                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${
-                          reg.accion === 'C' 
-                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' 
-                            : 'bg-blue-100 text-blue-800 border border-blue-200'
-                        }`}>
-                          {reg.accion === 'C' ? 'Registro' : 'Edición'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-gray-600 uppercase text-[11px] font-black tracking-widest">
-                        {reg.modulo}
-                      </td>
-                      <td className="px-6 py-4 text-gray-500 font-semibold italic">
-                        {new Date(reg.fecha_sistema).toLocaleString('es-ES', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          second: '2-digit'
-                        })}
-                      </td>
-                      <td className="px-6 py-4">{renderJsonCell(reg.objeto_anterior)}</td>
-                      <td className="px-6 py-4">{renderJsonCell(reg.objeto_nuevo)}</td>
-                    </tr>
-                  ))
+                  registrosFiltrados.map((reg) => {
+                    // Calculamos la diferencia justo antes de renderizar la fila
+                    const { anterior, nuevo } = obtenerSoloCambios(reg);
+                    
+                    return (
+                      <tr key={reg.id} className="hover:bg-green-50/30 transition-colors duration-150">
+                        <td className="px-6 py-4 font-bold text-gray-800">{reg.usuario_nombre}</td>
+                        <td className="px-6 py-4">
+                          <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${
+                            reg.accion === 'C' 
+                              ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' 
+                              : 'bg-blue-100 text-blue-800 border border-blue-200'
+                          }`}>
+                            {reg.accion === 'C' ? 'Registro' : 'Edición'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-gray-600 uppercase text-[11px] font-black tracking-widest">
+                          {reg.modulo}
+                        </td>
+                        <td className="px-6 py-4 text-gray-500 font-semibold italic">
+                          {new Date(reg.fecha_sistema).toLocaleString('es-ES', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                          })}
+                        </td>
+                        <td className="px-6 py-4">{renderJsonCell(anterior)}</td>
+                        <td className="px-6 py-4">{renderJsonCell(nuevo)}</td>
+                      </tr>
+                    );
+                  })
                 ) : (
                   <tr>
                     <td colSpan={6} className="text-center py-20 text-gray-500 font-semibold bg-gray-50/50">
