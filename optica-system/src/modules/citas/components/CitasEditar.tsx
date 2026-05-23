@@ -175,6 +175,7 @@ import { Search, Edit3, CheckCircle, Calendar, User } from "lucide-react";
 import CitaForm from "../../../modules/citas/components/CitaForm";
 import { obtenerCitas, actualizarEstadoCita } from "@/services/citaService";
 import api from "@/api/axiosConfig";
+import { useNotifications } from "@/context/NotificationContext";
 
 export default function CitaEditar() {
   /* -------- ESTADOS -------- */
@@ -185,6 +186,7 @@ export default function CitaEditar() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { addNotification } = useNotifications();
 
   const horasPermitidas = [
     "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
@@ -243,6 +245,11 @@ export default function CitaEditar() {
     try {
       await actualizarEstadoCita(id, { estado_cita: "COM" });
       setSuccess("Cita marcada como completada.");
+      addNotification({
+        titulo: "Cita completada",
+        mensaje: "La cita fue marcada como completada correctamente.",
+        fecha: "Ahora",
+      });
       await cargarDatos();
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
@@ -267,6 +274,11 @@ export default function CitaEditar() {
       });
 
       setSuccess("Cita modificada correctamente");
+      addNotification({
+        titulo: "Cita modificada",
+        mensaje: "Los datos de la cita fueron actualizados.",
+        fecha: "Ahora",
+      });
       setEditando(null);
       await cargarDatos();
       setTimeout(() => setSuccess(""), 3000);

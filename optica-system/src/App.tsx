@@ -28,6 +28,7 @@ import { authService } from "@/services/authService";
 import { setUnauthorizedHandler } from "@/auth/authEvents";
 import { authStorage } from "@/auth/authStorage";
 import { roleCanAccessPath } from "@/auth/routeAccess";
+import { Toaster } from "sonner";
 
 
 /** Evita mostrar la landing tras F5 si ya hay sesión o el usuario pasó a login. */
@@ -209,6 +210,12 @@ function App() {
         onLogout={handleLogout}
         goHomeAfterLogin={goHomeAfterLogin}
         onGoHomeConsumed={handleGoHomeConsumed}
+      />
+      <Toaster
+        position="top-right"
+        richColors
+        closeButton
+        duration={5000}
       />
     </BrowserRouter>
   );
