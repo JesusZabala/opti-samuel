@@ -173,6 +173,14 @@ REST_FRAMEWORK = {
 #     "CLASS": "django_rest_passwordreset.models.ResetPasswordToken",
 # }
 
+# Configuración para que el token sea un código corto de 6 dígitos
+DJANGO_REST_PASSWORDRESET_TOKEN_CONFIG = {
+    "CLASS": "django_rest_passwordreset.tokens.RandomNumberTokenGenerator",
+    "OPTIONS": {
+        "length": 6
+    }
+}
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),

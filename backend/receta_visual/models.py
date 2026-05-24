@@ -14,7 +14,7 @@ class RecetaVisual(models.Model):
     estado_receta = models.CharField(max_length=2, choices=EstadoReceta.choices,  default=EstadoReceta.SIN_PEDIDO, blank=False, null=False)
     observaciones = models.CharField(max_length=255, blank=False, null=False)
     fecha_sistema = models.DateField(auto_now=True)
-    fecha_creacion = models.DateField(auto_now_add=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
 
 
 class Oculus(models.Model):

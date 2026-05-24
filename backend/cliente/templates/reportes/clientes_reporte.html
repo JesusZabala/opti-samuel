@@ -19,8 +19,8 @@
 </head>
 <body>
     <div className="header">
-        <div className="title">OPTI-SAMUEL</div>
-        <div className="subtitle">Reporte de Clientes Nuevos</div>
+        <div className="title">OPTI SAMUEL C.A</div>
+        <div className="subtitle">Reporte de Clientes</div>
         <p style="font-size: 9px;">Periodo: {{ desde }} al {{ hasta }}</p>
     </div>
 
@@ -31,7 +31,7 @@
                 <th>Nombre Completo</th>
                 <th>Identificación</th>
                 <th>Teléfono</th>
-                <th>Registro</th>
+                <th>Fecha de Registro</th>
             </tr>
         </thead>
         <tbody>
@@ -41,6 +41,7 @@
                 <td>{{ c.nombre }} {{ c.apellido }}</td>
                 <td>{{ c.identificacion }}</td>
                 <td>{{ c.telefono }}</td>
+                <td>{{ c.registered_at }}</td>
             </tr>
             {% empty %}
             <tr>
