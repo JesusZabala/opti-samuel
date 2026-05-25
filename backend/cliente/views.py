@@ -13,7 +13,7 @@ from xhtml2pdf import pisa
 # Create your views here.
 class ClienteViewSet(viewsets.ModelViewSet):
     permission_classes = [HasRole]
-    required_roles = ["superadmin", "recepcionista"]
+    required_roles = ["superadmin", "recepcionista", "optometrista"]
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
     # lookup_field = 'identificacion'
