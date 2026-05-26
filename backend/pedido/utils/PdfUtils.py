@@ -18,6 +18,7 @@ from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.http import HttpResponse
 
+
 def render_to_pdf(template_src, context_dict=None):
     if context_dict is None:
         context_dict = {}

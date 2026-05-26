@@ -66,6 +66,8 @@ class PedidoViewSet(viewsets.ModelViewSet):
             return response
         
         return Response({"error": "No se pudo generar el archivo PDF"}, status=status.HTTP_400_BAD_REQUEST)
+
+    
         
     @action(detail=False, methods=['get'])
     def obtener_catalogos(self, request):

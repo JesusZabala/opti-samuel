@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,14 @@ export default function RecetaConsultar() {
     const nombreCompleto = `${r.cliente_data?.nombre} ${r.cliente_data?.apellido}`.toLowerCase();
     return nombreCompleto.includes(busqueda.toLowerCase());
   });
+
+  /* -------- HELPER PARA ANTEPONER SIGNO "+" -------- */
+  const renderSigno = (valor: any) => {
+    if (valor === undefined || valor === null || valor === "") return "0.00";
+    const num = parseFloat(valor);
+    if (isNaN(num)) return valor; // Si es un string de texto, lo deja igual
+    return num > 0 ? `+${valor}` : valor;
+  };
 
   /* -------- UI DE CARGA -------- */
   if (loading) return (
@@ -151,11 +160,15 @@ export default function RecetaConsultar() {
                     <div className="grid grid-cols-3 gap-4">
                       <div className="text-center p-3 bg-slate-50 rounded-xl">
                         <span className="text-[10px] block text-slate-400 font-black uppercase">Esfera</span>
-                        <span className="text-lg font-mono font-bold text-slate-800">{det.oculus.esfera}</span>
+                        <span className="text-lg font-mono font-bold text-slate-800">
+                          {renderSigno(det.oculus.esfera)}
+                        </span>
                       </div>
                       <div className="text-center p-3 bg-slate-50 rounded-xl">
                         <span className="text-[10px] block text-slate-400 font-black uppercase">Cilindro</span>
-                        <span className="text-lg font-mono font-bold text-slate-800">{det.oculus.cilindro}</span>
+                        <span className="text-lg font-mono font-bold text-slate-800">
+                          {renderSigno(det.oculus.cilindro)}
+                        </span>
                       </div>
                       <div className="text-center p-3 bg-slate-50 rounded-xl">
                         <span className="text-[10px] block text-slate-400 font-black uppercase">Eje</span>
@@ -164,7 +177,7 @@ export default function RecetaConsultar() {
                     </div>
                     
                     <div className="mt-4 pt-4 border-t flex justify-between text-sm font-medium">
-                      <span>Adición: <b className="text-[#1a4731]">{det.adicion}</b></span>
+                      <span>Adición: <b className="text-[#1a4731]">{renderSigno(det.adicion)}</b></span>
                       <span>D.P: <b className="text-[#1a4731]">{det.distancia_pupilar} mm</b></span>
                     </div>
                   </div>
