@@ -43,19 +43,19 @@ class MarcaMontura(models.Model):
     def __str__(self):
         return self.descripcion
 
-class MedidasMontura(models.Model):
-    sku_monturas = models.CharField(max_length=255, blank=False, null=False)
-    largo = models.DecimalField(max_digits=10, decimal_places=2, blank=False, null=False)
-    ancho = models.DecimalField(max_digits=10, decimal_places=2, blank=False, null=False)
+# class MedidasMontura(models.Model):
+#     sku_monturas = models.CharField(max_length=255, blank=False, null=False)
+#     largo = models.DecimalField(max_digits=10, decimal_places=2, blank=False, null=False)
+#     ancho = models.DecimalField(max_digits=10, decimal_places=2, blank=False, null=False)
 
-    def __str__(self):
-        return f"{self.sku_monturas} ({self.ancho} x {self.largo})"
+#     def __str__(self):
+#         return f"{self.sku_monturas} ({self.ancho} x {self.largo})"
 
 class Montura(models.Model):
     modelo = models.ForeignKey(ModeloMontura, on_delete=models.CASCADE, related_name='modelo')
     marca = models.ForeignKey(MarcaMontura, on_delete=models.CASCADE, related_name='marca')
     color = models.ForeignKey(ColorMontura, on_delete=models.CASCADE, related_name='color')
-    medidas = models.ForeignKey(MedidasMontura, on_delete=models.CASCADE, related_name='medida')
+    # medidas = models.ForeignKey(MedidasMontura, on_delete=models.CASCADE, related_name='medida')
     material = models.CharField(max_length=255, blank=False, null=False)
     fecha_registro = models.DateField(auto_now_add=True)
 
@@ -88,6 +88,7 @@ class DetallePedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='detalles')
     montura = models.ForeignKey(Montura, on_delete=models.CASCADE, related_name='montura', null=True, blank=True)
     lente = models.ForeignKey(Lente, on_delete=models.CASCADE, related_name='lente', null=True, blank=True)
+    medida = models.CharField(max_length=255, blank=True, null=True)
     fecha_sistema = models.DateTimeField(auto_now_add=True)
     fecha_completado = models.DateTimeField(null=True, blank=True)
     

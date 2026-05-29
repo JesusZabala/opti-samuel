@@ -7,12 +7,16 @@ export interface PedidoInput {
     descripcion: string;
     observacion: string;
     detalle: {
+        medida?: string;
         montura?: {
-            modelo: number; marca: number; color: number; 
-            medidas: number; material: string;
+            modelo: number; 
+            marca: number; 
+            color: number; 
+            material: string;
         } | null;
         lente?: {
-            tipo_lente: number; tipo_tratamiento: number;
+            tipo_lente: number; 
+            tipo_tratamiento: number;
         } | null;
     };
 }

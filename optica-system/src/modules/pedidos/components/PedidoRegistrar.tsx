@@ -364,7 +364,7 @@ export default function PedidoRegistrar() {
     modelo: "",
     marca: "",
     color: "",
-    medidas: "",
+    medida: "",
     material: "",
     descripcion: "",
     observacion: ""
@@ -426,7 +426,7 @@ export default function PedidoRegistrar() {
     setError("");
     setFormData({
       receta: "", tipo_lente: "", tipo_tratamiento: "",
-      modelo: "", marca: "", color: "", medidas: "", material: "",
+      modelo: "", marca: "", color: "", medida: "", material: "",
       descripcion: "", observacion: ""
     });
   };
@@ -500,7 +500,7 @@ export default function PedidoRegistrar() {
       modelo: Number(formData.modelo),
       marca: Number(formData.marca),
       color: Number(formData.color),
-      medidas: Number(formData.medidas),
+      // medidas: Number(formData.medidas),
       material: formData.material.trim()
     } : null;
 
@@ -517,6 +517,7 @@ export default function PedidoRegistrar() {
         descripcion: formData.descripcion.trim(),
         observacion: formData.observacion.trim(),
         detalle: {
+          medida: (tipoPedido === 'C' || tipoPedido === 'SM') ? formData.medida.trim() : undefined,
           montura: monturaPayload,
           lente: lentePayload
         }
@@ -551,8 +552,11 @@ export default function PedidoRegistrar() {
     }
   };
 
-  if (loading && !catalogos) return <div className="p-20 text-center font-black animate-pulse text-[#1a4731]">CARGANDO CONFIGURACIÓN DE OPTI-SAMUEL...</div>;
-
+  // if (loading && !catalogos) return <div className="p-20 text-center font-black animate-pulse text-[#1a4731]">CARGANDO CONFIGURACIÓN DE OPTI-SAMUEL...</div>;
+  // POR ESTO (Más seguro):
+  if (loading || !catalogos) {
+    return <div className="p-20 text-center font-black animate-pulse text-[#1a4731]">CARGANDO CONFIGURACIÓN DE OPTI-SAMUEL...</div>;
+  }
   return (
     <div className="p-10 max-w-7xl mx-auto">
       <div className="bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden">
@@ -709,7 +713,7 @@ export default function PedidoRegistrar() {
                 </div>
               )}
 
-              {(tipoPedido === 'C' || tipoPedido === 'SM') && (
+              {/* {(tipoPedido === 'C' || tipoPedido === 'SM') && (
                 <div className="relative p-8 pt-12 border-2 border-green-50 rounded-[2.5rem] bg-green-50/10 grid grid-cols-2 md:grid-cols-5 gap-4">
                   <div className="absolute -top-4 left-8 bg-green-600 text-white px-6 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] shadow-lg flex items-center gap-2">
                     <Glasses className="w-3 h-3" /> ESPECIFICACIONES DE MONTURA
@@ -725,17 +729,69 @@ export default function PedidoRegistrar() {
                     </div>
                   ))}
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-green-900/40 uppercase ml-1">Talla</label>
-                    <select required className="w-full p-4 rounded-xl border-2 border-green-100 font-bold bg-white focus:border-green-400 outline-none" 
-                      value={formData.medidas} onChange={(e) => setFormData({...formData, medidas: e.target.value})}>
-                      <option value="">Medida</option>
-                      {catalogos?.monturas?.medidas?.map((m: any) => <option key={m.id} value={m.id}>{m.sku_monturas}</option>)}
-                    </select>
+                    <label className="text-[10px] font-black text-green-900/40 uppercase ml-1">Medida / Talla</label>
+                    <Input 
+                      required 
+                      placeholder="Ej: 54-18-140..." 
+                      className="h-[52px] rounded-xl border-green-100 font-bold bg-white focus:border-green-400" 
+                      value={formData.medida} 
+                      onChange={(e) => setFormData({...formData, medida: e.target.value})} 
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-green-900/40 uppercase ml-1">Material</label>
                     <Input required placeholder="Pasta, Metal..." className="h-[52px] rounded-xl border-green-100 font-bold" 
                       value={formData.material} onChange={(e) => setFormData({...formData, material: e.target.value})} />
+                  </div>
+                </div>
+              )} */}
+              {(tipoPedido === 'C' || tipoPedido === 'SM') && (
+                <div className="relative p-8 pt-12 border-2 border-green-50 rounded-[2.5rem] bg-green-50/10 grid grid-cols-2 md:grid-cols-5 gap-4">
+                  <div className="absolute -top-4 left-8 bg-green-600 text-white px-6 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] shadow-lg flex items-center gap-2">
+                    <Glasses className="w-3 h-3" /> ESPECIFICACIONES DE MONTURA
+                  </div>
+                  
+                  {/* Forzamos el tipado de las llaves para eliminar el 'as any' de forma segura */}
+                  {(['marca', 'modelo', 'color'] as Array<keyof typeof formData>).map((f) => (
+                    <div key={f} className="space-y-2">
+                      <label className="text-[10px] font-black text-green-900/40 uppercase ml-1">{f}</label>
+                      <select 
+                        required 
+                        className="w-full p-4 rounded-xl border-2 border-green-100 font-bold bg-white focus:border-green-400 outline-none uppercase text-xs" 
+                        value={formData[f]} // 👈 ¡Ya no necesita 'as any'! TypeScript ya sabe que es válido
+                        onChange={(e) => setFormData({ ...formData, [f]: e.target.value })}
+                      >
+                        <option value="">{f}</option>
+                        {/* 👇 Cortocircuito seguro: si la red falla, se mapea un array vacío y la app no se cae */}
+                        {(catalogos?.monturas?.[f === 'marca' ? 'marcas' : f === 'modelo' ? 'modelos' : 'colores'] || []).map((i: any) => (
+                          <option key={i.id} value={i.id}>
+                            {i.descripcion}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ))}
+                  
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-green-900/40 uppercase ml-1">Medida / Talla</label>
+                    <Input 
+                      required 
+                      placeholder="Ej: 54-18-140..." 
+                      className="h-[52px] rounded-xl border-green-100 font-bold bg-white focus:border-green-400" 
+                      value={formData.medida} 
+                      onChange={(e) => setFormData({ ...formData, medida: e.target.value })} 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-green-900/40 uppercase ml-1">Material</label>
+                    <Input 
+                      required 
+                      placeholder="Pasta, Metal..." 
+                      className="h-[52px] rounded-xl border-green-100 font-bold" 
+                      value={formData.material} 
+                      onChange={(e) => setFormData({ ...formData, material: e.target.value })} 
+                    />
                   </div>
                 </div>
               )}

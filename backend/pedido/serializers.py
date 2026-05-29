@@ -51,22 +51,22 @@ class MarcaMonturaSerializer(serializers.ModelSerializer):
         fields = ['id','descripcion','alias']
         read_only_fields = ('id',)
 
-class MedidasMonturaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MedidasMontura
-        fields = ['id','sku_monturas','largo','ancho']
-        read_only_fields = ('id',)
+# class MedidasMonturaSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = MedidasMontura
+#         fields = ['id','sku_monturas','largo','ancho']
+#         read_only_fields = ('id',)
 
 class MonturaSerializer(serializers.ModelSerializer):
     modelo_data = ModeloMonturaSerializer(source='modelo', read_only=True)
     marca_data = MarcaMonturaSerializer(source='marca', read_only=True)
     color_data = ColorMonturaSerializer(source='color', read_only=True)
-    medidas_data = MedidasMonturaSerializer(source='medidas',read_only=True)
+    # medidas_data = MedidasMonturaSerializer(source='medidas',read_only=True)
 
     class Meta:
         model = Montura
-        fields = ['id','modelo','marca','color','medidas','modelo_data','marca_data',
-                  'color_data','medidas_data', 'material','fecha_registro']
+        fields = ['id','modelo','marca','color','modelo_data','marca_data',
+                  'color_data','material','fecha_registro']
         read_only_fields = ('id',)
 
 class DetallePedidoSerializer(serializers.ModelSerializer):
@@ -77,8 +77,8 @@ class DetallePedidoSerializer(serializers.ModelSerializer):
         model = DetallePedido
         fields = [
             'id', 'pedido', 'montura', 'lente', 'montura_data', 
-            'lente_data', 'fecha_sistema', 'fecha_completado'
-        ]
+            'lente_data','medida', 'fecha_sistema', 'fecha_completado'
+        ]#agregar medida
         read_only_fields = ('id', 'pedido')
 
 class PedidoSerializer(serializers.ModelSerializer):
@@ -191,7 +191,7 @@ class PedidoSerializer(serializers.ModelSerializer):
                     'modelo_id': m_data.get('modelo'),
                     'marca_id': m_data.get('marca'),
                     'color_id': m_data.get('color'),
-                    'medidas_id': m_data.get('medidas'),
+                    # 'medidas_id': m_data.get('medidas'),
                     'material': m_data.get('material', '')
                 }
                 montura_obj, _ = Montura.objects.get_or_create(**montura_params)
@@ -204,11 +204,16 @@ class PedidoSerializer(serializers.ModelSerializer):
                     'tipo_tratamiento_id': l_data.get('tipo_tratamiento')
                 }
                 lente_obj, _ = Lente.objects.get_or_create(**lente_params)
-
+            
+            medida_manual = detalle_data.get('medida')
+            if not medida_manual and 'montura' in detalle_data and isinstance(detalle_data['montura'], dict):
+                medida_manual = detalle_data['montura'].get('medida')
+                
             DetallePedido.objects.create(
                 pedido=pedido,
                 montura=montura_obj,
-                lente=lente_obj
+                lente=lente_obj,
+                medida=medida_manual
             )
 
         if pedido.cliente and pedido.cliente.email:
