@@ -267,19 +267,19 @@ export default function ClienteEditar() {
     }
   };
 
-  if (loading) return <div className="p-10 text-center font-bold text-[#1a4731] animate-pulse">Cargando base de datos de clientes...</div>;
+  if (loading) return <div className="p-10 text-center font-bold text-[#1a4731] dark:text-emerald-100 animate-pulse">Cargando base de datos de clientes...</div>;
 
   return (
-    <div className="p-10">
-      <div className="bg-white p-10 rounded-3xl shadow-xl min-h-[400px] border border-gray-100">
-        <h2 className="text-3xl font-black text-[#1a4731] mb-8">
+    <div className="p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-3xl shadow-xl min-h-[400px] border border-gray-100 dark:border-white/10">
+        <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8">
           {editando ? `Modificar Datos` : "Panel de Clientes"}
         </h2>
 
-        {success && <div className="mb-6 text-green-700 font-bold bg-green-50 p-4 rounded-xl border border-green-200 flex items-center gap-2"><span>✓</span> {success}</div>}
+        {success && <div className="mb-6 text-green-700 dark:text-emerald-300 font-bold bg-green-50 dark:bg-emerald-900/20 p-4 rounded-xl border border-green-200 dark:border-emerald-800/30 flex items-center gap-2"><span>✓</span> {success}</div>}
         
         {error && (
-          <div className="mb-6 text-red-600 bg-red-50 p-4 rounded-xl border border-red-200 text-sm">
+          <div className="mb-6 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800/30 text-sm">
              {typeof error === 'object' ? "Error: Revisa los datos ingresados." : error}
           </div>
         )}
@@ -292,18 +292,18 @@ export default function ClienteEditar() {
                   placeholder="Buscar por cédula, nombre o apellido..." 
                   value={busqueda}
                   onChange={(e) => setBusqueda(e.target.value)}
-                  className="p-7 rounded-2xl border-gray-200 shadow-sm focus:ring-2 focus:ring-green-600 pl-12"
+                  className="p-7 rounded-2xl border-gray-200 dark:border-gray-700 shadow-sm focus:ring-2 focus:ring-green-600 pl-12"
                 />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl">🔍</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300 text-xl">🔍</span>
             </div>
 
             <div className="grid gap-4">
               {clientesFiltrados.map((c) => (
-                <div key={c.id} className="p-5 border rounded-2xl flex justify-between items-center hover:bg-gray-50 transition-all border-gray-100 shadow-sm group">
+                <div key={c.id} className="p-5 border rounded-2xl flex justify-between items-center hover:bg-gray-50 dark:hover:bg-[#0f1a14] transition-all border-gray-100 dark:border-white/10 shadow-sm group">
                   <div>
-                    <p className="font-bold text-[#1a4731] text-lg">{c.nombre} {c.apellido}</p>
-                    <p className="text-sm text-gray-500 font-medium">
-                      <span className="bg-gray-100 px-2 py-0.5 rounded mr-2">{c.tipo_cliente}-{c.identificacion}</span>
+                    <p className="font-bold text-[#1a4731] dark:text-emerald-100 text-lg">{c.nombre} {c.apellido}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                      <span className="bg-gray-100 dark:bg-[#0f1a14] px-2 py-0.5 rounded mr-2">{c.tipo_cliente}-{c.identificacion}</span>
                       {c.telefono}
                     </p>
                   </div>
@@ -313,8 +313,8 @@ export default function ClienteEditar() {
                 </div>
               ))}
               {clientesFiltrados.length === 0 && (
-                <div className="text-center py-20 border-2 border-dashed border-gray-100 rounded-3xl">
-                    <p className="text-gray-400">No se encontraron clientes con esa búsqueda.</p>
+                <div className="text-center py-20 border-2 border-dashed border-gray-100 dark:border-white/10 rounded-3xl">
+                    <p className="text-gray-400 dark:text-gray-300">No se encontraron clientes con esa búsqueda.</p>
                 </div>
               )}
             </div>
@@ -322,14 +322,14 @@ export default function ClienteEditar() {
         ) : (
           /* VISTA 2: FORMULARIO DE EDICIÓN */
           <div className="animate-in slide-in-from-right-5 duration-300">
-             <div className="bg-[#1a4731]/5 p-5 rounded-2xl mb-8 border border-[#1a4731]/10">
-                <p className="text-sm text-gray-600">ID de Cliente: <span className="font-mono font-bold text-[#1a4731]">{editando.identificacion}</span></p>
-                <p className="text-lg font-black text-[#1a4731] uppercase">{editando.nombre} {editando.apellido}</p>
+             <div className="bg-[#1a4731]/5 dark:bg-[#1a4731]/20 p-5 rounded-2xl mb-8 border border-[#1a4731]/10 dark:border-[#1a4731]/30">
+                <p className="text-sm text-gray-600 dark:text-gray-300">ID de Cliente: <span className="font-mono font-bold text-[#1a4731] dark:text-emerald-100">{editando.identificacion}</span></p>
+                <p className="text-lg font-black text-[#1a4731] dark:text-emerald-100 uppercase">{editando.nombre} {editando.apellido}</p>
              </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-wider ml-1">Nombre</label>
+                <label className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-wider ml-1">Nombre</label>
                 <Input 
                   value={editando.nombre || ""} 
                   onChange={(e) => handleEditChange("nombre", e.target.value)}
@@ -339,7 +339,7 @@ export default function ClienteEditar() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-wider ml-1">Apellido</label>
+                <label className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-wider ml-1">Apellido</label>
                 <Input 
                   value={editando.apellido || ""} 
                   onChange={(e) => handleEditChange("apellido", e.target.value)}
@@ -349,7 +349,7 @@ export default function ClienteEditar() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-wider ml-1">Teléfono Móvil</label>
+                <label className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-wider ml-1">Teléfono Móvil</label>
                 <Input 
                   value={editando.telefono || ""} 
                   onChange={(e) => handleEditChange("telefono", e.target.value)}
@@ -360,7 +360,7 @@ export default function ClienteEditar() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-wider ml-1">Correo Electrónico</label>
+                <label className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-wider ml-1">Correo Electrónico</label>
                 <Input 
                   value={editando.email || ""} 
                   onChange={(e) => handleEditChange("email", e.target.value)}
@@ -375,7 +375,7 @@ export default function ClienteEditar() {
               <Button onClick={handleUpdate} className="bg-[#1a4731] hover:bg-[#123122] flex-1 h-14 text-lg font-bold shadow-lg shadow-green-900/10">
                 Guardar Cambios
               </Button>
-              <Button variant="outline" onClick={() => setEditando(null)} className="flex-1 h-14 text-lg font-bold border-gray-300 hover:bg-gray-50">
+              <Button variant="outline" onClick={() => setEditando(null)} className="flex-1 h-14 text-lg font-bold border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-[#0f1a14]">
                 Cancelar Edición
               </Button>
             </div>

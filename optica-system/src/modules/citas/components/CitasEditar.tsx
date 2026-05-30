@@ -171,13 +171,17 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Edit3, CheckCircle, Calendar, User } from "lucide-react";
+import { Search, Edit3, CheckCircle, Calendar, User, ClipboardList } from "lucide-react";
 import CitaForm from "../../../modules/citas/components/CitaForm";
 import { obtenerCitas, actualizarEstadoCita } from "@/services/citaService";
+import { obtenerTodasLasRecetas } from "@/services/recetaService";
 import api from "@/api/axiosConfig";
 import { useNotifications } from "@/context/NotificationContext";
+import { useNavigate } from "react-router-dom";
 
 export default function CitaEditar() {
+  const navigate = useNavigate();
+
   /* -------- ESTADOS -------- */
   const [citas, setCitas] = useState<any[]>([]);
   const [optometristas, setOptometristas] = useState<any[]>([]);
@@ -186,6 +190,8 @@ export default function CitaEditar() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showRecetaModal, setShowRecetaModal] = useState(false);
+  const [pendingCitaId, setPendingCitaId] = useState<number | null>(null);
   const { addNotification } = useNotifications();
 
   const horasPermitidas = [
@@ -239,10 +245,19 @@ export default function CitaEditar() {
     });
   };
 
-  /* -------- ACCIÓN: COMPLETAR CITA (Rápido) -------- */
+  /* -------- ACCIÓN: COMPLETAR CITA (Verifica receta primero) -------- */
   const handleCompletarCita = async (id: number) => {
     if (!window.confirm("¿Marcar esta cita como completada?")) return;
     try {
+      const recetas = await obtenerTodasLasRecetas();
+      const tieneReceta = recetas.some((r) => r.cita === id);
+
+      if (!tieneReceta) {
+        setPendingCitaId(id);
+        setShowRecetaModal(true);
+        return;
+      }
+
       await actualizarEstadoCita(id, { estado_cita: "COM" });
       setSuccess("Cita marcada como completada.");
       addNotification({
@@ -254,6 +269,13 @@ export default function CitaEditar() {
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       setError("No se pudo actualizar el estado.");
+    }
+  };
+
+  const irARegistrarReceta = () => {
+    setShowRecetaModal(false);
+    if (pendingCitaId) {
+      navigate(`/recetas/registrar?cita=${pendingCitaId}`);
     }
   };
 
@@ -287,32 +309,66 @@ export default function CitaEditar() {
     }
   };
 
-  if (loading) return <div className="p-10 text-center font-bold text-[#1a4731] animate-pulse">Cargando gestión de citas...</div>;
+  /* -------- MODAL: RECETA REQUERIDA -------- */
+  const RecetaModal = () => {
+    if (!showRecetaModal) return null;
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="bg-white dark:bg-[#1a2a20] rounded-[2rem] p-8 max-w-md w-full mx-4 shadow-2xl border border-gray-100 dark:border-white/10 animate-in fade-in zoom-in-95 duration-200">
+          <div className="text-center">
+            <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center mx-auto mb-4">
+              <ClipboardList className="w-8 h-8 text-amber-600 dark:text-amber-300" />
+            </div>
+            <h3 className="text-xl font-black text-gray-800 dark:text-emerald-100 mb-2">Receta requerida</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+              Esta cita no tiene una receta registrada. Debes registrar la receta antes de marcarla como completada.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button
+                variant="outline"
+                onClick={() => { setShowRecetaModal(false); setPendingCitaId(null); }}
+                className="rounded-xl px-6"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={irARegistrarReceta}
+                className="bg-[#1a4731] hover:bg-[#163d2a] rounded-xl px-6"
+              >
+                Ir a Registrar Receta
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  if (loading) return <div className="p-10 text-center font-bold text-[#1a4731] dark:text-emerald-300 animate-pulse">Cargando gestión de citas...</div>;
 
   return (
     <div className="p-10 max-w-5xl mx-auto">
-      <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl border border-gray-100">
+      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10">
         
         <div className="flex justify-between items-center mb-10">
-            <h2 className="text-4xl font-black text-[#1a4731] tracking-tight">Gestión de Agenda</h2>
-            <Edit3 className="w-10 h-10 text-green-600/20" />
+            <h2 className="text-4xl font-black text-[#1a4731] dark:text-emerald-100 tracking-tight">Gestión de Agenda</h2>
+            <Edit3 className="w-10 h-10 text-green-600/20 dark:text-green-500/30" />
         </div>
 
-        {success && <p className="p-4 bg-green-50 text-green-600 rounded-2xl font-bold mb-6 border border-green-100 animate-in fade-in">✓ {success}</p>}
-        {error && <p className="p-4 bg-red-50 text-red-600 rounded-2xl font-bold mb-6 border border-red-100">⚠ {error}</p>}
+        {success && <p className="p-4 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-300 rounded-2xl font-bold mb-6 border border-green-100 dark:border-green-800 animate-in fade-in">✓ {success}</p>}
+        {error && <p className="p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 rounded-2xl font-bold mb-6 border border-red-100 dark:border-red-800">⚠ {error}</p>}
 
         {!editando ? (
           <div className="space-y-6">
             
             {/* BUSCADOR */}
             <div className="relative">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
                 <Input
                     placeholder="Buscar paciente por nombre..."
                     value={busqueda}
-                    // Agregado el paréntesis de cierre que faltaba al final de .replace()
                     onChange={(e) => setBusqueda(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]/g, ""))}
-                    className="pl-14 rounded-2xl border-gray-200 py-8 text-lg shadow-sm focus:ring-[#1a4731]"
+                    className="pl-14 rounded-2xl border-gray-200 dark:border-gray-700 dark:bg-[#0f1a14] dark:text-emerald-100 py-8 text-lg shadow-sm focus:ring-[#1a4731]"
                 />
             </div>
 
@@ -324,21 +380,21 @@ export default function CitaEditar() {
                   return (
                     <div 
                       key={cita.id} 
-                      className="group p-6 border-2 border-gray-50 rounded-3xl flex justify-between items-center bg-white hover:border-blue-200 hover:shadow-xl transition-all duration-300"
+                      className="group p-6 border-2 border-gray-50 dark:border-white/5 rounded-3xl flex justify-between items-center bg-white dark:bg-[#0f1a14] hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-xl transition-all duration-300"
                     >
                       <div className="flex items-center gap-6">
-                          <div className="p-4 rounded-2xl bg-blue-50 text-blue-600">
+                          <div className="p-4 rounded-2xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300">
                               <User className="w-6 h-6" />
                           </div>
                           <div>
-                              <p className="font-black text-gray-800 text-xl">
+                              <p className="font-black text-gray-800 dark:text-emerald-100 text-xl">
                                   {cita.cliente_data?.nombre} {cita.cliente_data?.apellido}
                               </p>
-                              <p className="text-sm text-gray-500 font-bold flex items-center gap-2 mt-1">
+                              <p className="text-sm text-gray-500 dark:text-gray-400 font-bold flex items-center gap-2 mt-1">
                                   <Calendar className="w-4 h-4" /> 
                                   {f.toLocaleDateString()} | {f.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                               </p>
-                              <span className="inline-block mt-2 text-[10px] bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-black uppercase tracking-widest">
+                              <span className="inline-block mt-2 text-[10px] bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-full font-black uppercase tracking-widest">
                                   AGENDADA
                               </span>
                           </div>
@@ -354,7 +410,7 @@ export default function CitaEditar() {
                           
                           <Button 
                             onClick={() => handleCompletarCita(cita.id)}
-                            className="bg-green-600 hover:bg-green-700 rounded-xl px-6 py-6 shadow-lg shadow-green-100"
+                            className="bg-green-600 hover:bg-green-700 rounded-xl px-6 py-6 shadow-lg shadow-green-100 dark:shadow-green-900/30"
                           >
                             <CheckCircle className="w-4 h-4 mr-2" /> Completar
                           </Button>
@@ -363,8 +419,8 @@ export default function CitaEditar() {
                   );
                 })
               ) : (
-                <div className="text-center py-20 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
-                    <p className="text-gray-400 font-bold italic">No hay citas pendientes que coincidan.</p>
+                <div className="text-center py-20 bg-gray-50 dark:bg-[#0f1a14] rounded-[3rem] border-2 border-dashed border-gray-200 dark:border-gray-700">
+                    <p className="text-gray-400 dark:text-gray-500 font-bold italic">No hay citas pendientes que coincidan.</p>
                 </div>
               )}
             </div>
@@ -372,13 +428,13 @@ export default function CitaEditar() {
         ) : (
           /* MODO EDICIÓN */
           <div className="animate-in slide-in-from-right duration-300">
-            <div className="flex items-center gap-4 mb-8 p-6 bg-blue-50 rounded-3xl border-2 border-blue-100">
+            <div className="flex items-center gap-4 mb-8 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-3xl border-2 border-blue-100 dark:border-blue-800">
                 <div className="bg-blue-600 p-3 rounded-2xl text-white">
                     <Edit3 className="w-6 h-6" />
                 </div>
                 <div>
-                    <h3 className="text-xl font-black text-blue-900">Modificando Cita</h3>
-                    <p className="text-blue-700 font-bold text-sm">Paciente: {editando.clienteNombre}</p>
+                    <h3 className="text-xl font-black text-blue-900 dark:text-blue-200">Modificando Cita</h3>
+                    <p className="text-blue-700 dark:text-blue-300 font-bold text-sm">Paciente: {editando.clienteNombre}</p>
                 </div>
             </div>
             
@@ -396,6 +452,7 @@ export default function CitaEditar() {
           </div>
         )}
       </div>
+      <RecetaModal />
     </div>
   );
 }

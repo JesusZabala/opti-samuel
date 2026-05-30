@@ -41,9 +41,9 @@ export default function ClienteConsultar() {
   });
 
   return (
-    <div className="p-10">
-      <div className="bg-white p-10 rounded-3xl shadow-xl min-h-[500px]">
-        <h2 className="text-3xl font-black text-[#1a4731] mb-6">
+    <div className="p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-3xl shadow-xl min-h-[500px]">
+        <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-6">
           Consultar Clientes
         </h2>
 
@@ -53,7 +53,7 @@ export default function ClienteConsultar() {
             placeholder="Buscar por cédula, nombre o apellido..." 
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            className="p-6 rounded-xl border-gray-200 focus:ring-green-500"
+            className="p-6 rounded-xl border-gray-200 dark:border-gray-700 focus:ring-green-500"
           />
           <Button onClick={cargarClientes} variant="outline" className="h-12">
             🔄 Refrescar
@@ -62,14 +62,14 @@ export default function ClienteConsultar() {
 
         {/* LISTADO / TABLA */}
         {loading ? (
-          <p className="text-center text-gray-500 animate-pulse">Cargando base de datos...</p>
+          <p className="text-center text-gray-500 dark:text-gray-400 animate-pulse">Cargando base de datos...</p>
         ) : error ? (
           <p className="text-center text-red-500 font-bold">{error}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b-2 border-gray-100 text-[#1a4731] font-bold">
+                <tr className="border-b-2 border-gray-100 dark:border-white/10 text-[#1a4731] dark:text-emerald-100 font-bold">
                   <th className="p-4">Identificación</th>
                   <th className="p-4">Nombre Completo</th>
                   <th className="p-4">Contacto</th>
@@ -80,15 +80,15 @@ export default function ClienteConsultar() {
               <tbody>
                 {clientesFiltrados.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="p-10 text-center text-gray-400">
+                    <td colSpan={5} className="p-10 text-center text-gray-400 dark:text-gray-300">
                       No se encontraron clientes que coincidan.
                     </td>
                   </tr>
                 ) : (
                   clientesFiltrados.map((c) => (
-                    <tr key={c.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                    <tr key={c.id} className="border-b border-gray-50 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-[#0f1a14] transition-colors">
                       <td className="p-4 font-mono text-sm">
-                        <span className="bg-gray-100 px-2 py-1 rounded text-gray-700">
+                        <span className="bg-gray-100 dark:bg-[#0f1a14] px-2 py-1 rounded text-gray-700 dark:text-gray-300">
                           {c.tipo_cliente}-{c.identificacion}
                         </span>
                       </td>
@@ -96,8 +96,8 @@ export default function ClienteConsultar() {
                         {c.nombre} {c.apellido}
                       </td>
                       <td className="p-4">
-                        <p className="text-sm text-gray-600">{c.email}</p>
-                        <p className="text-xs text-gray-400">{c.telefono}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">{c.email}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-300">{c.telefono}</p>
                       </td>
                       <td className="p-4 text-sm">
                         {c.genero === 'M' ? 'Masculino' : 'Femenino'}

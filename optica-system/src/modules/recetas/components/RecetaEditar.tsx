@@ -345,25 +345,25 @@ export default function RecetaEditar() {
     }
   }; 
 
-  if (loading && !editando) return <div className="p-20 text-center animate-pulse font-bold text-[#1a4731]">Consultando recetas editables...</div>;
+  if (loading && !editando) return <div className="p-20 text-center animate-pulse font-bold text-[#1a4731] dark:text-emerald-100">Consultando recetas editables...</div>;
 
   return (
-    <div className="p-10 max-w-7xl mx-auto">
-      <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl border border-gray-100">
+    <div className="p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10">
         
         {/* ENCABEZADO */}
         <div className="flex items-center justify-between mb-10">
           <div>
-            <h2 className="text-4xl font-black text-[#1a4731] flex items-center gap-3">
+            <h2 className="text-4xl font-black text-[#1a4731] dark:text-emerald-100 flex items-center gap-3">
               <ClipboardEdit className="w-10 h-10" />
               Gestión de Recetas
             </h2>
-            <p className="text-gray-400 font-bold uppercase text-xs tracking-widest mt-1 ml-1">
+            <p className="text-gray-400 dark:text-gray-300 font-bold uppercase text-xs tracking-widest mt-1 ml-1">
               Edición exclusiva para recetas sin pedido (Estado: SP)
             </p>
           </div>
           {editando && (
-            <Button variant="outline" onClick={() => { setEditando(null); setError(""); }} className="rounded-xl border-red-200 text-red-500 hover:bg-red-50">
+            <Button variant="outline" onClick={() => { setEditando(null); setError(""); }} className="rounded-xl border-red-200 dark:border-red-800/30 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
               <ArrowLeft className="w-4 h-4 mr-2" /> Cancelar
             </Button>
           )}
@@ -371,7 +371,7 @@ export default function RecetaEditar() {
 
         {/* CONTENEDOR DE ALERTAS GLOBALES */}
         {error && (
-          <div className="p-5 bg-red-50 border-l-4 border-red-500 text-red-700 flex items-start gap-3 rounded-r-xl mb-6 animate-in fade-in zoom-in">
+          <div className="p-5 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 text-red-700 dark:text-red-400 flex items-start gap-3 rounded-r-xl mb-6 animate-in fade-in zoom-in">
             <AlertCircle className="w-6 h-6 shrink-0 mt-0.5" />
             <div>
               <h5 className="font-black text-sm uppercase tracking-wide">Error de Validación</h5>
@@ -384,28 +384,28 @@ export default function RecetaEditar() {
           <div className="space-y-6">
             {/* BUSCADOR VALIDADO */}
             <div className="relative">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 w-6 h-6" />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300 w-6 h-6" />
               <Input
                 placeholder="Buscar paciente por nombre (solo letras)..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]/g, ""))}
-                className="pl-14 py-8 rounded-2xl border-gray-200 text-xl shadow-sm focus:ring-[#1a4731]"
+                className="pl-14 py-8 rounded-2xl border-gray-200 dark:border-gray-700 text-xl shadow-sm focus:ring-[#1a4731]"
               />
             </div>
 
             {/* LISTADO DE RESULTADOS */}
             <div className="grid grid-cols-1 gap-4 mt-8">
               {recetasFiltradas.map((r) => (
-                <div key={r.id} className="group p-6 border-2 border-gray-50 rounded-3xl flex justify-between items-center hover:border-[#1a4731]/30 transition-all bg-slate-50/50">
+                <div key={r.id} className="group p-6 border-2 border-gray-50 dark:border-white/10 rounded-3xl flex justify-between items-center hover:border-[#1a4731]/30 dark:hover:border-emerald-600/30 transition-all bg-slate-50/50 dark:bg-[#0f1a14]/50">
                   <div className="flex items-center gap-5">
-                    <div className="bg-white p-4 rounded-2xl shadow-sm group-hover:scale-110 transition-transform">
-                      <User className="w-6 h-6 text-[#1a4731]" />
+                    <div className="bg-white dark:bg-[#1a2a20] p-4 rounded-2xl shadow-sm group-hover:scale-110 transition-transform">
+                      <User className="w-6 h-6 text-[#1a4731] dark:text-emerald-100" />
                     </div>
                     <div>
-                      <p className="font-black text-xl text-gray-800 uppercase tracking-tight">
+                      <p className="font-black text-xl text-gray-800 dark:text-gray-200 uppercase tracking-tight">
                         {r.cliente_data?.nombre} {r.cliente_data?.apellido}
                       </p>
-                      <p className="text-sm text-gray-400 font-bold" suppressHydrationWarning>
+                      <p className="text-sm text-gray-400 dark:text-gray-300 font-bold" suppressHydrationWarning>
                         Receta #{r.id} • {r.fecha_creacion ? new Date(r.fecha_creacion).toLocaleDateString() : 'Fecha no disponible'}
                       </p>
                     </div>
@@ -425,37 +425,37 @@ export default function RecetaEditar() {
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {editando.rv_detalle_data.map((det: any, idx: number) => (
-                <div key={idx} className={`p-8 rounded-[2rem] border-2 bg-white relative overflow-hidden ${det.oculus.alias === 'OD' ? 'border-blue-100' : 'border-green-100'}`}>
+                <div key={idx} className={`p-8 rounded-[2rem] border-2 bg-white dark:bg-[#1a2a20] relative overflow-hidden ${det.oculus.alias === 'OD' ? 'border-blue-100 dark:border-blue-800/30' : 'border-green-100 dark:border-emerald-800/30'}`}>
                   <div className={`absolute top-0 right-0 px-6 py-1 font-black text-xs text-white rounded-bl-2xl ${det.oculus.alias === 'OD' ? 'bg-blue-500' : 'bg-green-600'}`}>
                     {det.oculus.alias}
                   </div>
-                  <h4 className="font-black text-[#1a4731] text-xl mb-6 flex items-center gap-2">
+                  <h4 className="font-black text-[#1a4731] dark:text-emerald-100 text-xl mb-6 flex items-center gap-2">
                     <Activity className="w-5 h-5 opacity-40" /> {det.oculus.descripcion}
                   </h4>
                   
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Esfera</label>
-                      <Input type="number" step="0.25" value={det.oculus.esfera} onChange={(e) => handleUpdateDetail(idx, "esfera", e.target.value)} className="rounded-xl border-gray-100 focus:border-[#1a4731] font-bold" />
+                      <label className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-300 ml-1">Esfera</label>
+                      <Input type="number" step="0.25" value={det.oculus.esfera} onChange={(e) => handleUpdateDetail(idx, "esfera", e.target.value)} className="rounded-xl border-gray-100 dark:border-gray-700 focus:border-[#1a4731] font-bold" />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Cilindro</label>
-                      <Input type="number" step="0.25" value={det.oculus.cilindro} onChange={(e) => handleUpdateDetail(idx, "cilindro", e.target.value)} className="rounded-xl border-gray-100 focus:border-[#1a4731] font-bold" />
+                      <label className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-300 ml-1">Cilindro</label>
+                      <Input type="number" step="0.25" value={det.oculus.cilindro} onChange={(e) => handleUpdateDetail(idx, "cilindro", e.target.value)} className="rounded-xl border-gray-100 dark:border-gray-700 focus:border-[#1a4731] font-bold" />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Eje (°)</label>
-                      <Input type="number" min="0" max="180" step="15" value={det.oculus.eje} onChange={(e) => handleUpdateDetail(idx, "eje", e.target.value)} className="rounded-xl border-gray-100 focus:border-[#1a4731] font-bold" />
+                      <label className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-300 ml-1">Eje (°)</label>
+                      <Input type="number" min="0" max="180" step="15" value={det.oculus.eje} onChange={(e) => handleUpdateDetail(idx, "eje", e.target.value)} className="rounded-xl border-gray-100 dark:border-gray-700 focus:border-[#1a4731] font-bold" />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 mt-6">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Adición</label>
-                      <Input type="number" step="0.25" min="0" max="3" value={det.adicion} onChange={(e) => handleUpdateDetail(idx, "adicion", e.target.value)} className="rounded-xl border-gray-100 focus:border-[#1a4731] font-bold" />
+                      <label className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-300 ml-1">Adición</label>
+                      <Input type="number" step="0.25" min="0" max="3" value={det.adicion} onChange={(e) => handleUpdateDetail(idx, "adicion", e.target.value)} className="rounded-xl border-gray-100 dark:border-gray-700 focus:border-[#1a4731] font-bold" />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-black uppercase text-gray-400 ml-1">D.P (mm)</label>
-                      <Input type="number" value={det.distancia_pupilar} onChange={(e) => handleUpdateDetail(idx, "distancia_pupilar", e.target.value)} className="rounded-xl border-gray-100 focus:border-[#1a4731] font-bold" />
+                      <label className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-300 ml-1">D.P (mm)</label>
+                      <Input type="number" value={det.distancia_pupilar} onChange={(e) => handleUpdateDetail(idx, "distancia_pupilar", e.target.value)} className="rounded-xl border-gray-100 dark:border-gray-700 focus:border-[#1a4731] font-bold" />
                     </div>
                   </div>
                 </div>
@@ -464,11 +464,11 @@ export default function RecetaEditar() {
 
             <div className="space-y-3">
               <div className="flex justify-between">
-                <label className="text-xs font-black uppercase text-gray-400 tracking-widest ml-1">Observaciones Finales</label>
-                <span className="text-[10px] font-bold text-gray-300">{editando.observaciones.length} / 255</span>
+                <label className="text-xs font-black uppercase text-gray-400 dark:text-gray-300 tracking-widest ml-1">Observaciones Finales</label>
+                <span className="text-[10px] font-bold text-gray-300 dark:text-gray-500">{editando.observaciones.length} / 255</span>
               </div>
               <textarea 
-                className="w-full p-6 border-2 border-gray-50 rounded-[2rem] bg-slate-50/30 focus:bg-white focus:ring-2 focus:ring-[#1a4731] outline-none transition-all font-medium" 
+                className="w-full p-6 border-2 border-gray-50 dark:border-white/10 rounded-[2rem] bg-slate-50/30 dark:bg-[#0f1a14]/30 focus:bg-white dark:focus:bg-[#1a2a20] focus:ring-2 focus:ring-[#1a4731] outline-none transition-all font-medium" 
                 rows={4}
                 maxLength={255}
                 value={editando.observaciones}

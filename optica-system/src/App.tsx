@@ -74,7 +74,7 @@ function AuthenticatedApp({
         onLogout={onLogout}
       />
 
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto bg-gradient-to-br from-[#f7faf8] via-[#eef8f1] to-[#f8fffb] dark:from-[#0a1a10] dark:via-[#0f1a14] dark:to-[#122418]">
         {!allowed ? (
           <Navigate to="/" replace />
         ) : (
@@ -175,7 +175,7 @@ function App() {
     return (
       <div className="animate-pulse">
         <WelcomeScreen role={userRole} onFinish={() => {}} />
-        <div className="fixed inset-0 bg-[#1a4731]/80 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-[#1a4731]/80 dark:bg-[#0a1a10]/90 z-50 flex items-center justify-center">
           <h2 className="text-white text-4xl font-black uppercase tracking-widest">
             Cerrando Sesión...
           </h2>
@@ -212,10 +212,11 @@ function App() {
         onGoHomeConsumed={handleGoHomeConsumed}
       />
       <Toaster
-        position="top-right"
+        position="top-center"
         richColors
         closeButton
         duration={5000}
+        className="dark:!bg-[#1a2a20] dark:!text-gray-100 dark:!border dark:!border-white/10"
       />
     </BrowserRouter>
   );

@@ -104,18 +104,18 @@ const handleUpdate = async () => {
   }
 };
 
-  if (loading) return <div className="p-10 text-center font-black text-[#1a4731] animate-pulse">Consultando nómina...</div>;
+  if (loading) return <div className="p-10 text-center font-black text-[#1a4731] dark:text-emerald-100 animate-pulse">Consultando nómina...</div>;
 
   return (
-    <div className="p-10">
-      <div className="bg-white p-10 rounded-3xl shadow-xl min-h-[450px] border border-gray-100">
-        <h2 className="text-3xl font-black text-[#1a4731] mb-8">
+    <div className="p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-3xl shadow-xl min-h-[450px] border border-gray-100 dark:border-white/10">
+        <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8">
           {editando ? `Editar Perfil: @${editando.username}` : "Gestión de Personal"}
         </h2>
 
         {/* NOTIFICACIONES */}
-        {success && <div className="mb-6 text-green-700 font-bold bg-green-50 p-4 rounded-xl border border-green-200 flex items-center gap-2 animate-bounce"><span>✓</span> {success}</div>}
-        {error && <div className="mb-6 text-red-600 bg-red-50 p-4 rounded-xl border border-red-200 text-sm font-medium">{typeof error === 'object' ? "Error: Verifica los campos ingresados." : error}</div>}
+        {success && <div className="mb-6 text-green-700 dark:text-emerald-300 font-bold bg-green-50 dark:bg-emerald-900/20 p-4 rounded-xl border border-green-200 dark:border-emerald-800/30 flex items-center gap-2 animate-bounce"><span>✓</span> {success}</div>}
+        {error && <div className="mb-6 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800/30 text-sm font-medium">{typeof error === 'object' ? "Error: Verifica los campos ingresados." : error}</div>}
 
         {/* VISTA 1: BUSCADOR Y LISTA */}
         {!editando ? (
@@ -125,19 +125,19 @@ const handleUpdate = async () => {
                   placeholder="Buscar empleado por nombre o usuario..." 
                   value={busqueda}
                   onChange={(e) => setBusqueda(e.target.value)}
-                  className="p-7 rounded-2xl border-gray-200 shadow-sm focus:ring-2 focus:ring-green-600 pl-12 text-lg"
+                  className="p-7 rounded-2xl border-gray-200 dark:border-gray-700 shadow-sm focus:ring-2 focus:ring-green-600 pl-12 text-lg"
                 />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl">🔍</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300 text-xl">🔍</span>
             </div>
 
             <div className="grid gap-4">
               {empleadosFiltrados.map((emp) => (
-                <div key={emp.id} className="p-5 border rounded-2xl flex justify-between items-center hover:bg-gray-50 transition-all border-gray-100 shadow-sm group">
+                <div key={emp.id} className="p-5 border rounded-2xl flex justify-between items-center hover:bg-gray-50 dark:hover:bg-[#0f1a14] transition-all border-gray-100 dark:border-white/10 shadow-sm group">
                   <div className="flex items-center gap-4">
                     <div className={`w-3 h-3 rounded-full ${emp.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
                     <div>
-                      <p className="font-bold text-[#1a4731] text-lg capitalize">{emp.first_name} {emp.last_name}</p>
-                      <p className="text-sm text-gray-400 font-mono">@{emp.username} • {emp.rol}</p>
+                      <p className="font-bold text-[#1a4731] dark:text-emerald-100 text-lg capitalize">{emp.first_name} {emp.last_name}</p>
+                      <p className="text-sm text-gray-400 dark:text-gray-300 font-mono">@{emp.username} • {emp.rol}</p>
                     </div>
                   </div>
                   <Button onClick={() => setEditando({ ...emp })} className="bg-[#1a4731] hover:bg-[#123122] rounded-xl px-8 h-12 transition-transform active:scale-95">
@@ -146,8 +146,8 @@ const handleUpdate = async () => {
                 </div>
               ))}
               {empleadosFiltrados.length === 0 && (
-                <div className="text-center py-20 border-2 border-dashed border-gray-100 rounded-3xl">
-                    <p className="text-gray-400">No se encontraron empleados con ese criterio.</p>
+                <div className="text-center py-20 border-2 border-dashed border-gray-100 dark:border-white/10 rounded-3xl">
+                    <p className="text-gray-400 dark:text-gray-300">No se encontraron empleados con ese criterio.</p>
                 </div>
               )}
             </div>
@@ -159,7 +159,7 @@ const handleUpdate = async () => {
               
               {/* NOMBRES */}
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-wider ml-1">Nombre</label>
+                <label className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-wider ml-1">Nombre</label>
                 <Input 
                   value={editando.first_name || ""} 
                   onChange={(e) => handleEditChange("first_name", e.target.value)}
@@ -169,7 +169,7 @@ const handleUpdate = async () => {
 
               {/* APELLIDOS */}
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-wider ml-1">Apellido</label>
+                <label className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-wider ml-1">Apellido</label>
                 <Input 
                   value={editando.last_name || ""} 
                   onChange={(e) => handleEditChange("last_name", e.target.value)}
@@ -179,7 +179,7 @@ const handleUpdate = async () => {
 
               {/* EMAIL */}
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-wider ml-1">Correo Electrónico</label>
+                <label className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-wider ml-1">Correo Electrónico</label>
                 <Input 
                   type="email"
                   value={editando.email || ""} 
@@ -190,11 +190,11 @@ const handleUpdate = async () => {
 
               {/* ROL / CARGO */}
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-wider ml-1">Cargo asignado</label>
+                <label className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-wider ml-1">Cargo asignado</label>
                 <select
                   value={editando.rol}
                   onChange={(e) => setEditando({...editando, rol: e.target.value as any})}
-                  className="w-full h-12 rounded-xl border border-gray-200 px-4 text-sm focus:ring-2 focus:ring-green-600 outline-none"
+                  className="w-full h-12 rounded-xl border border-gray-200 dark:border-gray-700 px-4 text-sm focus:ring-2 focus:ring-green-600 outline-none"
                 >
                   <option value="recepcionista">Recepcionista</option>
                   <option value="optometrista">Optometrista</option>
@@ -202,7 +202,7 @@ const handleUpdate = async () => {
               </div>
 
               {/* ESTADO DE CUENTA */}
-              <div className="md:col-span-2 flex items-center gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+              <div className="md:col-span-2 flex items-center gap-3 bg-gray-50 dark:bg-[#0f1a14] p-4 rounded-2xl border border-gray-100 dark:border-white/10">
                 <input 
                   type="checkbox"
                   id="active"
@@ -210,7 +210,7 @@ const handleUpdate = async () => {
                   onChange={(e) => setEditando({...editando, is_active: e.target.checked})}
                   className="w-5 h-5 accent-green-600"
                 />
-                <label htmlFor="active" className="text-sm font-bold text-gray-700 cursor-pointer">
+                <label htmlFor="active" className="text-sm font-bold text-gray-700 dark:text-gray-300 cursor-pointer">
                   Cuenta activa (Permitir acceso al sistema)
                 </label>
               </div>
@@ -221,7 +221,7 @@ const handleUpdate = async () => {
               <Button onClick={handleUpdate} className="bg-[#1a4731] hover:bg-[#123122] flex-1 h-14 text-lg font-bold shadow-lg shadow-green-900/10">
                 Guardar Cambios
               </Button>
-              <Button variant="outline" onClick={() => setEditando(null)} className="flex-1 h-14 text-lg font-bold border-gray-300 hover:bg-gray-50">
+              <Button variant="outline" onClick={() => setEditando(null)} className="flex-1 h-14 text-lg font-bold border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-[#0f1a14]">
                 Volver al listado
               </Button>
             </div>

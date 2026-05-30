@@ -2,7 +2,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import { Role } from '../types/roles';
-
 import {
   LayoutDashboard,
   Users,
@@ -19,7 +18,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 
-import { Badge } from '../components/ui/badge';
+
 
 interface SidebarProps {
   role: Role;
@@ -366,14 +365,34 @@ const AdministradorMenu = ({ openMenu, setOpenMenu }: { openMenu: string | null;
 const Sidebar = ({ role, onLogout }: SidebarProps) => {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
+  const roleColors: Record<string, { bg: string; icon: React.ReactNode; label: string }> = {
+    [Role.ADMINISTRADOR]: {
+      bg: 'from-emerald-500 to-emerald-600 shadow-emerald-500/30',
+      icon: <ShieldCheck size={16} />,
+      label: 'Administrador',
+    },
+    [Role.OPTOMETRISTA]: {
+      bg: 'from-blue-500 to-cyan-500 shadow-blue-500/30',
+      icon: <Eye size={16} />,
+      label: 'Optometrista',
+    },
+    [Role.RECEPCIONISTA]: {
+      bg: 'from-amber-500 to-orange-500 shadow-amber-500/30',
+      icon: <UserCircle size={16} />,
+      label: 'Recepcionista',
+    },
+  };
+
+  const rc = roleColors[role] || roleColors[Role.RECEPCIONISTA];
+
   return (
-    <aside className='w-80 bg-[#1a4731] h-screen flex flex-col sticky top-0 shadow-2xl z-20 border-r border-white/5'>
-      <div className='p-10 flex flex-col items-center border-b border-white/10 bg-[#163d2a]'>
+    <aside className='w-80 bg-[#1a4731] dark:bg-[#0f1a14] h-screen flex flex-col sticky top-0 shadow-2xl z-20 border-r border-white/5 dark:border-white/5'>
+      <div className='p-10 flex flex-col items-center border-b border-white/10 bg-[#163d2a] dark:bg-[#0a1a10]'>
         <img src={logo} alt='Opti Samuel' className='w-44 mb-6' />
-        <Badge className='flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold uppercase tracking-wider'>
-          {role === Role.ADMINISTRADOR ? <ShieldCheck size={14} /> : role === Role.OPTOMETRISTA ? <Eye size={14} /> : <UserCircle size={14} />}
-          {role}
-        </Badge>
+        <div className={`flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r ${rc.bg} text-white text-xs font-black uppercase tracking-wider shadow-lg`}>
+          {rc.icon}
+          {rc.label}
+        </div>
       </div>
 
       {role === Role.RECEPCIONISTA && <RecepcionMenu openMenu={openMenu} setOpenMenu={setOpenMenu} />}

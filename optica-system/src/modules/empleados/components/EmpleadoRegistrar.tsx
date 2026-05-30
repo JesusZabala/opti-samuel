@@ -80,9 +80,9 @@ export default function EmpleadoRegistrar() {
   };
 
   return (
-    <div className="p-10">
-      <div className="bg-white rounded-3xl shadow-xl p-10 max-w-4xl mx-auto border border-gray-100">
-        <h2 className="text-3xl font-black text-[#1a4731] mb-8 flex items-center gap-3">
+    <div className="p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] rounded-3xl shadow-xl p-10 max-w-4xl mx-auto border border-gray-100 dark:border-white/10">
+        <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8 flex items-center gap-3">
            Registrar Personal
         </h2>
 
@@ -128,7 +128,7 @@ export default function EmpleadoRegistrar() {
           <select
             value={empleado.rol}
             onChange={(e) => setEmpleado({ ...empleado, rol: e.target.value as Rol })}
-            className="p-3 rounded-xl border bg-white outline-none focus:ring-2 focus:ring-green-500 w-full text-gray-700 font-medium transition-all cursor-pointer"
+            className="p-3 rounded-xl border bg-white dark:bg-[#1a2a20] dark:border-gray-700 outline-none focus:ring-2 focus:ring-green-500 w-full text-gray-700 dark:text-gray-300 font-medium transition-all cursor-pointer"
           >
             <option value="recepcionista">Recepcionista</option>
             <option value="optometrista">Optometrista</option>
@@ -136,7 +136,7 @@ export default function EmpleadoRegistrar() {
 
           {/* Bloque de Errores Dinámicos */}
           {error && (
-            <div className="text-red-600 col-span-2 text-sm bg-red-50 p-4 rounded-xl border border-red-200 animate-in fade-in slide-in-from-top-1">
+            <div className="text-red-600 dark:text-red-400 col-span-2 text-sm bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800/30 animate-in fade-in slide-in-from-top-1">
                {typeof error === 'object' ? (
                  Object.entries(error).map(([key, val]: any) => (
                    <p key={key} className="flex gap-2">
@@ -151,7 +151,7 @@ export default function EmpleadoRegistrar() {
           )}
 
           {message && (
-            <div className="text-green-700 col-span-2 bg-green-50 p-4 rounded-xl border border-green-200 font-medium flex items-center gap-2">
+            <div className="text-green-700 dark:text-emerald-300 col-span-2 bg-green-50 dark:bg-emerald-900/20 p-4 rounded-xl border border-green-200 dark:border-emerald-800/30 font-medium flex items-center gap-2">
               <span className="text-xl">✓</span> {message}
             </div>
           )}

@@ -86,8 +86,8 @@ export default function ModuloReportes() {
   };
 
   return (
-    <div className="p-10 max-w-6xl mx-auto">
-      <div className="bg-white rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden">
+    <div className="p-10 max-w-6xl mx-auto dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] rounded-[3rem] shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
         
         {/* HEADER */}
         <div className="bg-[#1a4731] p-10 text-white flex justify-between items-center">
@@ -111,7 +111,7 @@ export default function ModuloReportes() {
           <section>
             <div className="flex items-center gap-2 mb-6">
                <span className="bg-[#1a4731] text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black">1</span>
-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Selecciona el módulo</label>
+               <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest">Selecciona el módulo</label>
             </div>
             
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -122,14 +122,14 @@ export default function ModuloReportes() {
                   disabled={cargando}
                   className={`p-6 rounded-[2.5rem] border-2 transition-all flex flex-col items-center gap-4 group relative ${
                     modulo === op.id 
-                    ? "border-[#1a4731] bg-green-50/20 shadow-xl scale-105" 
-                    : "border-gray-50 hover:border-gray-200 bg-white"
+                    ? "border-[#1a4731] dark:border-emerald-500 bg-green-50/20 dark:bg-emerald-900/10 shadow-xl scale-105" 
+                    : "border-gray-50 dark:border-white/10 hover:border-gray-200 dark:hover:border-gray-600 bg-white dark:bg-[#1a2a20]"
                   } ${cargando ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <div className={`p-5 rounded-2xl ${op.bg} ${op.color} group-hover:rotate-6 transition-transform`}>
                     <op.icon className="w-8 h-8" />
                   </div>
-                  <span className={`text-[11px] font-black uppercase tracking-tighter text-center ${modulo === op.id ? 'text-[#1a4731]' : 'text-gray-400'}`}>
+                  <span className={`text-[11px] font-black uppercase tracking-tighter text-center ${modulo === op.id ? 'text-[#1a4731] dark:text-emerald-100' : 'text-gray-400 dark:text-gray-300'}`}>
                     {op.nombre}
                   </span>
                   {modulo === op.id && (
@@ -143,35 +143,35 @@ export default function ModuloReportes() {
           </section>
 
           {/* PASO 2: RANGO DE FECHAS */}
-          <section className="bg-gray-50/50 p-10 rounded-[3rem] border border-gray-100">
+          <section className="bg-gray-50/50 dark:bg-[#0f1a14]/50 p-10 rounded-[3rem] border border-gray-100 dark:border-white/10">
             <div className="flex items-center gap-2 mb-8">
                <span className="bg-[#1a4731] text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black">2</span>
-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Define el periodo</label>
+               <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest">Define el periodo</label>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="space-y-3">
-                <p className="text-[10px] font-black text-gray-500 ml-4 uppercase">Desde</p>
+                <p className="text-[10px] font-black text-gray-500 dark:text-gray-400 ml-4 uppercase">Desde</p>
                 <div className="relative">
-                  <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
                   <input 
                     type="date" 
                     value={desde}
                     onChange={(e) => setDesde(e.target.value)}
-                    className="w-full pl-16 pr-8 h-16 rounded-[1.5rem] border-2 border-white bg-white shadow-sm focus:border-[#1a4731] outline-none font-bold text-gray-700 transition-all text-lg"
+                    className="w-full pl-16 pr-8 h-16 rounded-[1.5rem] border-2 border-white dark:border-white/10 bg-white dark:bg-[#1a2a20] dark:text-gray-100 shadow-sm focus:border-[#1a4731] dark:focus:border-emerald-500 outline-none font-bold text-gray-700 transition-all text-lg"
                   />
                 </div>
               </div>
 
               <div className="space-y-3">
-                <p className="text-[10px] font-black text-gray-500 ml-4 uppercase">Hasta</p>
+                <p className="text-[10px] font-black text-gray-500 dark:text-gray-400 ml-4 uppercase">Hasta</p>
                 <div className="relative">
-                  <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
                   <input 
                     type="date" 
                     value={hasta}
                     onChange={(e) => setHasta(e.target.value)}
-                    className="w-full pl-16 pr-8 h-16 rounded-[1.5rem] border-2 border-white bg-white shadow-sm focus:border-[#1a4731] outline-none font-bold text-gray-700 transition-all text-lg"
+                    className="w-full pl-16 pr-8 h-16 rounded-[1.5rem] border-2 border-white dark:border-white/10 bg-white dark:bg-[#1a2a20] dark:text-gray-100 shadow-sm focus:border-[#1a4731] dark:focus:border-emerald-500 outline-none font-bold text-gray-700 transition-all text-lg"
                   />
                 </div>
               </div>
@@ -203,12 +203,12 @@ export default function ModuloReportes() {
             </Button>
             
             {!desde || !hasta ? (
-              <div className="mt-8 flex items-center justify-center gap-3 text-amber-600 animate-pulse bg-amber-50 py-3 rounded-2xl border border-amber-100">
+              <div className="mt-8 flex items-center justify-center gap-3 text-amber-600 dark:text-amber-400 animate-pulse bg-amber-50 dark:bg-amber-950/30 py-3 rounded-2xl border border-amber-100 dark:border-amber-800/30">
                 <AlertCircle className="w-4 h-4" />
                 <span className="text-[10px] font-black uppercase tracking-widest">Selecciona las fechas para continuar</span>
               </div>
             ) : (
-              <p className="mt-8 text-center text-gray-400 text-[10px] font-black uppercase tracking-[0.2em]">
+              <p className="mt-8 text-center text-gray-400 dark:text-gray-500 text-[10px] font-black uppercase tracking-[0.2em]">
                 {cargando ? "Procesando datos del servidor..." : "El archivo se descargará automáticamente"}
               </p>
             )}

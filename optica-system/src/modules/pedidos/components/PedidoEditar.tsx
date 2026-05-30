@@ -215,22 +215,22 @@ export default function PedidoEntregar() {
     return nombreCompleto.includes(busqueda.toLowerCase());
   });
 
-  if (loading) return <div className="p-10 text-center font-bold text-[#1a4731]">Buscando pedidos listos...</div>;
+  if (loading) return <div className="p-10 text-center font-bold text-[#1a4731] dark:text-emerald-100">Buscando pedidos listos...</div>;
 
   return (
-    <div className="p-10">
-      <div className="bg-white p-10 rounded-3xl shadow-xl max-w-5xl border border-gray-100 mx-auto">
+    <div className="p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-3xl shadow-xl max-w-5xl border border-gray-100 dark:border-white/10 mx-auto">
         
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-black text-[#1a4731]">Entrega de Pedidos</h2>
-          <div className="bg-green-100 text-green-800 px-4 py-1 rounded-full text-sm font-bold">
+          <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100">Entrega de Pedidos</h2>
+          <div className="bg-green-100 dark:bg-emerald-900/20 text-green-800 dark:text-emerald-300 px-4 py-1 rounded-full text-sm font-bold">
             {pedidos.length} Pedidos por entregar
           </div>
         </div>
 
         {!seleccionado ? (
           <div className="space-y-6">
-            <p className="text-gray-500">
+            <p className="text-gray-500 dark:text-gray-400">
               A continuación se muestran los pedidos que ya están en óptica y listos para ser retirados.
             </p>
 
@@ -239,7 +239,7 @@ export default function PedidoEntregar() {
               placeholder="Buscar por cliente para entregar..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              className="rounded-xl border-gray-200 py-6 text-lg shadow-sm"
+              className="rounded-xl border-gray-200 dark:border-gray-700 py-6 text-lg shadow-sm"
             />
 
             {/* LISTA DE LISTOS */}
@@ -248,14 +248,14 @@ export default function PedidoEntregar() {
                 pedidosFiltrados.map((p) => (
                   <div 
                     key={p.id} 
-                    className="p-6 border rounded-2xl flex justify-between items-center bg-white hover:border-blue-300 transition-all shadow-sm border-l-8 border-l-green-500"
+                    className="p-6 border rounded-2xl flex justify-between items-center bg-white dark:bg-[#1a2a20] hover:border-blue-300 transition-all shadow-sm border-l-8 border-l-green-500"
                   >
                     <div>
-                      <p className="font-bold text-gray-800 text-xl">
+                      <p className="font-bold text-gray-800 dark:text-gray-200 text-xl">
                         {p.cliente_data?.nombre} {p.cliente_data?.apellido}
                       </p>
-                      <p className="text-sm text-gray-500">
-                        {getTipoLabel(p.tipo_pedido)} | <span className="text-blue-600 font-bold">Listo en Óptica</span>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {getTipoLabel(p.tipo_pedido)} | <span className="text-blue-600 dark:text-blue-400 font-bold">Listo en Óptica</span>
                       </p>
                     </div>
                     <Button 
@@ -267,7 +267,7 @@ export default function PedidoEntregar() {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-20 text-gray-400 italic bg-gray-50 rounded-3xl">
+                <div className="text-center py-20 text-gray-400 dark:text-gray-300 italic bg-gray-50 dark:bg-[#0f1a14] rounded-3xl">
                   {busqueda ? "No hay pedidos listos que coincidan con la búsqueda." : "No hay pedidos pendientes de entrega actualmente."}
                 </div>
               )}
@@ -276,14 +276,14 @@ export default function PedidoEntregar() {
         ) : (
           /* VISTA DE CONFIRMACIÓN DE ENTREGA */
           <div className="space-y-8 animate-in fade-in duration-300">
-            <div className="border-b pb-6">
-               <h3 className="text-2xl font-bold text-[#1a4731]">Confirmar Entrega de Pedido #{seleccionado.id}</h3>
-               <p className="text-gray-500">Verifica los datos antes de entregar al cliente.</p>
+            <div className="border-b dark:border-white/10 pb-6">
+               <h3 className="text-2xl font-bold text-[#1a4731] dark:text-emerald-100">Confirmar Entrega de Pedido #{seleccionado.id}</h3>
+               <p className="text-gray-500 dark:text-gray-400">Verifica los datos antes de entregar al cliente.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-gray-50 p-6 rounded-3xl space-y-4">
-                <h4 className="font-bold text-gray-400 uppercase text-xs tracking-widest">Información del Cliente</h4>
+              <div className="bg-gray-50 dark:bg-[#0f1a14] p-6 rounded-3xl space-y-4">
+                <h4 className="font-bold text-gray-400 dark:text-gray-300 uppercase text-xs tracking-widest">Información del Cliente</h4>
                 <p className="text-xl font-bold">{seleccionado.cliente_data?.nombre} {seleccionado.cliente_data?.apellido}</p>
                 <p><strong>Identificación:</strong> {seleccionado.cliente_data?.identificacion}</p>
                 <p><strong>Descripción:</strong> {seleccionado.descripcion}</p>
@@ -308,7 +308,7 @@ export default function PedidoEntregar() {
             </div>
 
             {/* PEQUEÑO RESUMEN TÉCNICO PARA ESTAR SEGUROS */}
-            <div className="p-4 border border-dashed rounded-2xl text-sm text-gray-500">
+            <div className="p-4 border border-dashed rounded-2xl text-sm text-gray-500 dark:text-gray-400">
               <strong>Nota:</strong> Al presionar "Marcar como entregado", el pedido saldrá de la lista de pendientes y se notificará el cierre del proceso en el sistema.
             </div>
           </div>

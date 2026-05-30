@@ -77,9 +77,9 @@ export default function ClienteRegistrar() {
   };
 
   return (
-    <div className="p-10">
-      <div className="bg-white rounded-3xl shadow-xl p-10 max-w-4xl mx-auto border border-gray-100">
-        <h2 className="text-3xl font-black text-[#1a4731] mb-8 flex items-center gap-3">
+    <div className="p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] rounded-3xl shadow-xl p-10 max-w-4xl mx-auto border border-gray-100 dark:border-white/10">
+        <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8 flex items-center gap-3">
            Registrar Cliente
         </h2>
 
@@ -103,7 +103,7 @@ export default function ClienteRegistrar() {
             <select
               value={cliente.tipo_cliente}
               onChange={(e) => handleChange("tipo_cliente", e.target.value)}
-              className="p-3 rounded-xl border bg-white outline-none focus:ring-2 focus:ring-green-500 font-bold text-gray-700"
+              className="p-3 rounded-xl border bg-white dark:bg-[#1a2a20] dark:border-gray-700 outline-none focus:ring-2 focus:ring-green-500 font-bold text-gray-700 dark:text-gray-300"
             >
               <option value="V">V</option>
               <option value="E">E</option>
@@ -138,7 +138,7 @@ export default function ClienteRegistrar() {
           <select
             value={cliente.genero}
             onChange={(e) => handleChange("genero", e.target.value)}
-            className="p-3 rounded-xl border bg-white outline-none focus:ring-2 focus:ring-green-500 w-full text-gray-600"
+            className="p-3 rounded-xl border bg-white dark:bg-[#1a2a20] dark:border-gray-700 outline-none focus:ring-2 focus:ring-green-500 w-full text-gray-600 dark:text-gray-300"
           >
             <option value="M">Masculino</option>
             <option value="F">Femenino</option>
@@ -146,7 +146,7 @@ export default function ClienteRegistrar() {
 
           {/* Errores detallados */}
           {error && (
-            <div className="text-red-600 col-span-2 text-sm bg-red-50 p-4 rounded-xl border border-red-200 animate-pulse">
+            <div className="text-red-600 dark:text-red-400 col-span-2 text-sm bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800/30 animate-pulse">
                {typeof error === 'object' ? (
                  Object.entries(error).map(([key, val]: any) => (
                    <p key={key} className="flex gap-2">
@@ -161,7 +161,7 @@ export default function ClienteRegistrar() {
           )}
 
           {message && (
-            <div className="text-green-700 col-span-2 bg-green-50 p-4 rounded-xl border border-green-200 font-medium flex items-center gap-2">
+            <div className="text-green-700 dark:text-emerald-300 col-span-2 bg-green-50 dark:bg-emerald-900/20 p-4 rounded-xl border border-green-200 dark:border-emerald-800/30 font-medium flex items-center gap-2">
               <span className="text-xl">✓</span> {message}
             </div>
           )}

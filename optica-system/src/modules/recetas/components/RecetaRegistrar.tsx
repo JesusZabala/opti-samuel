@@ -416,8 +416,8 @@ export default function RecetaRegistrar() {
   };
 
   return (
-    <div className="p-10 max-w-7xl mx-auto">
-      <div className="bg-white rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden">
+    <div className="p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] rounded-[2rem] shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
         
         {/* ENCABEZADO TIPO DASHBOARD */}
         <div className="bg-[#1a4731] p-8 text-white">
@@ -430,18 +430,18 @@ export default function RecetaRegistrar() {
 
         <div className="p-10">
           {/* SELECTOR DE MODO PROFESIONAL */}
-          <div className="flex bg-gray-100 p-1.5 rounded-2xl w-fit mb-10">
+          <div className="flex bg-gray-100 dark:bg-[#0f1a14] p-1.5 rounded-2xl w-fit mb-10">
             <button
               type="button"
               onClick={() => { setModo("CITA"); setSeleccionadoId(null); setBusqueda(""); }}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${modo === "CITA" ? "bg-white text-[#1a4731] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${modo === "CITA" ? "bg-white dark:bg-[#1a2a20] text-[#1a4731] dark:text-emerald-100 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
             >
               <Calendar className="w-5 h-5" /> Por Cita
             </button>
             <button
               type="button"
               onClick={() => { setModo("CLIENTE"); setSeleccionadoId(null); setBusqueda(""); }}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${modo === "CLIENTE" ? "bg-white text-[#1a4731] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${modo === "CLIENTE" ? "bg-white dark:bg-[#1a2a20] text-[#1a4731] dark:text-emerald-100 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
             >
               <User className="w-5 h-5" /> Cliente Externo
             </button>
@@ -452,7 +452,7 @@ export default function RecetaRegistrar() {
             {/* SECCIÓN DE BÚSQUEDA Y SELECCIÓN */}
             <section className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
               <div className="lg:col-span-1 space-y-4">
-                <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
+                <h3 className="font-bold text-gray-800 dark:text-gray-200 text-lg flex items-center gap-2">
                   <Search className="w-5 h-5 text-green-700" />
                   {modo === "CITA" ? "Filtrar Citas Pendientes" : "Buscar Cliente"}
                 </h3>
@@ -460,21 +460,21 @@ export default function RecetaRegistrar() {
                   placeholder={modo === "CITA" ? "Nombre del paciente..." : "Cédula o Nombre..."}
                   value={busqueda}
                   onChange={(e) => setBusqueda(e.target.value)}
-                  className="rounded-xl border-gray-200 py-6 shadow-sm focus:ring-2 focus:ring-green-600"
+                  className="rounded-xl border-gray-200 dark:border-gray-700 py-6 shadow-sm focus:ring-2 focus:ring-green-600"
                 />
-                <p className="text-xs text-gray-400 italic">
+                <p className="text-xs text-gray-400 dark:text-gray-300 italic">
                   {modo === "CITA" ? "Mostrando solo citas con estado 'Completada'." : "Escribe al menos 3 caracteres para buscar."}
                 </p>
               </div>
 
               <div className="lg:col-span-2">
-                <div className="border rounded-2xl overflow-hidden shadow-inner bg-gray-50 max-h-[250px] overflow-y-auto">
+                <div className="border rounded-2xl overflow-hidden shadow-inner bg-gray-50 dark:bg-[#0f1a14] max-h-[250px] overflow-y-auto">
                   <table className="w-full text-left border-collapse">
-                    <thead className="bg-white sticky top-0 shadow-sm">
+                    <thead className="bg-white dark:bg-[#1a2a20] sticky top-0 shadow-sm">
                       <tr>
-                        <th className="p-4 text-xs font-black uppercase text-gray-400">Nombre Completo</th>
-                        <th className="p-4 text-xs font-black uppercase text-gray-400">{modo === "CITA" ? "Fecha Cita" : "Identificación"}</th>
-                        <th className="p-4 text-xs font-black uppercase text-gray-400 text-center">Acción</th>
+                        <th className="p-4 text-xs font-black uppercase text-gray-400 dark:text-gray-300">Nombre Completo</th>
+                        <th className="p-4 text-xs font-black uppercase text-gray-400 dark:text-gray-300">{modo === "CITA" ? "Fecha Cita" : "Identificación"}</th>
+                        <th className="p-4 text-xs font-black uppercase text-gray-400 dark:text-gray-300 text-center">Acción</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -486,11 +486,11 @@ export default function RecetaRegistrar() {
                            return nombre.toLowerCase().includes(busqueda.toLowerCase());
                         })
                         .map((item) => (
-                        <tr key={item.id} className={`border-b transition-colors ${seleccionadoId === item.id ? 'bg-green-50' : 'bg-white hover:bg-gray-50'}`}>
-                          <td className="p-4 font-bold text-gray-700">
+                        <tr key={item.id} className={`border-b transition-colors ${seleccionadoId === item.id ? 'bg-green-50 dark:bg-emerald-900/20' : 'bg-white dark:bg-[#1a2a20] hover:bg-gray-50 dark:hover:bg-[#0f1a14]'}`}>
+                          <td className="p-4 font-bold text-gray-700 dark:text-gray-300">
                             {modo === "CITA" ? `${item.cliente_data?.nombre} ${item.cliente_data?.apellido}` : `${item.nombre} ${item.apellido}`}
                           </td>
-                          <td className="p-4 text-sm text-gray-500">
+                          <td className="p-4 text-sm text-gray-500 dark:text-gray-400">
                             {modo === "CITA" ? new Date(item.fecha).toLocaleDateString() : item.identificacion}
                           </td>
                           <td className="p-4 text-center">
@@ -508,35 +508,35 @@ export default function RecetaRegistrar() {
                     </tbody>
                   </table>
                   {((modo === "CITA" ? citasCompletadas : clientesFiltrados).length === 0) && (
-                    <div className="p-10 text-center text-gray-400 text-sm">No se encontraron resultados.</div>
+                    <div className="p-10 text-center text-gray-400 dark:text-gray-300 text-sm">No se encontraron resultados.</div>
                   )}
                 </div>
               </div>
             </section>
 
-            <hr className="border-gray-100" />
+            <hr className="border-gray-100 dark:border-white/10" />
 
             {/* SECCIÓN DE DATOS ÓPTICOS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               {/* OJO DERECHO */}
               <div className="relative group">
                 <div className="absolute -top-4 left-6 bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-black shadow-lg">OJO DERECHO (OD)</div>
-                <div className="p-8 pt-10 border-2 border-blue-100 rounded-[2rem] bg-blue-50/5 space-y-6">
+                <div className="p-8 pt-10 border-2 border-blue-100 dark:border-blue-800/30 rounded-[2rem] bg-blue-50/5 dark:bg-blue-900/10 space-y-6">
                   <div className="grid grid-cols-3 gap-6">
-                    <div className="space-y-1"> <label className="text-[10px] font-black text-blue-900/50 uppercase ml-1">Esfera</label> <Input type="number" step="0.25" className="rounded-xl border-blue-100 focus:border-blue-500" onChange={(e) => handleInputChange("od", "esfera", e.target.value)} /> </div>
-                    <div className="space-y-1"> <label className="text-[10px] font-black text-blue-900/50 uppercase ml-1">Cilindro</label> <Input type="number" step="0.25" className="rounded-xl border-blue-100 focus:border-blue-500" onChange={(e) => handleInputChange("od", "cilindro", e.target.value)} /> </div>
+                    <div className="space-y-1"> <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Esfera</label> <Input type="number" step="0.25" className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("od", "esfera", e.target.value)} /> </div>
+                    <div className="space-y-1"> <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Cilindro</label> <Input type="number" step="0.25" className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("od", "cilindro", e.target.value)} /> </div>
                     {/* Input Eje con step 15, min 1 y max 180 */}
                     <div className="space-y-1"> 
-                      <label className="text-[10px] font-black text-blue-900/50 uppercase ml-1">Eje (°)</label> 
-                      <Input type="number" min="0" max="180" step="15" className="rounded-xl border-blue-100 focus:border-blue-500" onChange={(e) => handleInputChange("od", "eje", e.target.value)} /> 
+                      <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Eje (°)</label> 
+                      <Input type="number" min="0" max="180" step="15" className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("od", "eje", e.target.value)} /> 
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-6 pt-2">
                     <div className="space-y-1"> 
-                      <label className="text-[10px] font-black text-blue-900/50 uppercase ml-1">Adición</label> 
-                      <Input type="number" step="0.25" min="0" max="3" defaultValue="1" className="rounded-xl border-blue-100 focus:border-blue-500" onChange={(e) => handleInputChange("od", "adicion", e.target.value)} /> 
+                      <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Adición</label> 
+                      <Input type="number" step="0.25" min="0" max="3" defaultValue="1" className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("od", "adicion", e.target.value)} /> 
                     </div>
-                    <div className="space-y-1"> <label className="text-[10px] font-black text-blue-900/50 uppercase ml-1">Distancia Pupilar</label> <Input type="number" className="rounded-xl border-blue-100 focus:border-blue-500" onChange={(e) => handleInputChange("od", "dp", e.target.value)} /> </div>
+                    <div className="space-y-1"> <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Distancia Pupilar</label> <Input type="number" className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("od", "dp", e.target.value)} /> </div>
                   </div>
                 </div>
               </div>
@@ -544,22 +544,22 @@ export default function RecetaRegistrar() {
               {/* OJO IZQUIERDO */}
               <div className="relative group">
                 <div className="absolute -top-4 left-6 bg-green-600 text-white px-4 py-1 rounded-full text-xs font-black shadow-lg">OJO IZQUIERDO (OI)</div>
-                <div className="p-8 pt-10 border-2 border-green-100 rounded-[2rem] bg-green-50/5 space-y-6">
+                <div className="p-8 pt-10 border-2 border-green-100 dark:border-emerald-800/30 rounded-[2rem] bg-green-50/5 dark:bg-emerald-900/10 space-y-6">
                   <div className="grid grid-cols-3 gap-6">
-                    <div className="space-y-1"> <label className="text-[10px] font-black text-green-900/50 uppercase ml-1">Esfera</label> <Input type="number" step="0.25" className="rounded-xl border-green-100 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "esfera", e.target.value)} /> </div>
-                    <div className="space-y-1"> <label className="text-[10px] font-black text-green-900/50 uppercase ml-1">Cilindro</label> <Input type="number" step="0.25" className="rounded-xl border-green-100 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "cilindro", e.target.value)} /> </div>
+                    <div className="space-y-1"> <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Esfera</label> <Input type="number" step="0.25" className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "esfera", e.target.value)} /> </div>
+                    <div className="space-y-1"> <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Cilindro</label> <Input type="number" step="0.25" className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "cilindro", e.target.value)} /> </div>
                     {/* Input Eje con step 15, min 1 y max 180 */}
                     <div className="space-y-1"> 
-                      <label className="text-[10px] font-black text-green-900/50 uppercase ml-1">Eje (°)</label> 
-                      <Input type="number" min="0" max="180" step="15" className="rounded-xl border-green-100 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "eje", e.target.value)} /> 
+                      <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Eje (°)</label> 
+                      <Input type="number" min="0" max="180" step="15" className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "eje", e.target.value)} /> 
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-6 pt-2">
                     <div className="space-y-1"> 
-                      <label className="text-[10px] font-black text-green-900/50 uppercase ml-1">Adición</label> 
-                      <Input type="number" step="0.25" min="0" max="3" defaultValue="1" className="rounded-xl border-green-100 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "adicion", e.target.value)} /> 
+                      <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Adición</label> 
+                      <Input type="number" step="0.25" min="0" max="3" defaultValue="1" className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "adicion", e.target.value)} /> 
                     </div>
-                    <div className="space-y-1"> <label className="text-[10px] font-black text-green-900/50 uppercase ml-1">Distancia Pupilar</label> <Input type="number" className="rounded-xl border-green-100 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "dp", e.target.value)} /> </div>
+                    <div className="space-y-1"> <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Distancia Pupilar</label> <Input type="number" className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "dp", e.target.value)} /> </div>
                   </div>
                 </div>
               </div>
@@ -567,13 +567,13 @@ export default function RecetaRegistrar() {
 
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <label className="text-sm font-black text-gray-400 uppercase tracking-widest ml-1">Observaciones Finales</label>
-                <span className={`text-xs font-bold ${formData.observaciones.length > 240 ? 'text-red-500' : 'text-gray-400'}`}>
+                <label className="text-sm font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest ml-1">Observaciones Finales</label>
+                <span className={`text-xs font-bold ${formData.observaciones.length > 240 ? 'text-red-500' : 'text-gray-400 dark:text-gray-300'}`}>
                   {formData.observaciones.length} / 255
                 </span>
               </div>
               <textarea 
-                className="w-full p-6 border rounded-[1.5rem] bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-600 outline-none transition-all border-gray-100 shadow-inner" 
+                className="w-full p-6 border rounded-[1.5rem] bg-gray-50 dark:bg-[#0f1a14] focus:bg-white dark:focus:bg-[#1a2a20] focus:ring-2 focus:ring-green-600 outline-none transition-all border-gray-100 dark:border-gray-700 shadow-inner" 
                 rows={3}
                 maxLength={255}
                 placeholder="Ej: El paciente presenta fatiga ocular. Se recomienda filtro azul..."

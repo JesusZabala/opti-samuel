@@ -184,11 +184,11 @@ export default function CitaForm({
         
         {/* OPTOMETRISTA */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-gray-400 ml-1 uppercase">Optometrista Asignado</label>
+          <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 ml-1 uppercase">Optometrista Asignado</label>
           <select
             value={data.optometrista}
             onChange={(e) => setData({ ...data, optometrista: e.target.value })}
-            className="w-full p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 outline-none bg-white"
+            className="w-full p-4 rounded-xl border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-green-500 outline-none bg-white dark:bg-[#1a2a20]"
           >
             <option value="">Seleccionar especialista...</option>
             {optometristas && optometristas.map((o: any, i: number) => (
@@ -201,23 +201,23 @@ export default function CitaForm({
 
         {/* FECHA */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-gray-400 ml-1 uppercase">Fecha de Cita</label>
+          <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 ml-1 uppercase">Fecha de Cita</label>
           <Input
             type="date"
             value={data.fecha}
             min={new Date().toISOString().split("T")[0]} // No permite fechas pasadas
             onChange={(e) => setData({ ...data, fecha: e.target.value })}
-            className="h-14 rounded-xl border-gray-200"
+            className="h-14 rounded-xl border-gray-200 dark:border-gray-700"
           />
         </div>
 
         {/* HORA */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-gray-400 ml-1 uppercase">Horario Disponible</label>
+          <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 ml-1 uppercase">Horario Disponible</label>
           <select
             value={data.hora}
             onChange={(e) => setData({ ...data, hora: e.target.value })}
-            className="w-full p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 outline-none bg-white"
+            className="w-full p-4 rounded-xl border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-green-500 outline-none bg-white dark:bg-[#1a2a20]"
           >
             <option value="">Seleccionar hora...</option>
             {horasPermitidas.map((h, i) => {
@@ -240,14 +240,14 @@ export default function CitaForm({
         {/* MOTIVO */}
         <div className="space-y-2 md:col-span-2">
           <div className="flex justify-between items-center">
-            <label className="text-[10px] font-black text-gray-400 ml-1 uppercase">Motivo de Consulta</label>
-            <span className="text-[10px] text-gray-300 font-bold">{data.motivo.length}/250</span>
+            <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 ml-1 uppercase">Motivo de Consulta</label>
+            <span className="text-[10px] text-gray-300 dark:text-gray-500 font-bold">{data.motivo.length}/250</span>
           </div>
           <textarea
             value={data.motivo}
             onChange={(e) => handleMotivoChange(e.target.value)}
             rows={3}
-            className="w-full p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 outline-none resize-none"
+            className="w-full p-4 rounded-xl border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-green-500 outline-none resize-none"
             placeholder="Ej: Control anual, cambio de montura, irritación..."
           />
         </div>
@@ -255,7 +255,7 @@ export default function CitaForm({
 
       {/* ERROR */}
       {error && (
-        <div className="p-4 bg-red-50 border border-red-100 rounded-xl">
+        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/30 rounded-xl">
           <p className="text-red-500 text-xs font-bold uppercase tracking-tighter">
             Atención: {error}
           </p>
@@ -274,7 +274,7 @@ export default function CitaForm({
           <Button
             variant="outline"
             onClick={onCancel}
-            className="h-14 flex-1 text-lg font-bold rounded-2xl border-gray-300"
+            className="h-14 flex-1 text-lg font-bold rounded-2xl border-gray-300 dark:border-gray-600"
           >
             Cancelar
           </Button>

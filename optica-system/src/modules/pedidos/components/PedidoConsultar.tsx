@@ -272,9 +272,9 @@ export default function PedidoConsultar() {
   }
 
   return (
-    <div className="p-10">
-      <div className="bg-white p-10 rounded-3xl shadow-xl max-w-5xl border border-gray-100 mx-auto">
-        <h2 className="text-3xl font-black text-[#1a4731] mb-8">Consultar Pedidos</h2>
+    <div className="p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-3xl shadow-xl max-w-5xl border border-gray-100 dark:border-white/10 mx-auto">
+        <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8">Consultar Pedidos</h2>
 
         {!detalle ? (
           <div className="space-y-6">
@@ -288,7 +288,7 @@ export default function PedidoConsultar() {
                   className={
                     filtroEstado === estado 
                       ? "bg-green-700 text-white rounded-xl" 
-                      : "bg-gray-200 text-black hover:bg-gray-300 rounded-xl"
+                      : "bg-gray-200 dark:bg-[#0f1a14] text-black dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-[#1a2a20] rounded-xl"
                   }
                 >
                   {estado === "TODOS" ? "Todos" : 
@@ -302,7 +302,7 @@ export default function PedidoConsultar() {
               placeholder="Buscar por cliente..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              className="rounded-xl border-gray-200 py-6 text-lg focus:ring-green-700 focus:border-green-700"
+              className="rounded-xl border-gray-200 dark:border-gray-700 py-6 text-lg focus:ring-green-700 focus:border-green-700"
             />
 
             {/* LISTADO DE PEDIDOS */}
@@ -311,19 +311,19 @@ export default function PedidoConsultar() {
                 pedidosFiltrados.map((p) => (
                   <div 
                     key={p.id} 
-                    className="p-6 border rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center bg-white hover:border-green-300 transition-all shadow-sm gap-4"
+                    className="p-6 border rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center bg-white dark:bg-[#1a2a20] hover:border-green-300 transition-all shadow-sm gap-4"
                   >
                     <div className="flex-1">
-                      <p className="font-black text-gray-800 text-xl uppercase tracking-tight">
+                      <p className="font-black text-gray-800 dark:text-gray-200 text-xl uppercase tracking-tight">
                         {p.cliente_data ? `${p.cliente_data.nombre} ${p.cliente_data.apellido}` : "Sin Cliente"}
                       </p>
                       <div className="flex gap-2 mt-2">
-                        <span className="text-[10px] font-black uppercase bg-gray-100 px-3 py-1 rounded-full text-gray-600 border border-gray-200">
+                        <span className="text-[10px] font-black uppercase bg-gray-100 dark:bg-[#0f1a14] px-3 py-1 rounded-full text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
                           {getTipoLabel(p.tipo_pedido)}
                         </span>
                         <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-full border ${
-                          p.estado_pedido === 'L' ? 'bg-green-50 text-green-700 border-green-200' : 
-                          p.estado_pedido === 'E' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-purple-50 text-purple-700 border-purple-200'
+                          p.estado_pedido === 'L' ? 'bg-green-50 dark:bg-emerald-900/20 text-green-700 dark:text-emerald-300 border-green-200 dark:border-emerald-800/30' : 
+                          p.estado_pedido === 'E' ? 'bg-blue-50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/30' : 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800/30'
                         }`}>
                           {getEstadoLabel(p.estado_pedido)}
                         </span>
@@ -339,7 +339,7 @@ export default function PedidoConsultar() {
                           );
                         }} 
                         variant="outline"
-                        className="border-2 border-red-100 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl px-4 flex gap-2 font-bold"
+                        className="border-2 border-red-100 dark:border-red-800/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 hover:text-red-700 rounded-xl px-4 flex gap-2 font-bold"
                       >
                         <FileText className="w-4 h-4" />
                         PDF
@@ -355,7 +355,7 @@ export default function PedidoConsultar() {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-20 text-gray-400 font-bold uppercase text-xs tracking-widest">
+                <div className="text-center py-20 text-gray-400 dark:text-gray-300 font-bold uppercase text-xs tracking-widest">
                    No hay pedidos registrados
                 </div>
               )}
@@ -364,10 +364,10 @@ export default function PedidoConsultar() {
         ) : (
           /* VISTA DETALLE COMPLETO */
           <div className="space-y-8 animate-in slide-in-from-bottom-2 duration-300">
-            <div className="flex justify-between items-center border-b pb-6">
+            <div className="flex justify-between items-center border-b dark:border-white/10 pb-6">
                <div>
-                  <h3 className="text-3xl font-black text-[#1a4731]">Pedido #{detalle.id}</h3>
-                  <p className="text-gray-500 font-bold uppercase text-xs mt-1">Estado actual: {getEstadoLabel(detalle.estado_pedido)}</p>
+                  <h3 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100">Pedido #{detalle.id}</h3>
+                  <p className="text-gray-500 dark:text-gray-400 font-bold uppercase text-xs mt-1">Estado actual: {getEstadoLabel(detalle.estado_pedido)}</p>
                </div>
                <div className="flex gap-3">
                  <Button 
@@ -377,11 +377,11 @@ export default function PedidoConsultar() {
                       );
                     }} 
                     variant="outline"
-                    className="rounded-xl border-2 border-red-500 text-red-500 font-bold hover:bg-red-50"
+                    className="rounded-xl border-2 border-red-500 text-red-500 font-bold hover:bg-red-50 dark:hover:bg-red-900/10"
                   >
                     Descargar Factura
                   </Button>
-                  <Button variant="outline" onClick={() => setDetalle(null)} className="rounded-xl border-2 hover:bg-gray-50 font-bold">
+                  <Button variant="outline" onClick={() => setDetalle(null)} className="rounded-xl border-2 hover:bg-gray-50 dark:hover:bg-[#0f1a14] font-bold">
                     ← Volver
                   </Button>
                </div>
@@ -390,36 +390,36 @@ export default function PedidoConsultar() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-4">Información General</h4>
-                  <div className="bg-gray-50 p-6 rounded-3xl space-y-3 border border-gray-100">
+                  <h4 className="text-gray-400 dark:text-gray-300 text-[10px] font-black uppercase tracking-widest mb-4">Información General</h4>
+                  <div className="bg-gray-50 dark:bg-[#0f1a14] p-6 rounded-3xl space-y-3 border border-gray-100 dark:border-white/10">
                     <p className="text-lg"><strong>Cliente:</strong> {detalle.cliente_data?.nombre} {detalle.cliente_data?.apellido}</p>
                     <p><strong>Tipo:</strong> {getTipoLabel(detalle.tipo_pedido)}</p>
                     {/* Fechas validadas de forma segura */}
                     <p><strong>Emisión:</strong> {detalle.fecha_emision ? new Date(detalle.fecha_emision).toLocaleDateString() : "N/A"}</p>
                     <p><strong>Entrega:</strong> {detalle.fecha_entrega ? new Date(detalle.fecha_entrega).toLocaleDateString() : "N/A"}</p>
-                    <div className="pt-4 mt-4 border-t border-gray-200">
-                      <p className="text-sm font-bold text-gray-400 uppercase mb-1">Descripción</p>
-                      <p className="text-gray-700 font-medium">{detalle.descripcion || "Sin descripción"}</p>
-                      <p className="text-sm font-bold text-gray-400 uppercase mt-4 mb-1">Observaciones</p>
-                      <p className="text-red-600 font-bold">{detalle.observacion || "Ninguna"}</p>
+                    <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+                      <p className="text-sm font-bold text-gray-400 dark:text-gray-300 uppercase mb-1">Descripción</p>
+                      <p className="text-gray-700 dark:text-gray-300 font-medium">{detalle.descripcion || "Sin descripción"}</p>
+                      <p className="text-sm font-bold text-gray-400 dark:text-gray-300 uppercase mt-4 mb-1">Observaciones</p>
+                      <p className="text-red-600 dark:text-red-400 font-bold">{detalle.observacion || "Ninguna"}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-6">
-                <h4 className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-4">Especificaciones Técnicas</h4>
+                <h4 className="text-gray-400 dark:text-gray-300 text-[10px] font-black uppercase tracking-widest mb-4">Especificaciones Técnicas</h4>
                 {/* Cortocircuito seguro para mapear info_detalle */}
                 {(detalle.info_detalle || []).map((item: any, idx: number) => (
                   <div key={idx} className="space-y-4">
                     
                     {/* MONTURA DETALLE CON ENCADENAMIENTO OPCIONAL (?.) */}
                     {item.montura_data && (
-                      <div className="p-6 border-2 border-green-50 rounded-3xl bg-green-50/20">
-                        <p className="text-green-800 font-black text-[10px] uppercase mb-2 tracking-widest">Montura Seleccionada</p>
-                        <p className="text-xl font-black text-green-900">{item.montura_data.marca_data?.descripcion || "Sin Marca"}</p>
-                        <p className="text-green-700 font-bold uppercase text-sm">{item.montura_data.modelo_data?.descripcion || "Sin Modelo"}</p>
-                        <p className="text-xs text-green-600/70 mt-2 font-bold uppercase">
+                      <div className="p-6 border-2 border-green-50 dark:border-emerald-800/30 rounded-3xl bg-green-50/20 dark:bg-emerald-900/10">
+                        <p className="text-green-800 dark:text-emerald-300 font-black text-[10px] uppercase mb-2 tracking-widest">Montura Seleccionada</p>
+                        <p className="text-xl font-black text-green-900 dark:text-emerald-200">{item.montura_data.marca_data?.descripcion || "Sin Marca"}</p>
+                        <p className="text-green-700 dark:text-emerald-300 font-bold uppercase text-sm">{item.montura_data.modelo_data?.descripcion || "Sin Modelo"}</p>
+                        <p className="text-xs text-green-600/70 dark:text-emerald-400/70 mt-2 font-bold uppercase">
                           Color: {item.montura_data.color_data?.descripcion || "N/A"} | Material: {item.montura_data.material || "N/A"}
                         </p>
                       </div>
@@ -427,10 +427,10 @@ export default function PedidoConsultar() {
                     
                     {/* LENTE DETALLE CON ENCADENAMIENTO OPCIONAL (?.) */}
                     {item.lente_data && (
-                      <div className="p-6 border-2 border-blue-50 rounded-3xl bg-blue-50/20">
-                        <p className="text-blue-800 font-black text-[10px] uppercase mb-2 tracking-widest">Tratamiento de Lentes</p>
-                        <p className="text-xl font-black text-blue-900">{item.lente_data.tipo_lente_data?.descripcion || "Sin Tipo"}</p>
-                        <p className="text-blue-700 font-bold uppercase text-sm">{item.lente_data.tipo_treatment_data?.descripcion || item.lente_data.tipo_tratamiento_data?.descripcion || "Sin Filtro"}</p>
+                      <div className="p-6 border-2 border-blue-50 dark:border-blue-800/30 rounded-3xl bg-blue-50/20 dark:bg-blue-900/10">
+                        <p className="text-blue-800 dark:text-blue-300 font-black text-[10px] uppercase mb-2 tracking-widest">Tratamiento de Lentes</p>
+                        <p className="text-xl font-black text-blue-900 dark:text-blue-200">{item.lente_data.tipo_lente_data?.descripcion || "Sin Tipo"}</p>
+                        <p className="text-blue-700 dark:text-blue-300 font-bold uppercase text-sm">{item.lente_data.tipo_treatment_data?.descripcion || item.lente_data.tipo_tratamiento_data?.descripcion || "Sin Filtro"}</p>
                       </div>
                     )}
                     
