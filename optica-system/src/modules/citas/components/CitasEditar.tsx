@@ -247,28 +247,25 @@ export default function CitaEditar() {
 
   /* -------- ACCIÓN: COMPLETAR CITA (Verifica receta primero) -------- */
   const handleCompletarCita = async (id: number) => {
-    if (!window.confirm("¿Marcar esta cita como completada?")) return;
+    if (!window.confirm("¿Deseas marcar esta cita como completada y abrir el módulo de recetas?")) return;
+    
     try {
-      const recetas = await obtenerTodasLasRecetas();
-      const tieneReceta = recetas.some((r) => r.cita === id);
-
-      if (!tieneReceta) {
-        setPendingCitaId(id);
-        setShowRecetaModal(true);
-        return;
-      }
-
+      setError("");
+      // 1. Cambiamos el estado en el backend a Completada ('COM')
       await actualizarEstadoCita(id, { estado_cita: "COM" });
-      setSuccess("Cita marcada como completada.");
+      
+      // 2. Notificación al usuario
       addNotification({
         titulo: "Cita completada",
-        mensaje: "La cita fue marcada como completada correctamente.",
+        mensaje: "La cita fue completada con éxito. Redirigiendo...",
         fecha: "Ahora",
       });
-      await cargarDatos();
-      setTimeout(() => setSuccess(""), 3000);
+
+      // 3. Redirección limpia al módulo de registro de recetas
+      navigate("/recetas/registrar");
+      
     } catch (err) {
-      setError("No se pudo actualizar el estado.");
+      setError("No se pudo actualizar el estado de la cita en el servidor.");
     }
   };
 

@@ -4,7 +4,7 @@ from cliente.serializers import ClienteSerializer
 from .utils import enviar_confirmacion_cita
 from authapp.serializers import get_user_role
 from django.contrib.auth.models import User
-
+from django.utils import timezone
 class OptometristaCitaSerializer(serializers.ModelSerializer):
     rol = serializers.SerializerMethodField()
 
@@ -35,6 +35,27 @@ class CitaSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Esta hora ya está ocupada por otra cita activa.")
         
         return value
+
+    def validate(self, attrs):
+        fecha_cita = attrs.get('fecha') # Asumiendo que 'fecha' es un DateTimeField completo
+        
+        if fecha_cita:
+            ahora = timezone.now() # Hora actual del servidor (con zona horaria)
+
+            # 1. Verificar si la cita es para una fecha en el pasado (días anteriores)
+            if fecha_cita.date() < ahora.date():
+                raise serializers.ValidationError(
+                    {"fecha": "No puedes agendar una cita en días anteriores."}
+                )
+
+            # 2. Si es hoy mismo, verificar que la hora no haya pasado
+            if fecha_cita.date() == ahora.date():
+                if fecha_cita < ahora:
+                    raise serializers.ValidationError(
+                        {"fecha": "No puedes agendar una cita en un horario que ya pasó hoy."}
+                    )
+
+        return attrs
 
     def create(self, validated_data):
         cita = Cita.objects.create(**validated_data)

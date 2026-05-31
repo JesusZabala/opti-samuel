@@ -23,7 +23,12 @@ from optisamuel.logo_data import LOGO_BASE64
 class CitaViewSet(viewsets.ModelViewSet):
     permission_classes = [HasRole]
     required_roles = ["superadmin", "recepcionista", "optometrista"]
-    queryset = Cita.objects.all()
+    def get_queryset(self):
+        queryset = Cita.objects.all()
+        fecha_filtro = self.request.query_params.get('fecha', None)
+        if fecha_filtro is not None:
+            queryset = queryset.filter(fecha__date=fecha_filtro)
+        return queryset
     serializer_class = CitaSerializer
 
     def create(self,request):
@@ -118,8 +123,8 @@ class CitaViewSet(viewsets.ModelViewSet):
         if not desde or not hasta:
             return Response({"error": "Faltan las fechas desde/hasta"}, status=400)
 
-        citas = self.get_queryset().filter(fecha_creacion__date__range=[desde, hasta]).select_related('cliente').order_by('fecha_creacion')
-
+        # citas = self.get_queryset().filter(fecha_creacion__date__range=[desde, hasta]).select_related('cliente').order_by('fecha_creacion')
+        citas = Cita.objects.all().filter(fecha_creacion__date__range=[desde, hasta]).select_related('cliente').order_by('fecha_creacion')
         context = {
             'citas': citas,
             'desde': desde,
