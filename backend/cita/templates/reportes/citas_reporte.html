@@ -2,43 +2,141 @@
 <html>
 <head>
     <style>
-        @page { size: letter; margin: 2cm; }
-        body { font-family: Helvetica, sans-serif; color: #333; }
-        .header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid green; padding-bottom: 10px; }
-        .title { font-size: 22px; font-weight: bold; color: green; margin: 0; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { background-color: green; color: white; font-size: 10px; text-transform: uppercase; padding: 8px; }
-        td { border-bottom: 1px solid #eee; padding: 8px; font-size: 10px; text-align: center; }
+        @page { size: letter; margin: 0; }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10px;
+            color: #333;
+            background: #ffffff;
+        }
+
+        .header-bar {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: 65px;
+            background-color: #1a4731;
+            z-index: 100;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+        }
+        .header-bar .logo { width: 55px; height: auto; margin-right: 14px; vertical-align: middle; }
+        .header-bar .company { display: inline-block; vertical-align: middle; }
+        .header-bar .company h1 { margin: 0; color: #ffffff; font-size: 16px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
+        .header-bar .company p { margin: 1px 0 0; color: #a3d4b0; font-size: 8px; font-weight: 600; letter-spacing: 1px; }
+
+        .watermark {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.05; z-index: -1;
+        }
+        .watermark img { width: 350px; height: auto; }
+
+        .content { padding: 85px 25px 75px; }
+
+        .report-title { text-align: center; font-size: 16px; font-weight: 800; color: #1a4731; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 4px; }
+        .report-range { text-align: center; font-size: 9px; color: #888; margin: 0 0 16px; }
+
+        .metrics { text-align: center; margin-bottom: 16px; }
+        .metric-box {
+            display: inline-block;
+            background-color: #f0f7f3;
+            border: 1px solid #d0e0d6;
+            border-radius: 8px;
+            padding: 10px 22px;
+            margin: 0 6px;
+            min-width: 110px;
+        }
+        .metric-box .number { font-size: 18px; font-weight: 800; color: #1a4731; }
+        .metric-box .label { font-size: 7px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+        th { background-color: #1a4731; color: white; padding: 6px 8px; text-align: left; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { border-bottom: 1px solid #e0e8e3; padding: 6px 8px; font-size: 9px; text-align: center; }
+        tr:nth-child(even) td { background-color: #f8fbf9; }
+
+        .footer-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            height: 55px;
+            background-color: #1a4731;
+            z-index: 100;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .footer-bar .col { color: #ffffff; font-size: 7px; line-height: 1.5; }
+        .footer-bar .col strong { color: #a3d4b0; font-size: 7.5px; }
+        .footer-bar .motto { text-align: center; font-style: italic; font-size: 7px; color: #a3d4b0; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="title">OPTI-SAMUEL</div>
-        <div class="subtitle" style="font-size: 10px; color: #666; font-weight: bold;">Reporte de Citas Médicas</div>
-        <p style="font-size: 9px;">Rango: {{ desde }} al {{ hasta }}</p>
+    <div class="header-bar">
+        <img class="logo" src="{{ logo_base64 }}" alt="Opti-Samuel" />
+        <div class="company">
+            <h1>Opti-Samuel</h1>
+            <p>Sistema de Gesti&oacute;n &Oacute;ptica</p>
+        </div>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Fecha de Registro</th> <th>Paciente</th>
-                <th>Fecha Cita (Atención)</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cita in citas %}
-            <tr>
-                <td style="color: #666;">{{ cita.fecha_creacion|date:"d/m/Y" }}</td>
-                
-                <td style="font-weight: bold;">{{ cita.cliente.nombre }} {{ cita.cliente.apellido }}</td>
-                
-                <td>{{ cita.fecha|date:"d/m/Y" }} - {{ cita.fecha|date:"H:i" }}</td>
-                
-                <td>{{ cita.get_estado_cita_display }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="watermark">
+        <img src="{{ logo_base64 }}" alt="" />
+    </div>
+
+    <div class="content">
+        <p class="report-title">Reporte de Citas M&eacute;dicas</p>
+        <p class="report-range">Rango: {{ desde }} al {{ hasta }}</p>
+
+        <div class="metrics">
+            <div class="metric-box">
+                <div class="number">{{ citas|length }}</div>
+                <div class="label">Total Citas</div>
+            </div>
+            <div class="metric-box">
+                <div class="number">{{ desde }}</div>
+                <div class="label">Desde</div>
+            </div>
+            <div class="metric-box">
+                <div class="number">{{ hasta }}</div>
+                <div class="label">Hasta</div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha Registro</th>
+                    <th>Paciente</th>
+                    <th>Fecha Cita</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cita in citas %}
+                <tr>
+                    <td style="color:#666;">{{ cita.fecha_creacion|date:"d/m/Y" }}</td>
+                    <td style="font-weight:bold;">{{ cita.cliente.nombre }} {{ cita.cliente.apellido }}</td>
+                    <td>{{ cita.fecha|date:"d/m/Y" }} - {{ cita.fecha|date:"H:i" }}</td>
+                    <td>{{ cita.get_estado_cita_display }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" style="text-align:center;padding:20px;color:#999;">No hay citas en este rango.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer-bar">
+        <div class="col">
+            <strong>Opti-Samuel C.A.</strong><br>
+            Rif: J-12345678-9
+        </div>
+        <div class="col motto">
+            &ldquo;Tu visi&oacute;n es nuestra prioridad&rdquo;
+        </div>
+        <div class="col" style="text-align:right;">
+            <strong>Contacto:</strong> 0412-1234567<br>
+            optisamuel6@gmail.com
+        </div>
+    </div>
 </body>
 </html>

@@ -11,6 +11,7 @@ from rest_framework.decorators import action
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from datetime import datetime
+from optisamuel.logo_data import LOGO_BASE64
 
 
 # Create your views here.
@@ -56,7 +57,8 @@ class RecetaVisualViewSet(viewsets.ModelViewSet):
             'desde': desde,
             'hasta': hasta,
             'tipo_reporte': 'Registro de Recetas',
-            'fecha_actual': datetime.now()
+            'fecha_actual': datetime.now(),
+            'logo_base64': LOGO_BASE64
         }
 
         try:

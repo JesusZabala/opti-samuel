@@ -16,6 +16,7 @@ from rest_framework.decorators import action
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from xhtml2pdf import pisa
+from optisamuel.logo_data import LOGO_BASE64
 
 # Create your views here.
 
@@ -124,7 +125,8 @@ class CitaViewSet(viewsets.ModelViewSet):
             'desde': desde,
             'hasta': hasta,
             'tipo_reporte': 'Registros de Citas',
-            'fecha_actual': datetime.now()
+            'fecha_actual': datetime.now(),
+            'logo_base64': LOGO_BASE64
         }
 
         html_string = render_to_string('reportes/citas_reporte.html', context)

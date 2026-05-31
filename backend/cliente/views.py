@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 
 from xhtml2pdf import pisa
+from optisamuel.logo_data import LOGO_BASE64
 # Create your views here.
 class ClienteViewSet(viewsets.ModelViewSet):
     permission_classes = [HasRole]
@@ -47,7 +48,8 @@ class ClienteViewSet(viewsets.ModelViewSet):
             'clientes': clientes,
             'desde': desde,
             'hasta': hasta,
-            'fecha_actual': datetime.now()
+            'fecha_actual': datetime.now(),
+            'logo_base64': LOGO_BASE64
         }
 
         html_string = render_to_string('reportes/clientes_reporte.html', context)

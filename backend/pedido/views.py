@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from rest_framework.decorators import action
 from xhtml2pdf import pisa
 from django.template.loader import render_to_string
+from optisamuel.logo_data import LOGO_BASE64
 from datetime import datetime
 from .models import Pedido
 from .serializers import PedidoSerializer
@@ -153,7 +154,8 @@ class PedidoViewSet(viewsets.ModelViewSet):
             'desde': desde,
             'hasta': hasta,
             'tipo_reporte': "Reporte General de Pedidos",
-            'fecha_actual': datetime.now()
+            'fecha_actual': datetime.now(),
+            'logo_base64': LOGO_BASE64
         }
 
         try:
