@@ -136,3 +136,5 @@ def enviar_agradecimiento_entrega(cliente_email, nombre_cliente):
     html_message += _base_html_footer()
 
     _send_email_with_logo(subject, text_message, html_message, cliente_email)
+
+
