@@ -101,7 +101,6 @@ def enviar_confirmacion_listo(cliente_email, nombre_cliente, pedido_id):
     <div style="background-color: #f0fdf4; border: 2px solid #22c55e; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0;">
         <p style="margin: 0; font-size: 16px; font-weight: 700; color: #1a4731;">&iexcl;Ya puedes pasar a retirarlos!</p>
     </div>
-    <p style="font-size: 13px; color: #555; line-height: 1.5;">Recuerda traer tu comprobante (f&iacute;sico o digital) al momento del retiro.</p>
     <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;">
     <p style="font-size: 12px; color: #777; line-height: 1.5;">Gracias por confiar en <strong>Opti-Samuel</strong>.<br>Si tienes alguna duda, puedes contactarnos respondiendo a este correo.</p>
 """
@@ -110,28 +109,23 @@ def enviar_confirmacion_listo(cliente_email, nombre_cliente, pedido_id):
     _send_email_with_logo(subject, text_message, html_message, cliente_email)
 
 
-def enviar_agradecimiento_entrega(cliente_email, nombre_cliente):
-    subject = 'Gracias por tu compra! - Optica Opti-Samuel'
+def enviar_confirmacion_retiro(cliente_email, nombre_cliente, pedido_id):
+    subject = 'Pedido Retirado - Optica Opti-Samuel'
 
-    text_message = f"Hola {nombre_cliente}, gracias por confiar en nosotros! Tu pedido ha sido entregado con exito."
+    text_message = f"Hola {nombre_cliente}, te confirmamos que tu pedido #{pedido_id} ha sido retirado exitosamente."
 
     html_message = _base_html_header()
     html_message += _greeting(nombre_cliente)
     html_message += f"""
     <p style="font-size: 14px; color: #1a4731; font-weight: 600; background-color: #e8f5ee; padding: 12px 18px; border-radius: 10px; margin: 16px 0;">
-        Queremos agradecerte formalmente por haber elegido a <strong>Opti-Samuel</strong> para cuidar de tu salud visual. Confirmamos que tus lentes han sido entregados con &eacute;xito el d&iacute;a de hoy.
+        Te confirmamos que tu <strong>Pedido #{pedido_id}</strong> ha sido retirado exitosamente de nuestra &oacute;ptica.
     </p>
     <div style="background-color: #f0fdf4; border: 2px solid #22c55e; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0;">
-        <p style="margin: 0; font-size: 14px; font-weight: 700; color: #1a4731;">&iexcl;Disfruta tu nueva visi&oacute;n!</p>
-        <p style="margin: 6px 0 0; font-size: 12px; color: #555;">Tu satisfacci&oacute;n es nuestro motor diario.</p>
+        <p style="margin: 0; font-size: 16px; font-weight: 700; color: #1a4731;">&iexcl;Gracias por tu visita!</p>
     </div>
-    <p style="font-size: 13px; color: #555; line-height: 1.5;">Recuerda que tus cristales y monturas cuentan con nuestro respaldo y garant&iacute;a de adaptaci&oacute;n. Te recomendamos limpiar tus lentes siempre con su pa&ntilde;o de microfibra para mantenerlos impecables.</p>
+    <p style="font-size: 13px; color: #555; line-height: 1.5;">Esperamos que disfrutes de tus nuevos lentes. Recuerda que cuentas con nuestra garant&iacute;a de adaptaci&oacute;n y servicio post-venta.</p>
     <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;">
-    <p style="font-size: 12px; color: #777; line-height: 1.5;">
-        <strong>Opti-Samuel C.A.</strong><br>
-        &ldquo;Tu visi&oacute;n es nuestra prioridad&rdquo;<br>
-        Si tienes comentarios sobre tu experiencia, nos encantar&iacute;a escucharte respondiendo a este correo.
-    </p>
+    <p style="font-size: 12px; color: #777; line-height: 1.5;">Gracias por confiar en <strong>Opti-Samuel</strong>.<br>Si tienes alguna duda o comentario, no dudes en contactarnos respondiendo a este correo.</p>
 """
     html_message += _base_html_footer()
 
