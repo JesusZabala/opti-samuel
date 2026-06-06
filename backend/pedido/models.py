@@ -43,14 +43,6 @@ class MarcaMontura(models.Model):
     def __str__(self):
         return self.descripcion
 
-# class MedidasMontura(models.Model):
-#     sku_monturas = models.CharField(max_length=255, blank=False, null=False)
-#     largo = models.DecimalField(max_digits=10, decimal_places=2, blank=False, null=False)
-#     ancho = models.DecimalField(max_digits=10, decimal_places=2, blank=False, null=False)
-
-#     def __str__(self):
-#         return f"{self.sku_monturas} ({self.ancho} x {self.largo})"
-
 class Montura(models.Model):
     modelo = models.ForeignKey(ModeloMontura, on_delete=models.CASCADE, related_name='modelo')
     marca = models.ForeignKey(MarcaMontura, on_delete=models.CASCADE, related_name='marca')
@@ -60,7 +52,6 @@ class Montura(models.Model):
     fecha_registro = models.DateField(auto_now_add=True)
 
 class Pedido(models.Model):
-
     class EstadoPedido(models.TextChoices):
         ENVIADO = 'E', 'Enviado'
         LISTO = 'L','Listo'
@@ -70,7 +61,6 @@ class Pedido(models.Model):
         SOLO_LENTE = 'SL', 'Solo Lente'
         SOLO_MONTURA = 'SM', 'Solo Montura'
         COMPLETO = 'C', 'Completo'
-
 
     tipo_pedido = models.CharField(max_length=2, choices=TipoPedido.choices, blank=False, null=False)
     estado_pedido = models.CharField(max_length=2, choices=EstadoPedido.choices, default=EstadoPedido.ENVIADO, blank=False, null=False)

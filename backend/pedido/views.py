@@ -20,7 +20,7 @@ from .models import *
 
 class PedidoViewSet(viewsets.ModelViewSet):
     permission_classes = [HasRole]
-    required_roles = ["superadmin", "optometrista"]
+    required_roles = ["superadmin", "optometrista","recepcionista"]
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
     

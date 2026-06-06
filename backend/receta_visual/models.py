@@ -2,9 +2,7 @@ from django.db import models
 from cita.models import Cita
 from cliente.models import Cliente
 
-
 class RecetaVisual(models.Model):
-
     class EstadoReceta(models.TextChoices):
         SIN_PEDIDO = 'SP', 'Sin Pedido'
         CON_PEDIDO = 'CP', 'Con Pedido' 
@@ -15,16 +13,12 @@ class RecetaVisual(models.Model):
     observaciones = models.CharField(max_length=255, blank=False, null=False)
     fecha_sistema = models.DateField(auto_now=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-
-
 class Oculus(models.Model):
     descripcion = models.CharField(max_length=255, blank=False, null=False)
     alias = models.CharField(max_length=255, blank=False, null=False)
     esfera = models.DecimalField(max_digits=10, decimal_places=2, blank=False, null=False)
     cilindro = models.DecimalField(max_digits=10, decimal_places=2, blank=False, null=False)
     eje = models.IntegerField(null=False, blank=False)
-
-
 class RecetaVisualDetalle(models.Model):
     receta_visual = models.ForeignKey(RecetaVisual, on_delete=models.CASCADE, related_name="rv_detalle")
     oculus = models.ForeignKey(Oculus, on_delete=models.CASCADE, related_name='oculus')

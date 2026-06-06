@@ -37,18 +37,16 @@ class CitaSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
-        fecha_cita = attrs.get('fecha') # Asumiendo que 'fecha' es un DateTimeField completo
+        fecha_cita = attrs.get('fecha') 
         
         if fecha_cita:
-            ahora = timezone.now() # Hora actual del servidor (con zona horaria)
+            ahora = timezone.now() 
 
-            # 1. Verificar si la cita es para una fecha en el pasado (días anteriores)
             if fecha_cita.date() < ahora.date():
                 raise serializers.ValidationError(
                     {"fecha": "No puedes agendar una cita en días anteriores."}
                 )
 
-            # 2. Si es hoy mismo, verificar que la hora no haya pasado
             if fecha_cita.date() == ahora.date():
                 if fecha_cita < ahora:
                     raise serializers.ValidationError(
