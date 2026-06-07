@@ -42,10 +42,12 @@ const RecepcionMenu = ({ openMenu, setOpenMenu }: { openMenu: string | null; set
   const path = location.pathname;
   const openClientes = path.startsWith('/clientes');
   const openCitas = path.startsWith('/citas');
+  const openPedidos = path.startsWith('/pedidos');
 
   useEffect(() => {
     if (openClientes) setOpenMenu('clientes');
     else if (openCitas) setOpenMenu('citas');
+    else if (openPedidos) setOpenMenu('pedidos-rec');
   }, [location.pathname]);
 
   return (
@@ -100,6 +102,29 @@ const RecepcionMenu = ({ openMenu, setOpenMenu }: { openMenu: string | null; set
           </NavLink>
           <NavLink to='/citas/editar' className={({ isActive }) => itemClass(isActive)}>
             Editar Cita
+          </NavLink>
+        </div>
+
+        <button
+          onClick={() => setOpenMenu(openMenu === 'pedidos-rec' ? null : 'pedidos-rec')}
+          className={`flex items-center justify-between w-full p-4 rounded-xl font-bold transition-all ${
+            openPedidos ? 'bg-white/20 text-white border-l-4 border-green-400' : 'text-white/70 hover:bg-white/10'
+          }`}>
+          <div className='flex items-center gap-3'>
+            <Package size={18} /> Pedidos
+          </div>
+          <ChevronDown size={16} className={`transition-transform duration-300 ${openMenu === 'pedidos-rec' ? 'rotate-180' : ''}`} />
+        </button>
+
+        <div className={`ml-10 flex flex-col gap-2 overflow-hidden transition-all duration-300 ${openMenu === 'pedidos-rec' ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+          <NavLink to='/pedidos/registrar' className={({ isActive }) => itemClass(isActive)}>
+            Registrar Pedido
+          </NavLink>
+          <NavLink to='/pedidos/consultar' className={({ isActive }) => itemClass(isActive)}>
+            Consultar Pedido
+          </NavLink>
+          <NavLink to='/pedidos/editar' className={({ isActive }) => itemClass(isActive)}>
+            Editar Pedido
           </NavLink>
         </div>
       </div>

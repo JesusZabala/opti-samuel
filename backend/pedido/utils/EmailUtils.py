@@ -1,11 +1,31 @@
+import base64
+import re
+
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
-import os
+from email.mime.image import MIMEImage
+
 from optisamuel.logo_data import LOGO_BASE64
 
 
-# Ruta absoluta al logo desde el frontend
-LOGO_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), 'optica-system', 'src', 'assets', 'Logo.png')
+# NOTA SOBRE EL LOGO EN CORREOS:
+# - El logo se embebe como parte MIME "related" con Content-ID <logo@optisamuel>,
+#   referenciado en el HTML como <img src="cid:logo@optisamuel">.
+# - NO es un adjunto descargable: el cliente de correo NO lo lista como archivo
+#   adjunto, NO se puede descargar desde la UI. Solo se renderiza inline.
+# - Esto es lo que usa Gmail/Outlook/Mailchimp para sus logos; el data URI
+#   base64 y las rutas remotas se rompen o son bloqueadas por muchos clientes.
+# - Si querés cambiar el logo, regenerá `optisamuel/logo_data.py` (string base64).
+
+LOGO_CID = "logo@optisamuel"
+
+
+def _decode_logo_png():
+    """Devuelve los bytes binarios del PNG a partir de LOGO_BASE64."""
+    # LOGO_BASE64 viene como 'data:image/png;base64,<...>'. Nos quedamos con la parte base64.
+    match = re.match(r"data:image/\w+;base64,(.*)", LOGO_BASE64, flags=re.DOTALL)
+    payload = match.group(1) if match else LOGO_BASE64
+    return base64.b64decode(payload)
 
 
 def _send_email_with_logo(subject, text_message, html_message, to_email):
@@ -16,6 +36,14 @@ def _send_email_with_logo(subject, text_message, html_message, to_email):
         to=[to_email],
     )
     msg.attach_alternative(html_message, "text/html")
+
+    # Adjunto MIME inline (NO descargable) con Content-ID para que el <img src="cid:...">
+    # del HTML lo encuentre. Content-Disposition: inline garantiza que el cliente
+    # de correo no lo muestre en la lista de adjuntos.
+    logo_mime = MIMEImage(_decode_logo_png(), _subtype="png")
+    logo_mime.add_header("Content-ID", f"<{LOGO_CID}>")
+    logo_mime.add_header("Content-Disposition", "inline", filename="logo.png")
+    msg.attach(logo_mime)
 
     try:
         msg.send(fail_silently=False)
@@ -28,7 +56,7 @@ def _base_html_header():
     return f"""
 <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); font-family: 'Segoe UI', Arial, sans-serif;">
     <div style="background: linear-gradient(135deg, #1a4731 0%, #256046 100%); padding: 30px 40px; text-align: center;">
-        <img src="{LOGO_BASE64}" alt="Opti-Samuel" style="width: 100px; height: auto; margin-bottom: 10px;" />
+        <img src="cid:{LOGO_CID}" alt="Opti-Samuel" style="width: 100px; height: auto; margin-bottom: 10px;" />
         <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">Opti-Samuel</h1>
         <p style="color: #a3d4b0; margin: 4px 0 0; font-size: 12px; font-weight: 600; letter-spacing: 1px;">Tu visi&oacute;n es nuestra prioridad</p>
     </div>
@@ -130,5 +158,3 @@ def enviar_confirmacion_retiro(cliente_email, nombre_cliente, pedido_id):
     html_message += _base_html_footer()
 
     _send_email_with_logo(subject, text_message, html_message, cliente_email)
-
-

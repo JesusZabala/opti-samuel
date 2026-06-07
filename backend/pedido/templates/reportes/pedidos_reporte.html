@@ -3,278 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        @page {
-            size: letter landscape;
-            margin: 0;
-        }
+        @page { size: letter; margin: 0; }
         body {
             font-family: Helvetica, Arial, sans-serif;
-            font-size: 9px;
+            font-size: 8px;
             color: #333;
-            background: #ffffff;
-        }
-
-        /* ───── HEADER BAR (top) ───── */
-        .header-bar {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            height: 65px;
-            background-color: #1a4731;
-            z-index: 100;
-            padding: 0 30px;
-            display: flex;
-            align-items: center;
-        }
-        .header-bar .logo {
-            width: 55px;
-            height: auto;
-            margin-right: 14px;
-            vertical-align: middle;
-        }
-        .header-bar .company {
-            display: inline-block;
-            vertical-align: middle;
-        }
-        .header-bar .company h1 {
             margin: 0;
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            padding: 0;
         }
-        .header-bar .company p {
-            margin: 1px 0 0;
-            color: #a3d4b0;
-            font-size: 8px;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
+        table { width: 100%; border-collapse: collapse; }
 
-        /* ───── WATERMARK ───── */
-        .watermark {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.05;
-            z-index: -1;
-        }
-        .watermark img { width: 320px; height: auto; }
-
-        /* ───── CONTENT ───── */
-        .content {
-            padding: 85px 25px 75px;
-        }
-
-        /* ───── REPORT TITLE ───── */
-        .report-title {
-            text-align: center;
-            font-size: 14px;
-            font-weight: 800;
-            color: #1a4731;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 0 0 4px;
-        }
-        .report-range {
-            text-align: center;
-            font-size: 9px;
-            color: #888;
-            margin: 0 0 16px;
-        }
-
-        /* ───── METRICS BOXES ───── */
-        .metrics {
-            text-align: center;
-            margin-bottom: 16px;
-        }
-        .metric-box {
-            display: inline-block;
-            background-color: #f0f7f3;
-            border: 1px solid #d0e0d6;
-            border-radius: 8px;
-            padding: 10px 22px;
-            margin: 0 6px;
-            min-width: 110px;
-        }
-        .metric-box .number {
-            font-size: 18px;
-            font-weight: 800;
-            color: #1a4731;
-        }
-        .metric-box .label {
-            font-size: 7px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 2px;
-        }
-
-        /* ───── TABLE ───── */
-        table {
+        /* ─── HEADER ─── */
+        .header-bar {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 6px;
-        }
-        th {
             background-color: #1a4731;
-            color: white;
-            padding: 6px 8px;
-            text-align: left;
-            font-size: 8px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            border-collapse: collapse;
+            height: 45px;
+        }
+        .header-bar td {
+            border: none;
+            vertical-align: middle;
+            height: 45px;
+            padding: 0 8px;
+        }
+        .header-bar .col-logo { width: 70px; padding: 0 8px 0 30px; }
+        .header-bar .col-company { padding: 0; }
+        .header-bar .col-report { text-align: right; padding: 0 30px 0 8px; }
+        .header-bar .logo { width: 85px; height: auto; display: block; }
+        .header-bar .company-name {
+            color: #fff; font-size: 14px; font-weight: 800;
+            letter-spacing: 2px; text-transform: uppercase; display: block;
+        }
+        .header-bar .company-sub {
+            color: #a3d4b0; font-size: 7px; font-weight: 600;
+            letter-spacing: 0.5px; display: block; margin-top: 1px;
+        }
+        .header-bar .report-name {
+            color: #fff; font-size: 10px; font-weight: 700;
+            letter-spacing: 0.5px; text-transform: uppercase; display: block;
+        }
+        .header-bar .report-date {
+            color: #a3d4b0; font-size: 7px; font-weight: 600; display: block; margin-top: 1px;
+        }
+
+        /* ─── CONTENT ─── */
+        .content { padding: 6px 25px 8px; }
+
+        /* ─── SECTION TITLE ─── */
+        .section-title {
+            background-color: #1a4731; color: #fff;
+            padding: 3px 8px; margin: 5px 0 3px;
+            font-weight: 700; font-size: 8pt;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        /* ─── REPORT INFO ─── */
+        .report-range {
+            text-align: center; font-size: 8pt; color: #555;
+            margin: 0 0 4px; font-weight: 600;
+        }
+
+        /* ─── SUMMARY TABLE ─── */
+        .summary {
+            width: 100%; border-collapse: collapse; margin-bottom: 5px;
+        }
+        .summary td {
+            border: 1px solid #d0e0d6; padding: 3px 8px; font-size: 7.5pt;
+        }
+        .summary .label {
+            background-color: #1a4731; color: #fff; font-weight: 700;
+            width: 25%; text-align: left;
+        }
+        .summary .value {
+            background-color: #f0f7f3; color: #1a4731; font-weight: 700;
+            width: 25%; text-align: center;
+        }
+
+        /* ─── MAIN TABLE ─── */
+        th {
+            background-color: #1a4731; color: #fff;
+            padding: 3px 5px; font-size: 7pt; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.3px;
+            border: 1px solid #1a4731; text-align: center;
         }
         td {
-            border-bottom: 1px solid #e0e8e3;
-            padding: 6px 8px;
-            vertical-align: top;
-            font-size: 8px;
+            border: 1px solid #ddd; padding: 3px 5px; font-size: 7pt;
+            text-align: center; vertical-align: middle;
         }
-        tr:nth-child(even) td {
-            background-color: #f8fbf9;
-        }
-        .tipo-badge {
-            font-weight: 700;
-            padding: 2px 6px;
-            background: #e8f5ee;
-            color: #1a4731;
-            border-radius: 3px;
-            font-size: 7px;
-        }
-        .item-box {
-            margin-bottom: 2px;
-            font-size: 7.5px;
-        }
+        tbody tr:nth-child(even) td { background-color: #f8fbf9; }
+        .text-left { text-align: left !important; }
 
-        /* ───── FOOTER BAR ───── */
+        /* ─── FOOTER ─── */
         .footer-bar {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            height: 55px;
-            background-color: #1a4731;
-            z-index: 100;
-            padding: 0 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            width: 100%; background-color: #1a4731;
+            border-collapse: collapse; height: 26px;
+            color: #fff; font-size: 7pt;
         }
-        .footer-bar .col {
-            color: #ffffff;
-            font-size: 7px;
-            line-height: 1.5;
+        .footer-bar td {
+            border: none; vertical-align: middle; height: 26px;
+            text-align: center; padding: 0 25px;
         }
-        .footer-bar .col strong {
-            color: #a3d4b0;
-            font-size: 7.5px;
-        }
-        .footer-bar .motto {
-            text-align: center;
-            font-style: italic;
-            font-size: 7px;
-            color: #a3d4b0;
-        }
+        .footer-bar .motto { color: #a3d4b0; }
     </style>
 </head>
 <body>
 
-    <!-- ═══ HEADER BAR ═══ -->
-    <div class="header-bar">
-        <img class="logo" src="{{ logo_base64 }}" alt="Opti-Samuel" />
-        <div class="company">
-            <h1>Opti-Samuel</h1>
-            <p>Sistema de Gesti&oacute;n &Oacute;ptica</p>
-        </div>
-    </div>
-
-    <!-- ═══ WATERMARK ═══ -->
-    <div class="watermark">
-        <img src="{{ logo_base64 }}" alt="" />
-    </div>
+    <!-- ═══ HEADER ═══ -->
+    <table class="header-bar">
+        <tr>
+            <td class="col-logo"><img class="logo" src="{{ logo_base64 }}" alt="Opti-Samuel" /></td>
+            <td class="col-company">
+                <span class="company-name">Opti-Samuel C.A.</span>
+                <span class="company-sub">Sistema de Gesti&oacute;n &Oacute;ptica</span>
+            </td>
+            <td class="col-report">
+                <span class="report-name">Reporte de Pedidos</span>
+                <span class="report-date">Generado: {{ fecha_actual|date:"d/m/Y" }}</span>
+            </td>
+        </tr>
+    </table>
 
     <!-- ═══ CONTENT ═══ -->
     <div class="content">
 
-        <p class="report-title">Reporte de Pedidos</p>
-        <p class="report-range">{{ desde }} al {{ hasta }}</p>
+        <p class="report-range">Per&iacute;odo: {{ desde }} al {{ hasta }}</p>
 
-        <!-- METRICS -->
-        <div class="metrics">
-            <div class="metric-box">
-                <div class="number">{{ pedidos|length }}</div>
-                <div class="label">Total Pedidos</div>
-            </div>
-            <div class="metric-box">
-                <div class="number">{{ desde }}</div>
-                <div class="label">Desde</div>
-            </div>
-            <div class="metric-box">
-                <div class="number">{{ hasta }}</div>
-                <div class="label">Hasta</div>
-            </div>
-        </div>
+        <!-- SUMMARY -->
+        <table class="summary">
+            <tr>
+                <td class="label">Total Pedidos</td>
+                <td class="value">{{ pedidos|length }}</td>
+                <td class="label">Generado</td>
+                <td class="value">{{ fecha_actual|date:"d/m/Y" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Desde</td>
+                <td class="value">{{ desde }}</td>
+                <td class="label">Hasta</td>
+                <td class="value">{{ hasta }}</td>
+            </tr>
+        </table>
 
-        <!-- TABLE -->
+        <!-- MAIN TABLE -->
         <table>
             <thead>
                 <tr>
-                    <th width="10%">Fecha</th>
-                    <th width="15%">Cliente</th>
-                    <th width="10%">Tipo / Estado</th>
-                    <th width="35%">Detalle</th>
-                    <th width="30%">Observaciones</th>
+                    <th width="9%">Fecha</th>
+                    <th width="16%">Cliente</th>
+                    <th width="9%">Tipo</th>
+                    <th width="9%">Estado</th>
+                    <th width="27%">Detalle</th>
+                    <th width="30%">Observaci&oacute;n</th>
                 </tr>
             </thead>
             <tbody>
                 {% for pedido in pedidos %}
-                <tr>
+                <tr style="page-break-inside: avoid;">
                     <td>{{ pedido.fecha_emision|date:"d/m/Y" }}</td>
                     <td>{{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }}</td>
-                    <td>
-                        <span class="tipo-badge">{{ pedido.get_tipo_pedido_display }}</span><br>
-                        <span style="font-size:7px;color:#888;">{{ pedido.get_estado_pedido_display }}</span>
-                    </td>
-                    <td>
+                    <td><strong>{{ pedido.get_tipo_pedido_display }}</strong></td>
+                    <td>{{ pedido.get_estado_pedido_display }}</td>
+                    <td class="text-left">
                         {% for detalle in pedido.detalles.all %}
                             {% if detalle.montura %}
-                            <div class="item-box">
-                                <strong>Montura:</strong> {{ detalle.montura.marca.descripcion }} -
-                                {{ detalle.montura.modelo.descripcion }} ({{ detalle.montura.color.descripcion }})
-                            </div>
+                            <div><strong>Montura:</strong> {{ detalle.montura.marca.descripcion }} &ndash; {{ detalle.montura.modelo.descripcion }}</div>
                             {% endif %}
                             {% if detalle.lente %}
-                            <div class="item-box">
-                                <strong>Lente:</strong> {{ detalle.lente.tipo_lente.descripcion }}<br>
-                                <strong>Trat.:</strong> {{ detalle.lente.tipo_tratamiento.descripcion }}
-                            </div>
+                            <div><strong>Lente:</strong> {{ detalle.lente.tipo_lente.descripcion }} &middot; <strong>Trat.:</strong> {{ detalle.lente.tipo_tratamiento.descripcion }}</div>
                             {% endif %}
                         {% endfor %}
                     </td>
-                    <td><small>{{ pedido.observacion|default:"Sin observaciones" }}</small></td>
+                    <td class="text-left"><small>{{ pedido.observacion|default:"Sin observaciones" }}</small></td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="5" style="text-align:center;padding:20px;color:#999;">No hay pedidos en este rango.</td></tr>
+                <tr><td colspan="6" style="text-align:center;padding:10px;color:#999;">No hay pedidos en este rango.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
 
     </div>
 
-    <!-- ═══ FOOTER BAR ═══ -->
-    <div class="footer-bar">
-        <div class="col">
-            <strong>Opti-Samuel C.A.</strong><br>
-            Rif: J-12345678-9
-        </div>
-        <div class="col motto">
-            &ldquo;Tu visi&oacute;n es nuestra prioridad&rdquo;
-        </div>
-        <div class="col" style="text-align:right;">
-            <strong>Contacto:</strong> 0412-1234567<br>
-            optisamuel6@gmail.com
-        </div>
-    </div>
+    <!-- ═══ FOOTER ═══ -->
+    <table class="footer-bar">
+        <tr>
+            <td>
+                <strong>Opti-Samuel C.A.</strong> &middot; Rif J-12345678-9 &middot; <strong>0412-1234567</strong> &middot; optisamuel6@gmail.com
+                &nbsp;&nbsp;<span class="motto">&ldquo;Tu visi&oacute;n es nuestra prioridad&rdquo;</span>
+            </td>
+        </tr>
+    </table>
 
 </body>
 </html>

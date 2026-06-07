@@ -95,11 +95,15 @@ class PedidoViewSet(viewsets.ModelViewSet):
         if pdf_content:
             # Nombre dinámico limpio usando la identificación del cliente
             filename = f"Pedido_{pedido.id}_{pedido.cliente.identificacion}.pdf"
-            
+
             response = HttpResponse(pdf_content, content_type='application/pdf')
             response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            # Anti-caché: el navegador no debe reusar un PDF viejo
+            response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            response['Pragma'] = 'no-cache'
+            response['Expires'] = '0'
             return response
-        
+
         return Response({"error": "No se pudo generar el archivo PDF"}, status=status.HTTP_400_BAD_REQUEST)
         
     @action(detail=False, methods=['get'])
@@ -162,12 +166,16 @@ class PedidoViewSet(viewsets.ModelViewSet):
             html_string = render_to_string('reportes/pedidos_reporte.html', context)
             response = HttpResponse(content_type='application/pdf')
             response['Content-Disposition'] = f'attachment; filename="reporte_pedidos_{desde}_al_{hasta}.pdf"'
+            # Anti-caché: el navegador no debe reusar un PDF viejo
+            response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            response['Pragma'] = 'no-cache'
+            response['Expires'] = '0'
 
             pisa_status = pisa.CreatePDF(html_string, dest=response)
 
             if pisa_status.err:
                 return HttpResponse('Error al generar el PDF de pedidos', status=500)
-            
+
             return response
         except Exception as e:
             print(f"Error en Reporte Pedidos: {str(e)}")
