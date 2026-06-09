@@ -106,6 +106,19 @@ WSGI_APPLICATION = 'optisamuel.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': env('DB_NAME'),
+#         'USER': env('DB_USER'),
+#         'PASSWORD': env('DB_PASSWORD'),
+#         'HOST': env('DB_HOST'),
+#         'PORT': env('DB_PORT'),
+#         'OPTIONS': {
+#             'sslmode': env('DB_SSL')
+#         },
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -114,12 +127,20 @@ DATABASES = {
         'PASSWORD': env('DB_PASSWORD'),
         'HOST': env('DB_HOST'),
         'PORT': env('DB_PORT'),
+        # Forzamos a Django a cerrar conexiones inactivas inmediatamente (0 segundos)
+        # Esto evita que Django intente reutilizar conexiones viejas que Aiven ya cerró.
+        'CONN_MAX_AGE': 0, 
         'OPTIONS': {
-            'sslmode': env('DB_SSL')
+            'sslmode': env('DB_SSL'),
+            # --- Configuración Anti-Cortes de Conexión ---
+            'connect_timeout': 10,       # Tiempo máximo para esperar la conexión inicial (en segundos)
+            'keepalives': 1,             # Activa el envío de paquetes de verificación (Keepalive)
+            'keepalives_idle': 30,       # Envía una señal cada 30 segundos de inactividad
+            'keepalives_interval': 10,   # Si no responde, reintenta cada 10 segundos
+            'keepalives_count': 5,       # Si falla 5 veces seguidas, da la conexión por muerta limpiamente
         },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
