@@ -3,7 +3,7 @@ import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import slide1 from "@/assets/intro.jpg";
-import slide2 from "@/assets/MonturaNEW.png";
+import slide2 from "@/assets/MonturaNEW.jpg";
 import slide3 from "@/assets/VisualEx.jpg";
 import slide4 from "@/assets/fondo.jpg";
 
@@ -67,7 +67,7 @@ export default function LandingWelcome({ onEnterLogin }: LandingWelcomeProps) {
           <img
             src={slide.image}
             alt=""
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-contain md:object-cover object-center"
             style={{
               transform: index === current ? "scale(1.05)" : "scale(1.15)",
               transition: "transform 7s ease"
@@ -82,22 +82,22 @@ export default function LandingWelcome({ onEnterLogin }: LandingWelcomeProps) {
 
       {/* LOGO */}
 
-      <div className="absolute top-8 left-10 z-20">
+      <div className="absolute top-4 md:top-8 left-4 md:left-10 z-20">
 
         <img
           src="/src/assets/Logo.png"
-          className="h-16 drop-shadow-2xl"
+          className="h-12 md:h-16 drop-shadow-2xl"
         />
 
       </div>
 
       {/* BOTON LOGIN */}
 
-      <div className="absolute top-8 right-10 z-20">
+      <div className="absolute top-4 md:top-8 right-4 md:right-10 z-20">
 
         <Button
           onClick={onEnterLogin}
-          className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white rounded-full px-6 py-2 shadow-xl transition-all hover:scale-110"
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white rounded-full px-4 md:px-6 py-1.5 md:py-2 text-xs md:text-sm shadow-xl transition-all hover:scale-110"
         >
           <LogIn size={16} />
           Iniciar Sesión
@@ -107,18 +107,18 @@ export default function LandingWelcome({ onEnterLogin }: LandingWelcomeProps) {
 
       {/* TEXTO */}
 
-      <div className="absolute bottom-28 left-16 z-20 max-w-2xl">
+      <div className="absolute bottom-28 left-4 md:left-16 right-4 md:right-auto z-20 max-w-2xl">
 
         <h1
           key={slides[current].title}
-          className="text-white text-6xl font-bold mb-4 leading-tight animate-fadeUp"
+          className="text-white text-3xl md:text-6xl font-bold mb-4 leading-tight animate-fadeUp"
         >
           {slides[current].title}
         </h1>
 
         <p
           key={slides[current].subtitle}
-          className="text-white/80 text-xl animate-fadeUp"
+          className="text-white/80 text-sm md:text-xl animate-fadeUp"
         >
           {slides[current].subtitle}
         </p>
@@ -127,7 +127,7 @@ export default function LandingWelcome({ onEnterLogin }: LandingWelcomeProps) {
 
       {/* INDICADORES */}
 
-      <div className="absolute bottom-10 left-16 flex gap-3 z-20">
+      <div className="absolute bottom-10 left-4 md:left-16 flex gap-3 z-20">
 
         {slides.map((_, index) => (
 

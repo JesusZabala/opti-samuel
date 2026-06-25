@@ -270,8 +270,8 @@ export default function ClienteEditar() {
   if (loading) return <div className="p-10 text-center font-bold text-[#1a4731] dark:text-emerald-100 animate-pulse">Cargando base de datos de clientes...</div>;
 
   return (
-    <div className="p-10 dark:bg-[#0a0f0a]">
-      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-3xl shadow-xl min-h-[400px] border border-gray-100 dark:border-white/10">
+    <div className="p-3 md:p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] p-4 md:p-10 rounded-3xl shadow-xl min-h-[400px] border border-gray-100 dark:border-white/10">
         <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8">
           {editando ? `Modificar Datos` : "Panel de Clientes"}
         </h2>
@@ -299,17 +299,15 @@ export default function ClienteEditar() {
 
             <div className="grid gap-4">
               {clientesFiltrados.map((c) => (
-                <div key={c.id} className="p-5 border rounded-2xl flex justify-between items-center hover:bg-gray-50 dark:hover:bg-[#0f1a14] transition-all border-gray-100 dark:border-white/10 shadow-sm group">
-                  <div>
+                <div key={c.id} className="p-5 border rounded-2xl flex-col md:flex-row flex justify-between items-start md:items-center gap-3 hover:bg-gray-50 dark:hover:bg-[#0f1a14] transition-all border-gray-100 dark:border-white/10 shadow-sm group">
+                  <div className="min-w-0 flex-1">
                     <p className="font-bold text-[#1a4731] dark:text-emerald-100 text-lg">{c.nombre} {c.apellido}</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                       <span className="bg-gray-100 dark:bg-[#0f1a14] px-2 py-0.5 rounded mr-2">{c.tipo_cliente}-{c.identificacion}</span>
                       {c.telefono}
                     </p>
                   </div>
-                  <Button onClick={() => setEditando({ ...c })} className="bg-[#1a4731] hover:bg-[#123122] rounded-xl px-6 h-12 transition-transform active:scale-95">
-                    Editar Perfil
-                  </Button>
+                  <Button onClick={() => setEditando({ ...c })} className="bg-[#1a4731] hover:bg-[#123122] rounded-xl px-6 h-12 transition-transform active:scale-95 w-full md:w-auto shrink-0">Editar Perfil</Button>
                 </div>
               ))}
               {clientesFiltrados.length === 0 && (

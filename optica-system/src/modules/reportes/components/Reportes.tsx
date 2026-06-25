@@ -88,9 +88,9 @@ export default function ModuloReportes() {
   };
 
   return (
-    <div className="p-6 md:p-10 max-w-6xl mx-auto dark:bg-[#0a0f0a]">
+    <div className="p-3 md:p-10 max-w-6xl mx-auto dark:bg-[#0a0f0a]">
       {/* ═══════ TOOLBAR (fuera de la hoja) ═══════ */}
-      <div className="bg-white dark:bg-[#1a2a20] rounded-3xl shadow-xl border border-gray-100 dark:border-white/10 p-6 md:p-8 mb-8 space-y-8">
+      <div className="bg-white dark:bg-[#1a2a20] rounded-3xl shadow-xl border border-gray-100 dark:border-white/10 p-4 md:p-8 mb-8 space-y-8">
 
         <div className="flex items-center gap-3">
           <FileText className="w-7 h-7 text-[#1a4731] dark:text-emerald-400" />
@@ -163,7 +163,7 @@ export default function ModuloReportes() {
                   type="date"
                   value={hasta}
                   onChange={(e) => setHasta(e.target.value)}
-                  className="w-full pl-12 pr-4 h-12 rounded-xl border-2 border-white dark:border-white/10 bg-white dark:bg-[#1a2a20] dark:text-gray-100 shadow-sm focus:border-[#1a4731] dark:focus:border-emerald-500 outline-none font-bold text-gray-700 transition-all"
+                  className="w-full pl-12 pr-4 h-12 rounded-xl border-2 border-white dark:border-white/10 bg-white dark:bg-[#1a2a20] shadow-sm focus:border-[#1a4731] dark:focus:border-emerald-500 outline-none font-bold text-gray-700 dark:text-gray-100 transition-all"
                 />
               </div>
             </div>
@@ -216,7 +216,8 @@ export default function ModuloReportes() {
           width: "100%",
           maxWidth: "850px",
           aspectRatio: "1 / 1.414",
-          minHeight: "1000px",
+          minHeight: "500px",
+          overflowY: "auto",
         }}
       >
         {/* MARCA DE AGUA (logo centrado y tenue) */}

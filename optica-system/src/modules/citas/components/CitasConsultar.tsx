@@ -408,12 +408,12 @@ export default function CitaConsultar() {
   if (loading) return <div className="p-10 text-center font-bold text-[#1a4731] dark:text-emerald-100 animate-pulse">Cargando agenda de Opti-Samuel...</div>;
 
   return (
-    <div className="p-10 max-w-6xl mx-auto dark:bg-[#0a0f0a]">
-      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10">
+    <div className="p-4 md:p-10 max-w-6xl mx-auto dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] p-4 md:p-10 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10">
         
         <div className="flex justify-between items-center mb-10">
-            <h2 className="text-4xl font-black text-[#1a4731] dark:text-emerald-100 tracking-tight">Consultar Citas</h2>
-            <Calendar className="w-12 h-12 text-green-500/20" />
+            <h2 className="text-2xl md:text-4xl font-black text-[#1a4731] dark:text-emerald-100 tracking-tight">Consultar Citas</h2>
+            <Calendar className="w-8 md:w-12 h-8 md:h-12 text-green-500/20" />
         </div>
 
         {success && <p className="p-4 bg-green-50 dark:bg-emerald-900/20 text-green-600 dark:text-green-400 rounded-2xl font-bold mb-6 border border-green-100 dark:border-emerald-800/30 animate-in fade-in">✓ {success}</p>}
@@ -456,9 +456,9 @@ export default function CitaConsultar() {
                 citasFiltradas.map((cita) => (
                   <div 
                     key={cita.id} 
-                    className="group p-6 border-2 border-gray-50 dark:border-white/10 rounded-3xl flex justify-between items-center bg-white dark:bg-[#1a2a20] hover:border-green-200 dark:hover:border-emerald-700 hover:shadow-xl transition-all duration-300"
+                    className="group p-6 border-2 border-gray-50 dark:border-white/10 rounded-3xl flex flex-col md:flex-row justify-between md:items-center gap-4 bg-white dark:bg-[#1a2a20] hover:border-green-200 dark:hover:border-emerald-700 hover:shadow-xl transition-all duration-300"
                   >
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-4 md:gap-6">
                         <div className={`p-4 rounded-2xl ${getEstadoColor(cita.estado_cita)} bg-opacity-20`}>
                             <User className="w-6 h-6" />
                         </div>
@@ -481,14 +481,14 @@ export default function CitaConsultar() {
                     </div>
                     <Button 
                       onClick={() => setDetalle(cita)} 
-                      className="bg-[#1a4731] hover:bg-green-800 rounded-2xl px-8 py-6 shadow-lg shadow-green-900/10 transition-transform active:scale-95"
+                      className="bg-[#1a4731] hover:bg-green-800 rounded-2xl px-8 py-6 shadow-lg shadow-green-900/10 transition-transform active:scale-95 w-full md:w-auto"
                     >
                       Ver Detalles
                     </Button>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-24 bg-gray-50 dark:bg-[#0f1a14] rounded-[3rem] border-2 border-dashed border-gray-200 dark:border-white/10">
+                <div className="text-center py-12 md:py-24 bg-gray-50 dark:bg-[#0f1a14] rounded-[3rem] border-2 border-dashed border-gray-200 dark:border-white/10">
                     <AlertCircle className="w-12 h-12 text-gray-300 dark:text-gray-500 mx-auto mb-4" />
                     <p className="text-gray-400 dark:text-gray-300 font-bold italic">No hay citas que coincidan con los filtros.</p>
                 </div>
@@ -498,12 +498,12 @@ export default function CitaConsultar() {
         ) : (
           /* VISTA DETALLE OPTIMIZADA */
           <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-            <div className="flex justify-between items-end border-b border-gray-100 dark:border-white/10 pb-8">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 border-b border-gray-100 dark:border-white/10 pb-8">
                 <div>
-                  <h3 className="text-4xl font-black text-[#1a4731] dark:text-emerald-100">Detalle de Cita</h3>
+                  <h3 className="text-2xl md:text-4xl font-black text-[#1a4731] dark:text-emerald-100">Detalle de Cita</h3>
                   <p className="text-gray-400 dark:text-gray-300 font-bold mt-2 uppercase tracking-widest text-[10px]">Gestión de Agenda Sanitaria</p>
                 </div>
-                <Button variant="outline" onClick={() => {setDetalle(null); setCancelando(false);}} className="rounded-2xl border-2 py-6 px-8 font-bold hover:bg-gray-50 dark:hover:bg-[#0f1a14] transition-all flex items-center gap-2">
+                <Button variant="outline" onClick={() => {setDetalle(null); setCancelando(false);}} className="rounded-2xl border-2 py-6 px-8 font-bold hover:bg-gray-50 dark:hover:bg-[#0f1a14] transition-all flex items-center gap-2 w-full md:w-auto justify-center">
                   <ArrowLeft className="w-4 h-4" /> Regresar
                 </Button>
             </div>
@@ -602,7 +602,7 @@ export default function CitaConsultar() {
 
             {/* SECCIÓN AGREGADA: MOTIVO DE CANCELACIÓN (Para citas que ya están canceladas en la DB) */}
             {detalle.estado_cita === 'C' && (
-              <div className="bg-red-50/60 dark:bg-red-900/10 p-8 rounded-[2rem] border-2 border-dashed border-red-200 dark:border-red-800/30 space-y-3">
+                <div className="bg-red-50/60 dark:bg-red-900/10 p-4 md:p-8 rounded-[2rem] border-2 border-dashed border-red-200 dark:border-red-800/30 space-y-3">
                 <div className="flex items-center gap-3 text-red-800">
                   <FileText className="w-5 h-5" />
                   <h4 className="text-xs font-black uppercase tracking-wider">Detalles de Cancelación del Sistema</h4>
@@ -618,7 +618,7 @@ export default function CitaConsultar() {
 
             {/* FORMULARIO DE CANCELACIÓN */}
             {cancelando && (
-                <div className="bg-red-50 dark:bg-red-900/10 p-8 rounded-[2rem] border-2 border-red-100 dark:border-red-800/30 space-y-6 animate-in zoom-in-95">
+                <div className="bg-red-50 dark:bg-red-900/10 p-4 md:p-8 rounded-[2rem] border-2 border-red-100 dark:border-red-800/30 space-y-6 animate-in zoom-in-95">
                     <div className="flex items-center gap-3 text-red-700">
                         <AlertCircle className="w-6 h-6" />
                         <h3 className="text-xl font-black uppercase tracking-tight">Confirmar Cancelación</h3>
@@ -630,7 +630,7 @@ export default function CitaConsultar() {
                         value={motivoCancelacion}
                         onChange={(e) => setMotivoCancelacion(e.target.value)}
                     />
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
                         <Button className="flex-1 bg-red-600 hover:bg-red-700 py-7 rounded-xl font-black uppercase tracking-widest text-xs" onClick={handleCancelarCita}>Confirmar Cancelación</Button>
                         <Button variant="ghost" className="flex-1 py-7 rounded-xl font-bold text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30" onClick={() => setCancelando(false)}>Cerrar</Button>
                     </div>

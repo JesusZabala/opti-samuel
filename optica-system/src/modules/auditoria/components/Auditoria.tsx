@@ -99,13 +99,13 @@ export default function Auditoria() {
   };
 
   return (
-    <div className="p-10 bg-[#f5f7fb] dark:bg-[#0a0f0a] min-h-screen">
-      <div className="bg-white dark:bg-[#1a2a20] rounded-3xl shadow-xl p-10 border border-gray-100 dark:border-white/10">
+    <div className="p-4 md:p-10 bg-[#f5f7fb] dark:bg-[#0a0f0a] min-h-screen">
+      <div className="bg-white dark:bg-[#1a2a20] rounded-3xl shadow-xl p-4 md:p-10 border border-gray-100 dark:border-white/10">
         
         {/* HEADER */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
           <div>
-            <h1 className="text-4xl font-black text-[#1a4731] dark:text-emerald-100">Auditoría del Sistema</h1>
+            <h1 className="text-2xl md:text-4xl font-black text-[#1a4731] dark:text-emerald-100">Auditoría del Sistema</h1>
             <p className="text-gray-500 dark:text-gray-400 mt-2">Seguimiento de registros y actualizaciones en Opti Samuel.</p>
           </div>
         </div>

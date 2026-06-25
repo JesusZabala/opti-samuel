@@ -50,14 +50,14 @@ export default function EmpleadoConsultar() {
   });
 
   return (
-    <div className="p-10 dark:bg-[#0a0f0a]">
-      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-3xl shadow-xl min-h-[500px] border border-gray-100 dark:border-white/10">
-        <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-6 flex items-center gap-2">
+    <div className="p-4 md:p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] p-4 md:p-10 rounded-3xl shadow-xl min-h-[500px] border border-gray-100 dark:border-white/10">
+        <h2 className="text-xl md:text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-6 flex items-center gap-2">
            Consultar Personal
         </h2>
 
         {/* BUSCADOR */}
-        <div className="flex gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <div className="relative flex-1">
             <Input 
               placeholder="Buscar por nombre, usuario o correo..." 

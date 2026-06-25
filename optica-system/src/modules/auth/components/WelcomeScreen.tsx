@@ -52,24 +52,24 @@ const WelcomeScreen = ({ role, onFinish }: Props) => {
       {/* MISMO FONDO POTENTE DEL LOGIN */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#0b2e1f] via-[#52b788] to-[#ffffff]" />
       <div className="absolute inset-0 bg-gradient-to-tr from-black/30 via-transparent to-transparent" />
-      <div className="absolute w-[800px] h-[800px] bg-green-400/50 blur-3xl rounded-full -top-60 -left-60" />
-      <div className="absolute w-[700px] h-[700px] bg-green-600/40 blur-3xl rounded-full -bottom-60 -right-60" />
+      <div className="absolute w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-green-400/50 blur-3xl rounded-full -top-30 md:-top-60 -left-30 md:-left-60" />
+      <div className="absolute w-[350px] md:w-[700px] h-[350px] md:h-[700px] bg-green-600/40 blur-3xl rounded-full -bottom-30 md:-bottom-60 -right-30 md:-right-60" />
 
       {/* TARJETA */}
-      <Card className="relative w-[440px] bg-[#1a4731] border-none shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6)] text-white animate-fade-in">
+      <Card className="relative w-[90vw] max-w-[440px] bg-[#1a4731] border-none shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6)] text-white animate-fade-in">
 
-        <CardContent className="flex flex-col items-center text-center gap-8 p-12">
+        <CardContent className="flex flex-col items-center text-center gap-6 md:gap-8 p-6 md:p-12">
 
           {/* LOGO */}
           <img
             src={logo}
             alt="Opti Samuel"
-            className="w-44 drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)]"
+            className="w-32 md:w-44 drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)]"
           />
 
           {/* BIENVENIDA */}
           <div>
-            <h1 className="text-2xl font-semibold">
+            <h1 className="text-xl md:text-2xl font-semibold">
               Bienvenido,{" "}
               <span className="capitalize text-green-400">
                 {role}

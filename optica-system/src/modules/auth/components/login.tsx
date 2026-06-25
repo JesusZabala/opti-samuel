@@ -183,20 +183,20 @@ const Login = ({ onLogin }: LoginProps) => {
   return (
     <div className='relative min-h-screen flex items-center justify-center overflow-hidden'>
       <div className='absolute inset-0 bg-gradient-to-br from-[#1b4332] via-[#95d5b2] to-[#ffffff]'></div>
-      <div className='absolute w-[700px] h-[700px] bg-green-400/40 blur-3xl rounded-full -top-40 -left-40'></div>
-      <div className='absolute w-[600px] h-[600px] bg-green-600/30 blur-3xl rounded-full -bottom-40 -right-40'></div>
+      <div className='absolute w-[400px] md:w-[700px] h-[400px] md:h-[700px] bg-green-400/40 blur-3xl rounded-full -top-20 md:-top-40 -left-20 md:-left-40'></div>
+      <div className='absolute w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-green-600/30 blur-3xl rounded-full -bottom-20 md:-bottom-40 -right-20 md:-right-40'></div>
 
-      <div className='relative bg-[#1a4731] p-10 rounded-3xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] w-full max-w-md text-center'>
+      <div className='relative bg-[#1a4731] p-6 md:p-10 rounded-3xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] w-full max-w-md mx-4 md:mx-auto text-center'>
         <div className='flex justify-center mb-8'>
           <img
             src={logo}
             alt='Opti Samuel'
-            className='w-56 object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.6)]'
+            className='w-44 md:w-56 object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.6)]'
           />
         </div>
 
         <div className='mb-8'>
-          <h1 className='text-white text-2xl font-semibold tracking-tight'>Sistema Administrativo</h1>
+          <h1 className='text-white text-xl md:text-2xl font-semibold tracking-tight'>Sistema Administrativo</h1>
           <p className='text-green-200/80 text-xs uppercase tracking-[0.3em] mt-2'>Óptica Opti Samuel • 2026</p>
         </div>
 

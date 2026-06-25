@@ -77,13 +77,13 @@ export default function ClienteRegistrar() {
   };
 
   return (
-    <div className="p-10 dark:bg-[#0a0f0a]">
-      <div className="bg-white dark:bg-[#1a2a20] rounded-3xl shadow-xl p-10 max-w-4xl mx-auto border border-gray-100 dark:border-white/10">
-        <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8 flex items-center gap-3">
+    <div className="p-3 md:p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] rounded-3xl shadow-xl p-4 md:p-10 max-w-4xl mx-auto border border-gray-100 dark:border-white/10">
+        <h2 className="text-xl md:text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8 flex items-center gap-3">
            Registrar Cliente
         </h2>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
             value={cliente.nombre}
             onChange={(e) => handleChange("nombre", e.target.value)}
@@ -99,11 +99,11 @@ export default function ClienteRegistrar() {
             className="capitalize"
           />
 
-          <div className="flex gap-2">
+          <div className="flex flex-col md:flex-row gap-2 min-w-0">
             <select
               value={cliente.tipo_cliente}
               onChange={(e) => handleChange("tipo_cliente", e.target.value)}
-              className="p-3 rounded-xl border bg-white dark:bg-[#1a2a20] dark:border-gray-700 outline-none focus:ring-2 focus:ring-green-500 font-bold text-gray-700 dark:text-gray-300"
+              className="p-3 rounded-xl border bg-white dark:bg-[#1a2a20] dark:border-gray-700 outline-none focus:ring-2 focus:ring-green-500 font-bold text-gray-700 dark:text-gray-300 w-full md:w-auto"
             >
               <option value="V">V</option>
               <option value="E">E</option>
@@ -114,7 +114,8 @@ export default function ClienteRegistrar() {
               onChange={(e) => handleChange("identificacion", e.target.value)}
               placeholder="Cédula / Identificación"
               required
-              inputMode="numeric" // Muestra teclado numérico en móviles
+              inputMode="numeric"
+              className="min-w-0 flex-1"
             />
           </div>
 

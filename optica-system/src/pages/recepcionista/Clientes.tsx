@@ -3,10 +3,10 @@ import ClienteConsultar from "@modules/clientes/components/ClienteConsultar";
 
 export default function GestionClientesPage() {
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Encabezado con el estilo de Opti Samuel */}
       <div className="mb-8">
-        <h1 className="text-3xl font-black text-[#1a4731] uppercase tracking-tight">
+        <h1 className="text-xl md:text-3xl font-black text-[#1a4731] uppercase tracking-tight">
           Gestión de Clientes
         </h1>
         <p className="text-gray-500 mt-1">

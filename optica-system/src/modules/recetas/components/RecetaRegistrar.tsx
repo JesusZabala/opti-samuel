@@ -456,7 +456,7 @@ export default function RecetaRegistrar() {
   };
 
   return (
-    <div className="p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
+    <div className="p-3 md:p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
       <div className="bg-white dark:bg-[#1a2a20] rounded-[2rem] shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
         
         {/* ENCABEZADO TIPO DASHBOARD */}
@@ -468,7 +468,7 @@ export default function RecetaRegistrar() {
           <p className="text-green-100/70 mt-1 font-medium">Registro de optometría y salud visual</p>
         </div>
 
-        <div className="p-10">
+        <div className="p-4 md:p-10">
           {/* SELECTOR DE MODO PROFESIONAL */}
           <div className="flex bg-gray-100 dark:bg-[#0f1a14] p-1.5 rounded-2xl w-fit mb-10">
             <button
@@ -508,7 +508,7 @@ export default function RecetaRegistrar() {
               </div>
 
               <div className="lg:col-span-2">
-                <div className="border rounded-2xl overflow-hidden shadow-inner bg-gray-50 dark:bg-[#0f1a14] max-h-[250px] overflow-y-auto">
+                <div className="border rounded-2xl overflow-y-auto shadow-inner bg-gray-50 dark:bg-[#0f1a14] max-h-[250px]">
                   <table className="w-full text-left border-collapse">
                     <thead className="bg-white dark:bg-[#1a2a20] sticky top-0 shadow-sm">
                       <tr>
@@ -563,7 +563,7 @@ export default function RecetaRegistrar() {
               <div className="relative group">
                 <div className="absolute -top-4 left-6 bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-black shadow-lg">OJO DERECHO (OD)</div>
                 <div className="p-8 pt-10 border-2 border-blue-100 dark:border-blue-800/30 rounded-[2rem] bg-blue-50/5 dark:bg-blue-900/10 space-y-6">
-                  <div className="grid grid-cols-3 gap-6">
+                  <div className="grid grid-cols-3 gap-2 md:gap-6">
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Esfera</label> 
                       <Input 
@@ -600,7 +600,7 @@ export default function RecetaRegistrar() {
                       /> 
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-6 pt-2">
+                  <div className="grid grid-cols-2 gap-2 md:gap-6 pt-2">
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Adición</label> 
                       <Input 
@@ -632,7 +632,7 @@ export default function RecetaRegistrar() {
               <div className="relative group">
                 <div className="absolute -top-4 left-6 bg-green-600 text-white px-4 py-1 rounded-full text-xs font-black shadow-lg">OJO IZQUIERDO (OI)</div>
                 <div className="p-8 pt-10 border-2 border-green-100 dark:border-emerald-800/30 rounded-[2rem] bg-green-50/5 dark:bg-emerald-900/10 space-y-6">
-                  <div className="grid grid-cols-3 gap-6">
+                  <div className="grid grid-cols-3 gap-2 md:gap-6">
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Esfera</label> 
                       <Input 
@@ -669,7 +669,7 @@ export default function RecetaRegistrar() {
                       /> 
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-6 pt-2">
+                  <div className="grid grid-cols-2 gap-2 md:gap-6 pt-2">
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Adición</label> 
                       <Input 

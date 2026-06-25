@@ -174,7 +174,6 @@ import { Button } from "@/components/ui/button";
 import { Search, Edit3, CheckCircle, Calendar, User, ClipboardList } from "lucide-react";
 import CitaForm from "../../../modules/citas/components/CitaForm";
 import { obtenerCitas, actualizarEstadoCita } from "@/services/citaService";
-import { obtenerTodasLasRecetas } from "@/services/recetaService";
 import api from "@/api/axiosConfig";
 import { useNotifications } from "@/context/NotificationContext";
 import { useNavigate } from "react-router-dom";
@@ -344,12 +343,12 @@ export default function CitaEditar() {
   if (loading) return <div className="p-10 text-center font-bold text-[#1a4731] dark:text-emerald-300 animate-pulse">Cargando gestión de citas...</div>;
 
   return (
-    <div className="p-10 max-w-5xl mx-auto">
-      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10">
+    <div className="p-4 md:p-10 max-w-5xl mx-auto">
+      <div className="bg-white dark:bg-[#1a2a20] p-4 md:p-10 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10">
         
         <div className="flex justify-between items-center mb-10">
-            <h2 className="text-4xl font-black text-[#1a4731] dark:text-emerald-100 tracking-tight">Gestión de Agenda</h2>
-            <Edit3 className="w-10 h-10 text-green-600/20 dark:text-green-500/30" />
+            <h2 className="text-2xl md:text-4xl font-black text-[#1a4731] dark:text-emerald-100 tracking-tight">Gestión de Agenda</h2>
+            <Edit3 className="w-8 md:w-10 h-8 md:h-10 text-green-600/20 dark:text-green-500/30" />
         </div>
 
         {success && <p className="p-4 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-300 rounded-2xl font-bold mb-6 border border-green-100 dark:border-green-800 animate-in fade-in">✓ {success}</p>}
@@ -377,9 +376,9 @@ export default function CitaEditar() {
                   return (
                     <div 
                       key={cita.id} 
-                      className="group p-6 border-2 border-gray-50 dark:border-white/5 rounded-3xl flex justify-between items-center bg-white dark:bg-[#0f1a14] hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-xl transition-all duration-300"
+                      className="group p-6 border-2 border-gray-50 dark:border-white/5 rounded-3xl flex flex-col md:flex-row justify-between md:items-center gap-4 bg-white dark:bg-[#0f1a14] hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-xl transition-all duration-300"
                     >
-                      <div className="flex items-center gap-6">
+                      <div className="flex items-center gap-4 md:gap-6">
                           <div className="p-4 rounded-2xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300">
                               <User className="w-6 h-6" />
                           </div>
@@ -397,17 +396,17 @@ export default function CitaEditar() {
                           </div>
                       </div>
 
-                      <div className="flex gap-3">
+                      <div className="flex gap-3 w-full md:w-auto">
                           <Button 
                             onClick={() => iniciarEdicion(cita)} 
-                            className="bg-gray-800 hover:bg-black rounded-xl px-6 py-6 transition-transform active:scale-95"
+                            className="bg-gray-800 hover:bg-black rounded-xl px-6 py-6 transition-transform active:scale-95 flex-1 md:flex-none"
                           >
                             <Edit3 className="w-4 h-4 mr-2" /> Modificar
                           </Button>
                           
                           <Button 
                             onClick={() => handleCompletarCita(cita.id)}
-                            className="bg-green-600 hover:bg-green-700 rounded-xl px-6 py-6 shadow-lg shadow-green-100 dark:shadow-green-900/30"
+                            className="bg-green-600 hover:bg-green-700 rounded-xl px-6 py-6 shadow-lg shadow-green-100 dark:shadow-green-900/30 flex-1 md:flex-none"
                           >
                             <CheckCircle className="w-4 h-4 mr-2" /> Completar
                           </Button>
@@ -416,7 +415,7 @@ export default function CitaEditar() {
                   );
                 })
               ) : (
-                <div className="text-center py-20 bg-gray-50 dark:bg-[#0f1a14] rounded-[3rem] border-2 border-dashed border-gray-200 dark:border-gray-700">
+                <div className="text-center py-12 md:py-20 bg-gray-50 dark:bg-[#0f1a14] rounded-[3rem] border-2 border-dashed border-gray-200 dark:border-gray-700">
                     <p className="text-gray-400 dark:text-gray-500 font-bold italic">No hay citas pendientes que coincidan.</p>
                 </div>
               )}

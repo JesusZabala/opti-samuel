@@ -558,7 +558,7 @@ export default function PedidoRegistrar() {
     return <div className="p-20 text-center font-black animate-pulse text-[#1a4731]">CARGANDO CONFIGURACIÓN DE OPTI-SAMUEL...</div>;
   }
   return (
-    <div className="p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
+    <div className="p-3 md:p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
       <div className="bg-white dark:bg-[#1a2a20] rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
         
         <div className="bg-[#1a4731] p-8 text-white flex justify-between items-center">
@@ -573,7 +573,7 @@ export default function PedidoRegistrar() {
           </div>
         </div>
 
-        <div className="p-10 dark:bg-[#0a0f0a]">
+        <div className="p-4 md:p-10 dark:bg-[#0a0f0a]">
           <div className="flex bg-gray-100 dark:bg-[#0f1a14] p-1.5 rounded-2xl w-fit mb-10 border border-gray-200 dark:border-white/10">
             {([{id: 'C', n: 'Completo'}, {id: 'SL', n: 'Lentes'}, {id: 'SM', n: 'Montura'}] as const).map((t) => (
               <button key={t.id} type="button" onClick={() => { setTipoPedido(t.id); limpiarCliente(); }}

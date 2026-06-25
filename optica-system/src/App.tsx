@@ -29,7 +29,7 @@ import { setUnauthorizedHandler } from "@/auth/authEvents";
 import { authStorage } from "@/auth/authStorage";
 import { roleCanAccessPath } from "@/auth/routeAccess";
 import { Toaster } from "sonner";
-
+import { Menu } from "lucide-react";
 
 /** Evita mostrar la landing tras F5 si ya hay sesión o el usuario pasó a login. */
 const SKIP_LANDING_KEY = "optisamuel_skip_landing";
@@ -55,8 +55,13 @@ function AuthenticatedApp({
   goHomeAfterLogin: boolean;
   onGoHomeConsumed: () => void;
 }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (goHomeAfterLogin) {
@@ -67,14 +72,52 @@ function AuthenticatedApp({
 
   const allowed = roleCanAccessPath(userRole, location.pathname);
 
-  return (
-    <div className="min-h-screen flex">
-      <Sidebar
-        role={userRole}
-        onLogout={onLogout}
-      />
+  const handleMobileLogout = () => {
+    setSidebarOpen(false);
+    onLogout();
+  };
 
-      <main className="flex-1 overflow-y-auto bg-gradient-to-br from-[#f7faf8] via-[#eef8f1] to-[#f8fffb] dark:from-[#0a1a10] dark:via-[#0f1a14] dark:to-[#122418]">
+  return (
+    <div className="min-h-screen flex relative">
+      {/* Desktop sidebar */}
+      <div className="hidden lg:block">
+        <Sidebar
+          role={userRole}
+          onLogout={onLogout}
+        />
+      </div>
+
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setSidebarOpen(false)}
+          />
+          <div className="fixed left-0 top-0 h-full">
+            <Sidebar
+              role={userRole}
+              onLogout={handleMobileLogout}
+            />
+          </div>
+        </div>
+      )}
+
+      <main className="flex-1 flex flex-col overflow-y-auto bg-gradient-to-br from-[#f7faf8] via-[#eef8f1] to-[#f8fffb] dark:from-[#0a1a10] dark:via-[#0f1a14] dark:to-[#122418]">
+        {/* Mobile header with hamburger */}
+        <div className="sticky top-0 z-30 lg:hidden">
+          <div className="flex items-center justify-between bg-[#1a4731] dark:bg-[#0f1a14] px-4 py-3 shadow-lg">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all"
+              aria-label="Abrir menú"
+            >
+              <Menu size={22} />
+            </button>
+            <span className="text-white font-bold text-sm tracking-wide">Opti Samuel</span>
+            <div className="w-9" />
+          </div>
+        </div>
         {!allowed ? (
           <Navigate to="/" replace />
         ) : (
@@ -173,13 +216,16 @@ function App() {
 
   if (isLoggingOut && userRole) {
     return (
-      <div className="animate-pulse">
-        <WelcomeScreen role={userRole} onFinish={() => {}} />
-        <div className="fixed inset-0 bg-[#1a4731]/80 dark:bg-[#0a1a10]/90 z-50 flex items-center justify-center">
-          <h2 className="text-white text-4xl font-black uppercase tracking-widest">
-            Cerrando Sesión...
-          </h2>
-        </div>
+      <div className="fixed inset-0 bg-[#1a4731] dark:bg-[#0a1a10] z-50 flex flex-col items-center justify-center gap-8">
+        <img
+          src="/src/assets/Logo.png"
+          alt="Opti Samuel"
+          className="h-20 md:h-24 drop-shadow-2xl"
+        />
+        <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+        <h2 className="text-white text-3xl md:text-4xl font-black uppercase tracking-widest animate-pulse">
+          Cerrando Sesión...
+        </h2>
       </div>
     );
   }

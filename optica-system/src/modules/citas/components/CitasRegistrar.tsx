@@ -307,14 +307,6 @@ export default function CitaRegistrar() {
     "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM"
   ]);
 
-  const stringAMinutos = (horaStr: string) => {
-    const [tiempo, ampm] = horaStr.split(" ");
-    let [horas, minutos] = tiempo.split(":").map(Number);
-    if (ampm === "PM" && horas !== 12) horas += 12;
-    if (ampm === "AM" && horas === 12) horas = 0;
-    return horas * 60 + minutos;
-  };
-
   // 1. Cargar Optometristas al montar el componente
   useEffect(() => {
     const cargarOptometristas = async () => {
@@ -457,14 +449,14 @@ export default function CitaRegistrar() {
   };
 
   return (
-    <div className="p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
+    <div className="p-4 md:p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
       <div className="bg-white dark:bg-[#1a2a20] rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
         
         {/* HEADER */}
-        <div className="bg-[#1a4731] p-8 text-white flex justify-between items-center">
+        <div className="bg-[#1a4731] p-4 md:p-8 text-white flex flex-col md:flex-row justify-between md:items-center gap-4">
           <div>
-            <h2 className="text-3xl font-black tracking-tight flex items-center gap-3">
-              <Calendar className="w-10 h-10 text-green-400" />
+            <h2 className="text-xl md:text-3xl font-black tracking-tight flex items-center gap-3">
+              <Calendar className="w-8 md:w-10 h-8 md:h-10 text-green-400" />
               Gestión de Citas
             </h2>
             <p className="text-green-100/60 font-bold text-xs uppercase tracking-[0.3em]">Opti Samuel • 2026</p>
@@ -477,8 +469,8 @@ export default function CitaRegistrar() {
           )}
         </div>
 
-        <div className="p-10">
-          <form onSubmit={handleAuthSubmit} className="space-y-10">
+        <div className="p-4 md:p-10">
+          <form onSubmit={handleAuthSubmit} className="space-y-6 md:space-y-10">
             
             {/* BUSCADOR */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -616,7 +608,7 @@ export default function CitaRegistrar() {
             <Button 
               disabled={loading || !seleccionadoId || !formData.usuario || !formData.hora || cargandoHorarios}
               type="submit" 
-              className="w-full py-12 text-xl font-black bg-[#1a4731] hover:bg-[#0f2d1f] text-white rounded-[2rem] shadow-2xl transition-all active:scale-95 disabled:opacity-20"
+              className="w-full py-6 md:py-12 text-lg md:text-xl font-black bg-[#1a4731] hover:bg-[#0f2d1f] text-white rounded-[2rem] shadow-2xl transition-all active:scale-95 disabled:opacity-20"
             >
               {loading ? "PROCESANDO..." : "CONFIRMAR Y AGENDAR CITA"}
             </Button>

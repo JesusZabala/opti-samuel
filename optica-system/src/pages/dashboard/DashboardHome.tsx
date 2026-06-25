@@ -189,7 +189,7 @@ const DashboardHome = () => {
                 </button>
 
                 {showNotifications && (
-                  <div className="absolute right-0 top-16 w-96 bg-white dark:bg-[#1a2a20] rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.12)] border border-emerald-100 dark:border-emerald-800/50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-3 duration-300">
+                  <div className="absolute right-0 sm:left-auto left-1/2 -translate-x-1/2 sm:translate-x-0 top-16 w-[90vw] sm:w-96 bg-white dark:bg-[#1a2a20] rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.12)] border border-emerald-100 dark:border-emerald-800/50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-3 duration-300">
                     <div className="bg-gradient-to-r from-[#163d2a] to-emerald-600 p-5 text-white">
                       <h3 className="font-black text-lg">Notificaciones</h3>
                       <p className="text-xs opacity-80 mt-1">Centro de actividad del sistema</p>

@@ -290,13 +290,13 @@ export default function EmpleadoRegistrar() {
   };
 
   return (
-    <div className="p-10 dark:bg-[#0a0f0a]">
-      <div className="bg-white dark:bg-[#1a2a20] rounded-3xl shadow-xl p-10 max-w-4xl mx-auto border border-gray-100 dark:border-white/10">
-        <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8 flex items-center gap-3">
+    <div className="p-3 md:p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] rounded-3xl shadow-xl p-4 md:p-10 max-w-4xl mx-auto border border-gray-100 dark:border-white/10">
+        <h2 className="text-xl md:text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8 flex items-center gap-3">
            Registrar Personal
         </h2>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           
           <Input
             value={empleado.first_name}
@@ -321,7 +321,7 @@ export default function EmpleadoRegistrar() {
           />
           
           {/* Campo Contraseña corregido */}
-          <div className="relative flex items-center">
+          <div className="relative w-full">
             <Input
               type={showPassword ? "text" : "password"}
               value={empleado.password}
@@ -358,7 +358,7 @@ export default function EmpleadoRegistrar() {
 
           {/* Panel de Requisitos */}
           {empleado.password && empleado.password.length > 0 && (
-            <div className="bg-gray-50 dark:bg-black/20 p-4 rounded-xl space-y-2 border border-gray-100 dark:border-white/5 text-xs col-span-2 grid grid-cols-2 gap-2">
+            <div className="bg-gray-50 dark:bg-black/20 p-4 rounded-xl space-y-2 border border-gray-100 dark:border-white/5 text-xs col-span-2 grid grid-cols-1 md:grid-cols-2 gap-2">
               <p className="text-gray-500 dark:text-green-200/60 font-bold uppercase tracking-wider text-[10px] col-span-2 mb-1">
                 Requisitos de seguridad:
               </p>

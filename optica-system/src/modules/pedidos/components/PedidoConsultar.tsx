@@ -268,13 +268,13 @@ export default function PedidoConsultar() {
   });
 
   if (loading) {
-    return <div className="p-10 text-center font-bold text-[#1a4731] text-xl animate-pulse">Cargando pedidos de Opti-Samuel...</div>;
+    return     <div className="p-10 text-center font-bold text-[#1a4731] text-xl animate-pulse">Cargando pedidos de Opti-Samuel...</div>;
   }
 
   return (
-    <div className="p-10 dark:bg-[#0a0f0a]">
-      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-3xl shadow-xl max-w-5xl border border-gray-100 dark:border-white/10 mx-auto">
-        <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8">Consultar Pedidos</h2>
+    <div className="p-4 md:p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] p-4 md:p-10 rounded-3xl shadow-xl max-w-5xl border border-gray-100 dark:border-white/10 mx-auto">
+        <h2 className="text-xl md:text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8">Consultar Pedidos</h2>
 
         {!detalle ? (
           <div className="space-y-6">
@@ -364,9 +364,9 @@ export default function PedidoConsultar() {
         ) : (
           /* VISTA DETALLE COMPLETO */
           <div className="space-y-8 animate-in slide-in-from-bottom-2 duration-300">
-            <div className="flex justify-between items-center border-b dark:border-white/10 pb-6">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 border-b dark:border-white/10 pb-6">
                <div>
-                  <h3 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100">Pedido #{detalle.id}</h3>
+                  <h3 className="text-xl md:text-3xl font-black text-[#1a4731] dark:text-emerald-100">Pedido #{detalle.id}</h3>
                   <p className="text-gray-500 dark:text-gray-400 font-bold uppercase text-xs mt-1">Estado actual: {getEstadoLabel(detalle.estado_pedido)}</p>
                </div>
                <div className="flex gap-3">

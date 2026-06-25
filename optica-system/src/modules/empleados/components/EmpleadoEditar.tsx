@@ -107,8 +107,8 @@ const handleUpdate = async () => {
   if (loading) return <div className="p-10 text-center font-black text-[#1a4731] dark:text-emerald-100 animate-pulse">Consultando nómina...</div>;
 
   return (
-    <div className="p-10 dark:bg-[#0a0f0a]">
-      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-3xl shadow-xl min-h-[450px] border border-gray-100 dark:border-white/10">
+    <div className="p-3 md:p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] p-4 md:p-10 rounded-3xl shadow-xl min-h-[450px] border border-gray-100 dark:border-white/10">
         <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8">
           {editando ? `Editar Perfil: @${editando.username}` : "Gestión de Personal"}
         </h2>
@@ -132,15 +132,15 @@ const handleUpdate = async () => {
 
             <div className="grid gap-4">
               {empleadosFiltrados.map((emp) => (
-                <div key={emp.id} className="p-5 border rounded-2xl flex justify-between items-center hover:bg-gray-50 dark:hover:bg-[#0f1a14] transition-all border-gray-100 dark:border-white/10 shadow-sm group">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-3 h-3 rounded-full ${emp.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
-                    <div>
-                      <p className="font-bold text-[#1a4731] dark:text-emerald-100 text-lg capitalize">{emp.first_name} {emp.last_name}</p>
-                      <p className="text-sm text-gray-400 dark:text-gray-300 font-mono">@{emp.username} • {emp.rol}</p>
+                <div key={emp.id} className="p-5 border rounded-2xl flex-col md:flex-row flex justify-between items-start md:items-center gap-3 hover:bg-gray-50 dark:hover:bg-[#0f1a14] transition-all border-gray-100 dark:border-white/10 shadow-sm group">
+                  <div className="flex items-center gap-4 min-w-0 flex-1">
+                    <div className={`w-3 h-3 rounded-full shrink-0 ${emp.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
+                    <div className="min-w-0">
+                      <p className="font-bold text-[#1a4731] dark:text-emerald-100 text-lg capitalize truncate">{emp.first_name} {emp.last_name}</p>
+                      <p className="text-sm text-gray-400 dark:text-gray-300 font-mono truncate">@{emp.username} • {emp.rol}</p>
                     </div>
                   </div>
-                  <Button onClick={() => setEditando({ ...emp })} className="bg-[#1a4731] hover:bg-[#123122] rounded-xl px-8 h-12 transition-transform active:scale-95">
+                  <Button onClick={() => setEditando({ ...emp })} className="bg-[#1a4731] hover:bg-[#123122] rounded-xl px-8 h-12 transition-transform active:scale-95 w-full md:w-auto shrink-0">
                     Modificar
                   </Button>
                 </div>

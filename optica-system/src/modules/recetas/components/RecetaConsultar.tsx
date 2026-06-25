@@ -50,16 +50,16 @@ export default function RecetaConsultar() {
 
   /* -------- UI DE CARGA -------- */
   if (loading) return (
-    <div className="p-10 text-center flex flex-col items-center gap-4">
+    <div className="p-4 md:p-10 text-center flex flex-col items-center gap-4">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a4731]"></div>
       <p className="text-[#1a4731] dark:text-emerald-100 font-bold">Cargando historial médico...</p>
     </div>
   );
 
   return (
-    <div className="p-10 dark:bg-[#0a0f0a]">
-      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-3xl shadow-xl min-h-[500px]">
-        <h2 className="text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-6 flex items-center gap-3">
+    <div className="p-4 md:p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] p-4 md:p-10 rounded-3xl shadow-xl min-h-[500px]">
+        <h2 className="text-xl md:text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-6 flex items-center gap-3">
           <ClipboardList className="w-8 h-8" />
           Consultar Recetas
         </h2>
@@ -87,11 +87,11 @@ export default function RecetaConsultar() {
               )}
 
               {recetasFiltradas.map((receta) => (
-                <div
-                  key={receta.id}
-                  className="p-6 border border-gray-100 dark:border-white/10 rounded-2xl flex justify-between items-center transition-all hover:shadow-lg hover:border-[#1a4731]/20 bg-slate-50/30 dark:bg-[#0f1a14]/30"
-                >
-                  <div className="space-y-1">
+                  <div
+                    key={receta.id}
+                    className="p-6 border border-gray-100 dark:border-white/10 rounded-2xl flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 transition-all hover:shadow-lg hover:border-[#1a4731]/20 bg-slate-50/30 dark:bg-[#0f1a14]/30"
+                  >
+                    <div className="space-y-1">
                     <p className="font-black text-xl text-gray-800 dark:text-gray-200 uppercase tracking-tight">
                       {receta.cliente_data?.nombre} {receta.cliente_data?.apellido}
                     </p>
@@ -108,7 +108,7 @@ export default function RecetaConsultar() {
 
                   <Button 
                     onClick={() => setDetalle(receta)} 
-                    className="bg-[#1a4731] hover:bg-[#123122] h-12 px-6 rounded-xl gap-2 font-bold"
+                    className="bg-[#1a4731] hover:bg-[#123122] h-12 px-6 rounded-xl gap-2 font-bold w-full sm:w-auto"
                   >
                     <Eye className="w-5 h-5" />
                     Ver Detalles

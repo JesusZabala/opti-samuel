@@ -289,8 +289,8 @@ export default function PedidoEntregar() {
   if (loading) return <div className="p-10 text-center font-bold text-[#1a4731] dark:text-emerald-100">Buscando pedidos...</div>;
 
   return (
-    <div className="p-10 dark:bg-[#0a0f0a]">
-      <div className="bg-white dark:bg-[#1a2a20] p-10 rounded-3xl shadow-xl max-w-5xl border border-gray-100 dark:border-white/10 mx-auto">
+    <div className="p-3 md:p-10 dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] p-4 md:p-10 rounded-3xl shadow-xl max-w-5xl border border-gray-100 dark:border-white/10 mx-auto">
         
         {/* TITULO Y CONTADORES */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -343,11 +343,11 @@ export default function PedidoEntregar() {
                 pedidosFiltrados.map((p) => (
                   <div 
                     key={p.id} 
-                    className={`p-6 border rounded-2xl flex justify-between items-center bg-white dark:bg-[#1a2a20] transition-all shadow-sm border-l-8 ${
+                    className={`p-6 border rounded-2xl flex-col md:flex-row flex justify-between items-start md:items-center gap-3 bg-white dark:bg-[#1a2a20] transition-all shadow-sm border-l-8 ${
                       filtroTab === 'E' ? "border-l-amber-500 hover:border-amber-300" : "border-l-green-500 hover:border-green-300"
                     }`}
                   >
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <p className="font-bold text-gray-800 dark:text-gray-200 text-xl">
                         {p.cliente_data?.nombre} {p.cliente_data?.apellido}
                       </p>
@@ -359,7 +359,7 @@ export default function PedidoEntregar() {
                     </div>
                     <Button 
                       onClick={() => setSeleccionado(p)} 
-                      className={`rounded-xl px-6 text-white font-bold ${
+                      className={`rounded-xl px-6 text-white font-bold w-full md:w-auto shrink-0 ${
                         filtroTab === 'E' ? "bg-amber-600 hover:bg-amber-700" : "bg-green-700 hover:bg-green-800"
                       }`}
                     >
