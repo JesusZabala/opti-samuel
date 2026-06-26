@@ -709,24 +709,24 @@ export default function PedidoRegistrar() {
     <div className="p-3 md:p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
       <div className="bg-white dark:bg-[#1a2a20] rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
         
-        <div className="bg-[#1a4731] p-8 text-white flex justify-between items-center">
+        <div className="bg-[#1a4731] p-4 md:p-8 text-white flex flex-col md:flex-row md:justify-between md:items-center gap-3">
           <div>
-            <h2 className="text-3xl font-black tracking-tight flex items-center gap-3">
-              <ShoppingCart className="w-10 h-10 text-green-400" /> Nuevo Pedido
+            <h2 className="text-xl md:text-3xl font-black tracking-tight flex items-center gap-3">
+              <ShoppingCart className="w-8 md:w-10 h-8 md:h-10 text-green-400" /> Nuevo Pedido
             </h2>
             <p className="text-green-100/60 font-bold uppercase text-[10px] tracking-widest mt-1">Panel de despacho Opti-Samuel</p>
           </div>
-          <div className="bg-white/10 px-4 py-2 rounded-full text-xs font-bold border border-white/20">
+          <div className="bg-white/10 px-4 py-2 rounded-full text-xs font-bold border border-white/20 self-start md:self-auto">
             {tipoPedido === 'C' ? 'ORDEN COMPLETA' : tipoPedido === 'SL' ? 'SOLO CRISTALES' : 'SOLO MONTURA'}
           </div>
         </div>
 
         <div className="p-4 md:p-10 dark:bg-[#0a0f0a]">
-          <div className="flex bg-gray-100 dark:bg-[#0f1a14] p-1.5 rounded-2xl w-fit mb-10 border border-gray-200 dark:border-white/10">
+          <div className="flex bg-gray-100 dark:bg-[#0f1a14] p-1.5 rounded-2xl w-full md:w-fit mb-6 md:mb-10 border border-gray-200 dark:border-white/10 overflow-x-auto">
             {([{id: 'C', n: 'Completo'}, {id: 'SL', n: 'Lentes'}, {id: 'SM', n: 'Montura'}] as const).map((t) => (
               <button key={t.id} type="button" onClick={() => { setTipoPedido(t.id); limpiarCliente(); }}
                 disabled={enviando}
-                className={`px-8 py-3 rounded-xl font-black text-xs uppercase transition-all ${tipoPedido === t.id ? "bg-white dark:bg-[#1a2a20] text-[#1a4731] dark:text-emerald-100 shadow-md" : "text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-400"} disabled:opacity-50`}>
+                className={`flex-1 md:flex-none px-4 md:px-8 py-3 rounded-xl font-black text-xs uppercase transition-all whitespace-nowrap ${tipoPedido === t.id ? "bg-white dark:bg-[#1a2a20] text-[#1a4731] dark:text-emerald-100 shadow-md" : "text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-400"} disabled:opacity-50`}>
                 {t.n}
               </button>
             ))}
@@ -825,7 +825,7 @@ export default function PedidoRegistrar() {
 
             <div className="grid grid-cols-1 gap-12">
               {(tipoPedido === 'C' || tipoPedido === 'SL') && (
-                <div className="relative p-8 pt-12 border-2 border-blue-50 dark:border-blue-800/30 rounded-[2.5rem] bg-blue-50/10 dark:bg-blue-900/5 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="relative p-4 md:p-8 pt-12 border-2 border-blue-50 dark:border-blue-800/30 rounded-[1.5rem] md:rounded-[2.5rem] bg-blue-50/10 dark:bg-blue-900/5 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                   <div className="absolute -top-4 left-8 bg-blue-600 text-white px-6 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] shadow-lg flex items-center gap-2">
                     <Layers className="w-3 h-3" /> CRISTALES Y TRATAMIENTOS
                   </div>
@@ -869,7 +869,7 @@ export default function PedidoRegistrar() {
               )}
 
               {(tipoPedido === 'C' || tipoPedido === 'SM') && (
-                <div className="relative p-8 pt-12 border-2 border-green-50 dark:border-emerald-800/30 rounded-[2.5rem] bg-green-50/10 dark:bg-emerald-900/5 grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div className="relative p-4 md:p-8 pt-12 border-2 border-green-50 dark:border-emerald-800/30 rounded-[1.5rem] md:rounded-[2.5rem] bg-green-50/10 dark:bg-emerald-900/5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                   <div className="absolute -top-4 left-8 bg-green-600 text-white px-6 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] shadow-lg flex items-center gap-2">
                     <Glasses className="w-3 h-3" /> ESPECIFICACIONES DE MONTURA
                   </div>
@@ -932,10 +932,10 @@ export default function PedidoRegistrar() {
               </div>
             </div>
 
-            <Button 
+            <Button
               disabled={enviando || !clienteSeleccionado || (tipoPedido !== 'SM' && !formData.receta)}
-              type="submit" 
-              className="w-full py-12 text-xl font-black bg-[#1a4731] hover:bg-[#143625] rounded-[2rem] shadow-2xl transition-all uppercase tracking-widest disabled:opacity-20 active:scale-95"
+              type="submit"
+              className="w-full py-6 md:py-12 text-sm md:text-xl font-black bg-[#1a4731] hover:bg-[#143625] rounded-2xl md:rounded-[2rem] shadow-2xl transition-all uppercase tracking-widest disabled:opacity-20 active:scale-95"
             >
               {enviando ? "PROCESANDO..." : "GENERAR PEDIDO Y DESCARGAR FACTURA"}
             </Button>

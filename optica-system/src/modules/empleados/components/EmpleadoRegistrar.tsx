@@ -185,8 +185,8 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, Check, XCircle } from "lucide-react"; 
-import { registrarEmpleados, type Empleado, type Rol } from "@/services/empleadoService"; 
+import { Eye, EyeOff, Check, XCircle, ShieldCheck } from "lucide-react";
+import { registrarEmpleados, type Empleado, type Rol } from "@/services/empleadoService";
 
 export default function EmpleadoRegistrar() {
   const [empleado, setEmpleado] = useState<Empleado>({
@@ -290,75 +290,103 @@ export default function EmpleadoRegistrar() {
   };
 
   return (
-    <div className="p-3 md:p-10 dark:bg-[#0a0f0a]">
-      <div className="bg-white dark:bg-[#1a2a20] rounded-3xl shadow-xl p-4 md:p-10 max-w-4xl mx-auto border border-gray-100 dark:border-white/10">
-        <h2 className="text-xl md:text-3xl font-black text-[#1a4731] dark:text-emerald-100 mb-8 flex items-center gap-3">
-           Registrar Personal
-        </h2>
+    <div className="p-3 md:p-10 max-w-5xl mx-auto dark:bg-[#0a0f0a]">
+      <div className="bg-white dark:bg-[#1a2a20] rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          
-          <Input
-            value={empleado.first_name}
-            onChange={(e) => handleChange("first_name", e.target.value)}
-            placeholder="Nombre"
-            required
-            className="capitalize"
-          />
-          <Input
-            value={empleado.last_name}
-            onChange={(e) => handleChange("last_name", e.target.value)}
-            placeholder="Apellido"
-            required
-            className="capitalize"
-          />
-
-          <Input
-            value={empleado.username}
-            onChange={(e) => handleChange("username", e.target.value)}
-            placeholder="Usuario (mín. 4 caracteres)"
-            required
-          />
-          
-          {/* Campo Contraseña corregido */}
-          <div className="relative w-full">
-            <Input
-              type={showPassword ? "text" : "password"}
-              value={empleado.password}
-              onChange={(e) => handleChange("password", e.target.value)}
-              placeholder="Contraseña"
-              required
-              className="pr-12"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 text-gray-400 hover:text-gray-600 dark:hover:text-emerald-400 transition-colors focus:outline-none select-none"
-            >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-            </button>
+        {/* HEADER */}
+        <div className="bg-[#1a4731] p-4 md:p-8 text-white flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+          <div>
+            <h2 className="text-xl md:text-3xl font-black tracking-tight flex items-center gap-3">
+              <ShieldCheck className="w-7 md:w-10 h-7 md:h-10 text-green-400" />
+              Registrar Personal
+            </h2>
+            <p className="text-green-100/60 font-bold text-[10px] md:text-xs uppercase tracking-[0.3em] mt-1">Opti Samuel • 2026</p>
           </div>
+        </div>
 
-          <Input
-            type="email"
-            value={empleado.email}
-            onChange={(e) => handleChange("email", e.target.value.toLowerCase())}
-            placeholder="Correo Electrónico"
-            required
-          />
+        <div className="p-4 md:p-10">
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
-          <select
-            value={empleado.rol}
-            onChange={(e) => setEmpleado({ ...empleado, rol: e.target.value as Rol })}
-            className="p-3 rounded-xl border bg-white dark:bg-[#1a2a20] dark:border-gray-700 outline-none focus:ring-2 focus:ring-green-500 w-full text-gray-700 dark:text-gray-300 font-medium transition-all cursor-pointer"
-          >
-            <option value="recepcionista">Recepcionista</option>
-            <option value="optometrista">Optometrista</option>
-          </select>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest ml-1">Nombre</label>
+              <Input
+                value={empleado.first_name}
+                onChange={(e) => handleChange("first_name", e.target.value)}
+                placeholder="Nombre"
+                required
+                className="capitalize h-12 rounded-xl"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest ml-1">Apellido</label>
+              <Input
+                value={empleado.last_name}
+                onChange={(e) => handleChange("last_name", e.target.value)}
+                placeholder="Apellido"
+                required
+                className="capitalize h-12 rounded-xl"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest ml-1">Usuario</label>
+              <Input
+                value={empleado.username}
+                onChange={(e) => handleChange("username", e.target.value)}
+                placeholder="Mín. 4 caracteres"
+                required
+                className="h-12 rounded-xl"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest ml-1">Contraseña</label>
+              <div className="relative w-full">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={empleado.password}
+                  onChange={(e) => handleChange("password", e.target.value)}
+                  placeholder="Contraseña segura"
+                  required
+                  className="pr-12 h-12 rounded-xl"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-emerald-400 transition-colors focus:outline-none select-none"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest ml-1">Correo Electrónico</label>
+              <Input
+                type="email"
+                value={empleado.email}
+                onChange={(e) => handleChange("email", e.target.value.toLowerCase())}
+                placeholder="correo@ejemplo.com"
+                required
+                className="h-12 rounded-xl"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest ml-1">Rol</label>
+              <select
+                value={empleado.rol}
+                onChange={(e) => setEmpleado({ ...empleado, rol: e.target.value as Rol })}
+                className="h-12 px-3 rounded-xl border bg-white dark:bg-[#0f1a14] dark:border-white/10 outline-none focus:ring-2 focus:ring-green-500 w-full text-gray-700 dark:text-gray-100 font-bold transition-all cursor-pointer"
+              >
+                <option value="recepcionista">Recepcionista</option>
+                <option value="optometrista">Optometrista</option>
+              </select>
+            </div>
 
           {/* Panel de Requisitos */}
           {empleado.password && empleado.password.length > 0 && (
-            <div className="bg-gray-50 dark:bg-black/20 p-4 rounded-xl space-y-2 border border-gray-100 dark:border-white/5 text-xs col-span-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div className="bg-gray-50 dark:bg-black/20 p-4 rounded-xl space-y-2 border border-gray-100 dark:border-white/5 text-xs md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-2">
               <p className="text-gray-500 dark:text-green-200/60 font-bold uppercase tracking-wider text-[10px] col-span-2 mb-1">
                 Requisitos de seguridad:
               </p>
@@ -387,11 +415,11 @@ export default function EmpleadoRegistrar() {
 
           {/* Bloque de Errores Dinámicos */}
           {error && (
-            <div className="text-red-600 dark:text-red-400 col-span-2 text-sm bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800/30 animate-in fade-in slide-in-from-top-1">
+            <div className="text-red-600 dark:text-red-400 md:col-span-2 text-sm bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800/30 animate-in fade-in slide-in-from-top-1">
                {typeof error === 'object' ? (
                  Object.entries(error).map(([key, val]: any) => (
                    <p key={key} className="flex gap-2">
-                     <span className="font-bold uppercase">{key}:</span> 
+                     <span className="font-bold uppercase">{key}:</span>
                      <span>{Array.isArray(val) ? val[0] : val}</span>
                    </p>
                  ))
@@ -402,19 +430,20 @@ export default function EmpleadoRegistrar() {
           )}
 
           {message && (
-            <div className="text-green-700 dark:text-emerald-300 col-span-2 bg-green-50 dark:bg-emerald-900/20 p-4 rounded-xl border border-green-200 dark:border-emerald-800/30 font-medium flex items-center gap-2">
+            <div className="text-green-700 dark:text-emerald-300 md:col-span-2 bg-green-50 dark:bg-emerald-900/20 p-4 rounded-xl border border-green-200 dark:border-emerald-800/30 font-medium flex items-center gap-2">
               <span className="text-xl">✓</span> {message}
             </div>
           )}
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={loading || ((empleado.password || "").length > 0 && !esPasswordSegura)}
-            className="mt-4 bg-[#1a4731] hover:bg-[#123122] col-span-2 h-14 text-lg font-bold shadow-lg transition-all active:scale-95 disabled:opacity-50"
+            className="mt-4 bg-[#1a4731] hover:bg-[#123122] md:col-span-2 h-14 text-lg font-black uppercase tracking-widest shadow-lg transition-all active:scale-95 disabled:opacity-50 rounded-2xl"
           >
             {loading ? "Procesando registro..." : "Confirmar Registro"}
           </Button>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

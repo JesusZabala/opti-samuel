@@ -629,33 +629,41 @@ export default function RecetaRegistrar() {
 
   return (
     <div className="p-3 md:p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
-      <div className="bg-white dark:bg-[#1a2a20] rounded-[2rem] shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
-        
-        {/* ENCABEZADO TIPO DASHBOARD */}
-        <div className="bg-[#1a4731] p-8 text-white">
-          <h2 className="text-3xl font-black tracking-tight flex items-center gap-3">
-            <CheckCircle2 className="w-10 h-10 text-green-400" />
-            Nueva Receta Médica
-          </h2>
-          <p className="text-green-100/70 mt-1 font-medium">Registro de optometría y salud visual</p>
+      <div className="bg-white dark:bg-[#1a2a20] rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
+
+        {/* HEADER (igual a CitasRegistrar) */}
+        <div className="bg-[#1a4731] p-4 md:p-8 text-white flex flex-col md:flex-row justify-between md:items-center gap-4">
+          <div>
+            <h2 className="text-xl md:text-3xl font-black tracking-tight flex items-center gap-3">
+              <CheckCircle2 className="w-8 md:w-10 h-8 md:h-10 text-green-400" />
+              Nueva Receta Médica
+            </h2>
+            <p className="text-green-100/60 font-bold text-[10px] md:text-xs uppercase tracking-[0.3em] mt-1">Opti Samuel • 2026</p>
+          </div>
+          {seleccionadoId && (
+            <div className="bg-white/10 px-6 py-3 rounded-2xl backdrop-blur-md border border-white/20">
+              <p className="text-[10px] font-black text-green-300 uppercase">Modo</p>
+              <p className="font-bold text-lg">{modo === "CITA" ? "Por Cita" : "Cliente Externo"}</p>
+            </div>
+          )}
         </div>
 
         <div className="p-4 md:p-10">
           {/* SELECTOR DE MODO PROFESIONAL */}
-          <div className="flex bg-gray-100 dark:bg-[#0f1a14] p-1.5 rounded-2xl w-fit mb-10">
+          <div className="flex bg-gray-100 dark:bg-[#0f1a14] p-1.5 rounded-2xl w-full md:w-fit mb-6 md:mb-10 overflow-x-auto">
             <button
               type="button"
               onClick={() => { setModo("CITA"); setSeleccionadoId(null); setBusqueda(""); }}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${modo === "CITA" ? "bg-white dark:bg-[#1a2a20] text-[#1a4731] dark:text-emerald-100 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 md:px-6 py-3 rounded-xl font-bold transition-all whitespace-nowrap text-xs md:text-sm ${modo === "CITA" ? "bg-white dark:bg-[#1a2a20] text-[#1a4731] dark:text-emerald-100 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
             >
-              <Calendar className="w-5 h-5" /> Por Cita
+              <Calendar className="w-4 md:w-5 h-4 md:h-5" /> Por Cita
             </button>
             <button
               type="button"
               onClick={() => { setModo("CLIENTE"); setSeleccionadoId(null); setBusqueda(""); }}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${modo === "CLIENTE" ? "bg-white dark:bg-[#1a2a20] text-[#1a4731] dark:text-emerald-100 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 md:px-6 py-3 rounded-xl font-bold transition-all whitespace-nowrap text-xs md:text-sm ${modo === "CLIENTE" ? "bg-white dark:bg-[#1a2a20] text-[#1a4731] dark:text-emerald-100 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
             >
-              <User className="w-5 h-5" /> Cliente Externo
+              <User className="w-4 md:w-5 h-4 md:h-5" /> Cliente Externo
             </button>
           </div>
 
@@ -734,7 +742,7 @@ export default function RecetaRegistrar() {
               {/* OJO DERECHO */}
               <div className="relative group">
                 <div className="absolute -top-4 left-6 bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-black shadow-lg">OJO DERECHO (OD)</div>
-                <div className="p-8 pt-10 border-2 border-blue-100 dark:border-blue-800/30 rounded-[2rem] bg-blue-50/5 dark:bg-blue-900/10 space-y-6">
+                <div className="p-4 md:p-8 pt-8 md:pt-10 border-2 border-blue-100 dark:border-blue-800/30 rounded-[1.5rem] md:rounded-[2rem] bg-blue-50/5 dark:bg-blue-900/10 space-y-6">
                   <div className="grid grid-cols-3 gap-2 md:gap-6">
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Esfera</label> 
@@ -803,7 +811,7 @@ export default function RecetaRegistrar() {
               {/* OJO IZQUIERDO */}
               <div className="relative group">
                 <div className="absolute -top-4 left-6 bg-green-600 text-white px-4 py-1 rounded-full text-xs font-black shadow-lg">OJO IZQUIERDO (OI)</div>
-                <div className="p-8 pt-10 border-2 border-green-100 dark:border-emerald-800/30 rounded-[2rem] bg-green-50/5 dark:bg-emerald-900/10 space-y-6">
+                <div className="p-4 md:p-8 pt-8 md:pt-10 border-2 border-green-100 dark:border-emerald-800/30 rounded-[1.5rem] md:rounded-[2rem] bg-green-50/5 dark:bg-emerald-900/10 space-y-6">
                   <div className="grid grid-cols-3 gap-2 md:gap-6">
                     <div className="space-y-1"> 
                        
@@ -888,10 +896,10 @@ export default function RecetaRegistrar() {
               />
             </div>
 
-            <Button 
+            <Button
               disabled={loading || !seleccionadoId}
-              type="submit" 
-              className="w-full py-10 text-xl font-black bg-[#1a4731] hover:bg-[#143625] rounded-[1.5rem] shadow-xl transition-all hover:scale-[1.01] uppercase tracking-widest disabled:opacity-50"
+              type="submit"
+              className="w-full py-6 md:py-10 text-sm md:text-xl font-black bg-[#1a4731] hover:bg-[#143625] rounded-2xl md:rounded-[1.5rem] shadow-xl transition-all hover:scale-[1.01] uppercase tracking-widest disabled:opacity-50"
             >
               {loading ? "PROCESANDO REGISTRO..." : "GUARDAR RECETA EN HISTORIAL"}
             </Button>

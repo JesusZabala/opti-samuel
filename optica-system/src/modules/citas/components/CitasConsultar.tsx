@@ -463,7 +463,7 @@ export default function CitaConsultar() {
                             <User className="w-6 h-6" />
                         </div>
                         <div>
-                            <p className="font-black text-gray-800 text-xl">
+                            <p className="font-black text-gray-800 dark:text-gray-100 text-xl">
                                 {cita.cliente_data?.nombre} {cita.cliente_data?.apellido}
                             </p>
                             <div className="flex gap-4 mt-1">
