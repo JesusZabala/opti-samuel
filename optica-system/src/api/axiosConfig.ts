@@ -3,6 +3,7 @@ import { authStorage } from '@/auth/authStorage';
 import { notifyUnauthorized } from '@/auth/authEvents';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000/api/';
+// http://192.168.1.102:8000/api/
 
 export const api = axios.create({
   baseURL,

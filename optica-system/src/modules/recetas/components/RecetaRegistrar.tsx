@@ -15,8 +15,8 @@
 //     cita: null as number | null,
 //     cliente: null as number | null,
 //     observaciones: "",
-//     od: { esfera: 0, cilindro: 0, eje: 0, adicion: 1, dp: 0 },
-//     oi: { esfera: 0, cilindro: 0, eje: 0, adicion: 1, dp: 0 },
+//     od: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
+//     oi: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
 //   });
 
 //   const [citasCompletadas, setCitasCompletadas] = useState<any[]>([]);
@@ -57,11 +57,24 @@
 //     else setFormData(prev => ({ ...prev, cliente: id, cita: null }));
 //   };
 
+//   // CONTROL ESTRICTO DE INPUTS NUMÉRICOS
 //   const handleInputChange = (ojo: "od" | "oi", campo: string, valor: string) => {
-//     setFormData((prev) => ({
-//       ...prev,
-//       [ojo]: { ...prev[ojo], [campo]: parseFloat(valor) || 0 },
-//     }));
+//     if (valor === "") {
+//       setFormData((prev) => ({
+//         ...prev,
+//         [ojo]: { ...prev[ojo], [campo]: 0 },
+//       }));
+//       return;
+//     }
+
+//     const numeroParseado = parseFloat(valor);
+
+//     if (!isNaN(numeroParseado)) {
+//       setFormData((prev) => ({
+//         ...prev,
+//         [ojo]: { ...prev[ojo], [campo]: numeroParseado },
+//       }));
+//     }
 //   };
 
 //   const handleSubmit = async (e: React.FormEvent) => {
@@ -69,17 +82,14 @@
 //     if (!seleccionadoId) return alert("Por favor, selecciona un cliente o cita primero.");
 
 //     /* --- VALIDACIONES --- */
-//     // 1. Validar rangos de adición (Mínimo 0, Máximo 3)
 //     if (formData.od.adicion < 0 || formData.od.adicion > 3 || formData.oi.adicion < 0 || formData.oi.adicion > 3) {
 //       return alert("La adición de ambos ojos debe estar entre un valor mínimo de 0 y un máximo de 3.");
 //     }
 
-//     // 2. Validar rangos de Eje (Mínimo 1, Máximo 180)
 //     if (formData.od.eje < 1 || formData.od.eje > 180 || formData.oi.eje < 1 || formData.oi.eje > 180) {
 //       return alert("El eje de ambos ojos debe estar en un rango de 1° a 180°.");
 //     }
 
-//     // 3. Validar que la Distancia Pupilar sea idéntica en ambos ojos
 //     if (formData.od.dp !== formData.oi.dp) {
 //       return alert("La Distancia Pupilar (D.P.) debe ser exactamente igual para el Ojo Derecho y el Ojo Izquierdo.");
 //     }
@@ -110,8 +120,8 @@
 //         cita: null,
 //         cliente: null,
 //         observaciones: "",
-//         od: { esfera: 0, cilindro: 0, eje: 0, adicion: 1, dp: 0 },
-//         oi: { esfera: 0, cilindro: 0, eje: 0, adicion: 1, dp: 0 },
+//         od: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
+//         oi: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
 //       });
 //       setSeleccionadoId(null);
 //       setBusqueda("");
@@ -133,7 +143,7 @@
 //   };
 
 //   return (
-//     <div className="p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
+//     <div className="p-3 md:p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
 //       <div className="bg-white dark:bg-[#1a2a20] rounded-[2rem] shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
         
 //         {/* ENCABEZADO TIPO DASHBOARD */}
@@ -145,7 +155,7 @@
 //           <p className="text-green-100/70 mt-1 font-medium">Registro de optometría y salud visual</p>
 //         </div>
 
-//         <div className="p-10">
+//         <div className="p-4 md:p-10">
 //           {/* SELECTOR DE MODO PROFESIONAL */}
 //           <div className="flex bg-gray-100 dark:bg-[#0f1a14] p-1.5 rounded-2xl w-fit mb-10">
 //             <button
@@ -185,7 +195,7 @@
 //               </div>
 
 //               <div className="lg:col-span-2">
-//                 <div className="border rounded-2xl overflow-hidden shadow-inner bg-gray-50 dark:bg-[#0f1a14] max-h-[250px] overflow-y-auto">
+//                 <div className="border rounded-2xl overflow-y-auto shadow-inner bg-gray-50 dark:bg-[#0f1a14] max-h-[250px]">
 //                   <table className="w-full text-left border-collapse">
 //                     <thead className="bg-white dark:bg-[#1a2a20] sticky top-0 shadow-sm">
 //                       <tr>
@@ -235,25 +245,72 @@
 
 //             {/* SECCIÓN DE DATOS ÓPTICOS */}
 //             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              
 //               {/* OJO DERECHO */}
 //               <div className="relative group">
 //                 <div className="absolute -top-4 left-6 bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-black shadow-lg">OJO DERECHO (OD)</div>
 //                 <div className="p-8 pt-10 border-2 border-blue-100 dark:border-blue-800/30 rounded-[2rem] bg-blue-50/5 dark:bg-blue-900/10 space-y-6">
-//                   <div className="grid grid-cols-3 gap-6">
-//                     <div className="space-y-1"> <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Esfera</label> <Input type="number" step="0.25" className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("od", "esfera", e.target.value)} /> </div>
-//                     <div className="space-y-1"> <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Cilindro</label> <Input type="number" step="0.25" className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("od", "cilindro", e.target.value)} /> </div>
-//                     {/* Input Eje con step 15, min 1 y max 180 */}
+//                   <div className="grid grid-cols-3 gap-2 md:gap-6">
+//                     <div className="space-y-1"> 
+//                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Esfera</label> 
+//                       <Input 
+//                         type="number" 
+//                         step="0.25" 
+//                         value={formData.od.esfera || ""}
+//                         onKeyDown={(e) => ["e", "E", "+"].includes(e.key) && e.preventDefault()}
+//                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
+//                         onChange={(e) => handleInputChange("od", "esfera", e.target.value)} 
+//                       /> 
+//                     </div>
+//                     <div className="space-y-1"> 
+//                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Cilindro</label> 
+//                       <Input 
+//                         type="number" 
+//                         step="0.25" 
+//                         value={formData.od.cilindro || ""}
+//                         onKeyDown={(e) => ["e", "E", "+"].includes(e.key) && e.preventDefault()}
+//                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
+//                         onChange={(e) => handleInputChange("od", "cilindro", e.target.value)} 
+//                       /> 
+//                     </div>
 //                     <div className="space-y-1"> 
 //                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Eje (°)</label> 
-//                       <Input type="number" min="0" max="180" step="15" className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("od", "eje", e.target.value)} /> 
+//                       <Input 
+//                         type="number" 
+//                         min="0" 
+//                         max="180" 
+//                         step="15" 
+//                         value={formData.od.eje || ""}
+//                         onKeyDown={(e) => ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault()}
+//                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
+//                         onChange={(e) => handleInputChange("od", "eje", e.target.value)} 
+//                       /> 
 //                     </div>
 //                   </div>
-//                   <div className="grid grid-cols-2 gap-6 pt-2">
+//                   <div className="grid grid-cols-2 gap-2 md:gap-6 pt-2">
 //                     <div className="space-y-1"> 
 //                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Adición</label> 
-//                       <Input type="number" step="0.25" min="0" max="3" defaultValue="1" className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("od", "adicion", e.target.value)} /> 
+//                       <Input 
+//                         type="number" 
+//                         step="0.25" 
+//                         min="0" 
+//                         max="3" 
+//                         value={formData.od.adicion || ""}
+//                         onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
+//                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
+//                         onChange={(e) => handleInputChange("od", "adicion", e.target.value)} 
+//                       /> 
 //                     </div>
-//                     <div className="space-y-1"> <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Distancia Pupilar</label> <Input type="number" className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("od", "dp", e.target.value)} /> </div>
+//                     <div className="space-y-1"> 
+//                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Distancia Pupilar</label> 
+//                       <Input 
+//                         type="number" 
+//                         value={formData.od.dp || ""}
+//                         onKeyDown={(e) => ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault()}
+//                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
+//                         onChange={(e) => handleInputChange("od", "dp", e.target.value)} 
+//                       /> 
+//                     </div>
 //                   </div>
 //                 </div>
 //               </div>
@@ -262,21 +319,67 @@
 //               <div className="relative group">
 //                 <div className="absolute -top-4 left-6 bg-green-600 text-white px-4 py-1 rounded-full text-xs font-black shadow-lg">OJO IZQUIERDO (OI)</div>
 //                 <div className="p-8 pt-10 border-2 border-green-100 dark:border-emerald-800/30 rounded-[2rem] bg-green-50/5 dark:bg-emerald-900/10 space-y-6">
-//                   <div className="grid grid-cols-3 gap-6">
-//                     <div className="space-y-1"> <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Esfera</label> <Input type="number" step="0.25" className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "esfera", e.target.value)} /> </div>
-//                     <div className="space-y-1"> <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Cilindro</label> <Input type="number" step="0.25" className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "cilindro", e.target.value)} /> </div>
-//                     {/* Input Eje con step 15, min 1 y max 180 */}
+//                   <div className="grid grid-cols-3 gap-2 md:gap-6">
+//                     <div className="space-y-1"> 
+//                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Esfera</label> 
+//                       <Input 
+//                         type="number" 
+//                         step="0.25" 
+//                         value={formData.oi.esfera || ""}
+//                         onKeyDown={(e) => ["e", "E", "+"].includes(e.key) && e.preventDefault()}
+//                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
+//                         onChange={(e) => handleInputChange("oi", "esfera", e.target.value)} 
+//                       /> 
+//                     </div>
+//                     <div className="space-y-1"> 
+//                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Cilindro</label> 
+//                       <Input 
+//                         type="number" 
+//                         step="0.25" 
+//                         value={formData.oi.cilindro || ""}
+//                         onKeyDown={(e) => ["e", "E", "+"].includes(e.key) && e.preventDefault()}
+//                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
+//                         onChange={(e) => handleInputChange("oi", "cilindro", e.target.value)} 
+//                       /> 
+//                     </div>
 //                     <div className="space-y-1"> 
 //                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Eje (°)</label> 
-//                       <Input type="number" min="0" max="180" step="15" className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "eje", e.target.value)} /> 
+//                       <Input 
+//                         type="number" 
+//                         min="0" 
+//                         max="180" 
+//                         step="15" 
+//                         value={formData.oi.eje || ""}
+//                         onKeyDown={(e) => ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault()}
+//                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
+//                         onChange={(e) => handleInputChange("oi", "eje", e.target.value)} 
+//                       /> 
 //                     </div>
 //                   </div>
-//                   <div className="grid grid-cols-2 gap-6 pt-2">
+//                   <div className="grid grid-cols-2 gap-2 md:gap-6 pt-2">
 //                     <div className="space-y-1"> 
 //                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Adición</label> 
-//                       <Input type="number" step="0.25" min="0" max="3" defaultValue="1" className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "adicion", e.target.value)} /> 
+//                       <Input 
+//                         type="number" 
+//                         step="0.25" 
+//                         min="0" 
+//                         max="3" 
+//                         value={formData.oi.adicion || ""}
+//                         onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
+//                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
+//                         onChange={(e) => handleInputChange("oi", "adicion", e.target.value)} 
+//                       /> 
 //                     </div>
-//                     <div className="space-y-1"> <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Distancia Pupilar</label> <Input type="number" className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" onChange={(e) => handleInputChange("oi", "dp", e.target.value)} /> </div>
+//                     <div className="space-y-1"> 
+//                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Distancia Pupilar</label> 
+//                       <Input 
+//                         type="number" 
+//                         value={formData.oi.dp || ""}
+//                         onKeyDown={(e) => ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault()}
+//                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
+//                         onChange={(e) => handleInputChange("oi", "dp", e.target.value)} 
+//                       /> 
+//                     </div>
 //                   </div>
 //                 </div>
 //               </div>
@@ -313,6 +416,7 @@
 //   );
 // }
 
+
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -328,8 +432,8 @@ export default function RecetaRegistrar() {
     cita: null as number | null,
     cliente: null as number | null,
     observaciones: "",
-    od: { esfera: 0, cilindro: 0, eje: 0, adicion: 1, dp: 0 },
-    oi: { esfera: 0, cilindro: 0, eje: 0, adicion: 1, dp: 0 },
+    od: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
+    oi: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
   });
 
   const [citasCompletadas, setCitasCompletadas] = useState<any[]>([]);
@@ -390,6 +494,70 @@ export default function RecetaRegistrar() {
     }
   };
 
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (!seleccionadoId) return alert("Por favor, selecciona un cliente o cita primero.");
+
+  //   /* --- VALIDACIONES --- */
+  //   if (formData.od.adicion < 0 || formData.od.adicion > 3 || formData.oi.adicion < 0 || formData.oi.adicion > 3) {
+  //     return alert("La adición de ambos ojos debe estar entre un valor mínimo de 0 y un máximo de 3.");
+  //   }
+
+  //   if (formData.od.eje < 1 || formData.od.eje > 180 || formData.oi.eje < 1 || formData.oi.eje > 180) {
+  //     return alert("El eje de ambos ojos debe estar en un rango de 1° a 180°.");
+  //   }
+
+  //   if (formData.od.dp !== formData.oi.dp) {
+  //     return alert("La Distancia Pupilar (D.P.) debe ser exactamente igual para el Ojo Derecho y el Ojo Izquierdo.");
+  //   }
+
+  //   loading(true);
+  //   const payload = {
+  //     cita: modo === "CITA" ? formData.cita : null,
+  //     cliente: modo === "CLIENTE" ? formData.cliente : null,
+  //     observaciones: formData.observaciones,
+  //     rv_detalle_data: [
+  //       {
+  //         oculus: { descripcion: "Ojo Derecho", alias: "OD", esfera: formData.od.esfera, cilindro: formData.od.cilindro, eje: formData.od.eje },
+  //         adicion: formData.od.adicion,
+  //         distancia_pupilar: formData.od.dp
+  //       },
+  //       {
+  //         oculus: { descripcion: "Ojo Izquierdo", alias: "OI", esfera: formData.oi.esfera, cilindro: formData.oi.cilindro, eje: formData.oi.eje },
+  //         adicion: formData.oi.adicion,
+  //         distancia_pupilar: formData.oi.dp
+  //       }
+  //     ]
+  //   };
+
+  //   try {
+  //     await registrarRecetaCompleta(payload);
+  //     alert("Receta registrada con éxito en Opti-Samuel");
+  //     setFormData({
+  //       cita: null,
+  //       cliente: null,
+  //       observaciones: "",
+  //       od: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
+  //       oi: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
+  //     });
+  //     setSeleccionadoId(null);
+  //     setBusqueda("");
+  //     setClientesFiltrados([]);
+  //     if (modo === "CITA") {
+  //       api
+  //         .get("cita/")
+  //         .then((res) => {
+  //           const completadas = res.data.filter((c: { estado_cita: string }) => c.estado_cita === "COM");
+  //           setCitasCompletadas(completadas);
+  //         })
+  //         .catch(() => console.error("Error al recargar citas"));
+  //     }
+  //   } catch (err) {
+  //     alert("Error al guardar la receta. Revisa los permisos.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!seleccionadoId) return alert("Por favor, selecciona un cliente o cita primero.");
@@ -407,7 +575,9 @@ export default function RecetaRegistrar() {
       return alert("La Distancia Pupilar (D.P.) debe ser exactamente igual para el Ojo Derecho y el Ojo Izquierdo.");
     }
 
-    setLoading(true);
+    // CORREGIDO: Usar la función modificadora del estado
+    setLoading(true); 
+
     const payload = {
       cita: modo === "CITA" ? formData.cita : null,
       cliente: modo === "CLIENTE" ? formData.cliente : null,
@@ -429,19 +599,21 @@ export default function RecetaRegistrar() {
     try {
       await registrarRecetaCompleta(payload);
       alert("Receta registrada con éxito en Opti-Samuel");
+      
+      // Reiniciar formulario...
       setFormData({
         cita: null,
         cliente: null,
         observaciones: "",
-        od: { esfera: 0, cilindro: 0, eje: 0, adicion: 1, dp: 0 },
-        oi: { esfera: 0, cilindro: 0, eje: 0, adicion: 1, dp: 0 },
+        od: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
+        oi: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
       });
       setSeleccionadoId(null);
       setBusqueda("");
       setClientesFiltrados([]);
+      
       if (modo === "CITA") {
-        api
-          .get("cita/")
+        api.get("cita/")
           .then((res) => {
             const completadas = res.data.filter((c: { estado_cita: string }) => c.estado_cita === "COM");
             setCitasCompletadas(completadas);
@@ -449,7 +621,7 @@ export default function RecetaRegistrar() {
           .catch(() => console.error("Error al recargar citas"));
       }
     } catch (err) {
-      alert("Error al guardar la receta. Revisa los permisos.");
+      alert("Error al guardar la receta. Revisa los permisos o los datos enviados.");
     } finally {
       setLoading(false);
     }
@@ -569,7 +741,7 @@ export default function RecetaRegistrar() {
                       <Input 
                         type="number" 
                         step="0.25" 
-                        value={formData.od.esfera || ""}
+                        value={formData.od.esfera ?? ""}
                         onKeyDown={(e) => ["e", "E", "+"].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("od", "esfera", e.target.value)} 
@@ -580,7 +752,7 @@ export default function RecetaRegistrar() {
                       <Input 
                         type="number" 
                         step="0.25" 
-                        value={formData.od.cilindro || ""}
+                        value={formData.od.cilindro ?? ""}
                         onKeyDown={(e) => ["e", "E", "+"].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("od", "cilindro", e.target.value)} 
@@ -593,7 +765,7 @@ export default function RecetaRegistrar() {
                         min="0" 
                         max="180" 
                         step="15" 
-                        value={formData.od.eje || ""}
+                        value={formData.od.eje ?? ""}
                         onKeyDown={(e) => ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("od", "eje", e.target.value)} 
@@ -608,7 +780,7 @@ export default function RecetaRegistrar() {
                         step="0.25" 
                         min="0" 
                         max="3" 
-                        value={formData.od.adicion || ""}
+                        value={formData.od.adicion ?? ""}
                         onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("od", "adicion", e.target.value)} 
@@ -618,7 +790,7 @@ export default function RecetaRegistrar() {
                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Distancia Pupilar</label> 
                       <Input 
                         type="number" 
-                        value={formData.od.dp || ""}
+                        value={formData.od.dp ?? ""}
                         onKeyDown={(e) => ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("od", "dp", e.target.value)} 
@@ -634,11 +806,12 @@ export default function RecetaRegistrar() {
                 <div className="p-8 pt-10 border-2 border-green-100 dark:border-emerald-800/30 rounded-[2rem] bg-green-50/5 dark:bg-emerald-900/10 space-y-6">
                   <div className="grid grid-cols-3 gap-2 md:gap-6">
                     <div className="space-y-1"> 
+                       
                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Esfera</label> 
                       <Input 
                         type="number" 
                         step="0.25" 
-                        value={formData.oi.esfera || ""}
+                        value={formData.oi.esfera ?? ""}
                         onKeyDown={(e) => ["e", "E", "+"].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("oi", "esfera", e.target.value)} 
@@ -649,7 +822,7 @@ export default function RecetaRegistrar() {
                       <Input 
                         type="number" 
                         step="0.25" 
-                        value={formData.oi.cilindro || ""}
+                        value={formData.oi.cilindro ?? ""}
                         onKeyDown={(e) => ["e", "E", "+"].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("oi", "cilindro", e.target.value)} 
@@ -662,7 +835,7 @@ export default function RecetaRegistrar() {
                         min="0" 
                         max="180" 
                         step="15" 
-                        value={formData.oi.eje || ""}
+                        value={formData.oi.eje ?? ""}
                         onKeyDown={(e) => ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("oi", "eje", e.target.value)} 
@@ -677,7 +850,7 @@ export default function RecetaRegistrar() {
                         step="0.25" 
                         min="0" 
                         max="3" 
-                        value={formData.oi.adicion || ""}
+                        value={formData.oi.adicion ?? ""}
                         onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("oi", "adicion", e.target.value)} 
@@ -687,7 +860,7 @@ export default function RecetaRegistrar() {
                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Distancia Pupilar</label> 
                       <Input 
                         type="number" 
-                        value={formData.oi.dp || ""}
+                        value={formData.oi.dp ?? ""}
                         onKeyDown={(e) => ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("oi", "dp", e.target.value)} 
