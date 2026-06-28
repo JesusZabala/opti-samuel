@@ -1,6 +1,5 @@
-
 // import { useState, type FormEvent, useEffect } from "react";
-// import { ArrowLeft, Loader2, KeyRound, CheckCircle2, XCircle, Check } from "lucide-react";
+// import { ArrowLeft, Loader2, KeyRound, CheckCircle2, XCircle, Check, Eye, EyeOff } from "lucide-react";
 // import logo from "@/assets/logo.png";
 // import { authService } from "@/services/authService";
 
@@ -8,6 +7,7 @@
 //   const [email, setEmail] = useState("");
 //   const [token, setToken] = useState("");
 //   const [password, setPassword] = useState("");
+//   const [showPassword, setShowPassword] = useState(false); // ✨ Estado para alternar visibilidad
 //   const [step, setStep] = useState(1);
 //   const [loading, setLoading] = useState(false);
 //   const [error, setError] = useState<string | null>(null);
@@ -35,7 +35,6 @@
 //       especial: tieneEspecial,
 //     });
 
-//     // La contraseña es totalmente segura si cumple todos los criterios
 //     setEsPasswordSegura(tieneLongitud && tieneNumero && tieneMayuscula && tieneEspecial);
 //   }, [password]);
 
@@ -61,7 +60,6 @@
 //     if (e) e.preventDefault();
 //     if (!token || !password) return;
 
-//     // Bloqueo de seguridad en JS por si intentan saltarse el deshabilitado del botón
 //     if (!esPasswordSegura) {
 //       setError("La contraseña no cumple con los requisitos de seguridad.");
 //       return;
@@ -127,7 +125,7 @@
 //               <input
 //                 type="email"
 //                 value={email}
-//                 onChange={(e) => setEmail(e.target.value)}
+//                 onChange={(e) => setEmail(e.target.value.replace(/[^a-zA-Z0-9@.]/g, "").toLowerCase())}
 //                 placeholder="Correo electrónico"
 //                 required
 //                 className="w-full px-5 py-4 rounded-xl bg-white text-gray-800 font-medium placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
@@ -159,14 +157,24 @@
 //               />
 
 //               <div className="space-y-3 text-left">
-//                 <input
-//                   type="password"
-//                   value={password}
-//                   onChange={(e) => setPassword(e.target.value)}
-//                   placeholder="Escribe tu nueva clave"
-//                   required
-//                   className="w-full px-5 py-4 rounded-xl bg-white text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-green-400 transition"
-//                 />
+//                 {/* ✨ Contenedor relativo para posicionar el ojito */}
+//                 <div className="relative">
+//                   <input
+//                     type={showPassword ? "text" : "password"}
+//                     value={password}
+//                     onChange={(e) => setPassword(e.target.value)}
+//                     placeholder="Escribe tu nueva clave"
+//                     required
+//                     className="w-full pl-5 pr-12 py-4 rounded-xl bg-white text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-green-400 transition"
+//                   />
+//                   <button
+//                     type="button"
+//                     onClick={() => setShowPassword(!showPassword)}
+//                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition p-1"
+//                   >
+//                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+//                   </button>
+//                 </div>
 
 //                 {/* PANEL VISUAL DE REQUISITOS */}
 //                 {password.length > 0 && (
@@ -229,11 +237,15 @@ import logo from "@/assets/logo.png";
 import { authService } from "@/services/authService";
 
 export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: () => void }) {
-  const [email, setEmail] = useState("");
+  // Inicializamos los estados recuperando de sessionStorage por si el móvil recargó la pestaña
+  const [email, setEmail] = useState(() => sessionStorage.getItem("reset_email") || "");
   const [token, setToken] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // ✨ Estado para alternar visibilidad
-  const [step, setStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
+  const [step, setStep] = useState(() => {
+    const savedStep = sessionStorage.getItem("reset_step");
+    return savedStep ? parseInt(savedStep, 10) : 1;
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -245,6 +257,12 @@ export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: ()
     especial: false,
   });
   const [esPasswordSegura, setEsPasswordSegura] = useState(false);
+
+  // Sincronizar el paso y el email con sessionStorage para evitar pérdidas al salir de la app
+  useEffect(() => {
+    sessionStorage.setItem("reset_step", step.toString());
+    sessionStorage.setItem("reset_email", email);
+  }, [step, email]);
 
   // Evaluar la contraseña cada vez que cambie
   useEffect(() => {
@@ -262,6 +280,13 @@ export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: ()
 
     setEsPasswordSegura(tieneLongitud && tieneNumero && tieneMayuscula && tieneEspecial);
   }, [password]);
+
+  // Limpiar el almacenamiento temporal al salir voluntariamente
+  const handleCleanAndBack = () => {
+    sessionStorage.removeItem("reset_step");
+    sessionStorage.removeItem("reset_email");
+    onBackToLogin();
+  };
 
   // --- LÓGICA PASO 1: ENVIAR CORREO ---
   const handleRequestReset = async (e?: FormEvent<HTMLFormElement>) => {
@@ -295,6 +320,8 @@ export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: ()
     try {
       await authService.confirmPasswordReset(token, password);
       alert("¡Contraseña actualizada con éxito!");
+      sessionStorage.removeItem("reset_step");
+      sessionStorage.removeItem("reset_email");
       onBackToLogin();
     } catch (err: any) {
       if (err.response && err.response.data) {
@@ -369,7 +396,7 @@ export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: ()
               {/* NOTIFICACIÓN DE ENVÍO EXITOSO */}
               <div className="flex items-center gap-2 text-green-300 text-xs bg-green-900/40 p-3 rounded-lg mb-2 border border-green-500/20">
                 <CheckCircle2 size={16} className="shrink-0" />
-                <span className="text-left font-medium">Verifique su correo electrónico. Le hemos enviado un código.</span>
+                <span className="text-left font-medium">Verifique su correo electrónico. Le hemos enviado un código a <strong>{email}</strong></span>
               </div>
               
               <input
@@ -382,7 +409,6 @@ export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: ()
               />
 
               <div className="space-y-3 text-left">
-                {/* ✨ Contenedor relativo para posicionar el ojito */}
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -436,12 +462,20 @@ export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: ()
               >
                 {loading ? <Loader2 className="animate-spin" size={20} /> : <><KeyRound size={20} /> Cambiar Clave</>}
               </button>
+              
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="text-xs text-green-300/70 hover:text-green-300 underline block mx-auto pt-1"
+              >
+                ¿No te llegó? Volver a ingresar correo
+              </button>
             </>
           )}
         </form>
 
         <button
-          onClick={onBackToLogin}
+          onClick={handleCleanAndBack}
           className="flex items-center justify-center gap-2 text-green-200 hover:text-white transition text-sm w-full mt-6"
         >
           <ArrowLeft size={16} />

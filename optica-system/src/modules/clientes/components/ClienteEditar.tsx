@@ -209,7 +209,7 @@ export default function ClienteEditar() {
 
     let sanitizedValue = value;
 
-    // 1. Letras solamente y límite de 40
+    // 1. Letras solamente y límite de 40 caracteres
     if (field === "nombre" || field === "apellido") {
       sanitizedValue = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
       if (sanitizedValue.length > 40) return;
@@ -225,6 +225,11 @@ export default function ClienteEditar() {
       sanitizedValue = value.toLowerCase().slice(0, 60);
     }
 
+    // 4. Identificación (Solo números para Cédula/RIF, límite de 12 dígitos)
+    if (field === "identificacion") {
+      sanitizedValue = value.replace(/[^0-9]/g, "").slice(0, 12);
+    }
+
     setEditando({ ...editando, [field]: sanitizedValue });
   };
 
@@ -232,9 +237,9 @@ export default function ClienteEditar() {
   const handleUpdate = async () => {
     if (!editando?.id) return;
 
-    // Validación básica de campos obligatorios
-    if (!editando.nombre || !editando.apellido || !editando.telefono) {
-      setError("Nombre, Apellido y Teléfono son obligatorios.");
+    // Validación básica de campos obligatorios incluyendo identificación
+    if (!editando.nombre || !editando.apellido || !editando.telefono || !editando.identificacion) {
+      setError("Nombre, Apellido, Identificación y Teléfono son obligatorios.");
       return;
     }
 
@@ -242,13 +247,15 @@ export default function ClienteEditar() {
       setError("");
       setSuccess("Actualizando...");
 
+      // Enviamos todos los datos modificados a la API mediante PATCH
       await actualizarCliente(editando.id, {
         nombre: editando.nombre,
         apellido: editando.apellido,
+        identificacion: editando.identificacion,
+        tipo_cliente: editando.tipo_cliente,
         email: editando.email,
         telefono: editando.telefono,
         genero: editando.genero,
-        tipo_cliente: editando.tipo_cliente,
         estado_cliente: editando.estado_cliente
       });
 
@@ -280,7 +287,7 @@ export default function ClienteEditar() {
         
         {error && (
           <div className="mb-6 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800/30 text-sm">
-             {typeof error === 'object' ? "Error: Revisa los datos ingresados." : error}
+             {typeof error === 'object' ? "Error: Revisa que la identificación no esté duplicada o los datos ingresados." : error}
           </div>
         )}
 
@@ -321,11 +328,45 @@ export default function ClienteEditar() {
           /* VISTA 2: FORMULARIO DE EDICIÓN */
           <div className="animate-in slide-in-from-right-5 duration-300">
              <div className="bg-[#1a4731]/5 dark:bg-[#1a4731]/20 p-5 rounded-2xl mb-8 border border-[#1a4731]/10 dark:border-[#1a4731]/30">
-                <p className="text-sm text-gray-600 dark:text-gray-300">ID de Cliente: <span className="font-mono font-bold text-[#1a4731] dark:text-emerald-100">{editando.identificacion}</span></p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">ID Original del Cliente: <span className="font-mono font-bold text-[#1a4731] dark:text-emerald-100">{editando.tipo_cliente}-{editando.identificacion}</span></p>
                 <p className="text-lg font-black text-[#1a4731] dark:text-emerald-100 uppercase">{editando.nombre} {editando.apellido}</p>
              </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* CAMPO COMBINADO: TIPO E IDENTIFICACIÓN */}
+              <div className="space-y-2">
+                <label className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-wider ml-1">Identificación (Cédula / RIF)</label>
+                <div className="flex gap-2">
+                  <select
+                    value={editando.tipo_cliente}
+                    onChange={(e) => setEditando({ ...editando, tipo_cliente: e.target.value as any })}
+                    className="h-12 w-20 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2a20] px-3 font-bold text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600"
+                  >
+                    <option value="V">V</option>
+                    <option value="E">E</option>
+                    <option value="J">J</option>
+                  </select>
+                  <Input 
+                    value={editando.identificacion || ""} 
+                    onChange={(e) => handleEditChange("identificacion", e.target.value)}
+                    maxLength={12}
+                    className="h-12 rounded-xl flex-1"
+                    placeholder="Ej: 25123456"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-wider ml-1">Teléfono Móvil</label>
+                <Input 
+                  value={editando.telefono || ""} 
+                  onChange={(e) => handleEditChange("telefono", e.target.value)}
+                  maxLength={15}
+                  type="tel"
+                  className="h-12 rounded-xl"
+                />
+              </div>
+
               <div className="space-y-2">
                 <label className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-wider ml-1">Nombre</label>
                 <Input 
@@ -346,18 +387,7 @@ export default function ClienteEditar() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-wider ml-1">Teléfono Móvil</label>
-                <Input 
-                  value={editando.telefono || ""} 
-                  onChange={(e) => handleEditChange("telefono", e.target.value)}
-                  maxLength={15}
-                  type="tel"
-                  className="h-12 rounded-xl"
-                />
-              </div>
-
-              <div className="space-y-2">
+              <div className="space-y-2 md:col-span-2">
                 <label className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-wider ml-1">Correo Electrónico</label>
                 <Input 
                   value={editando.email || ""} 

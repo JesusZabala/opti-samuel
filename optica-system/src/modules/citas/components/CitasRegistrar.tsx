@@ -1,10 +1,12 @@
+
+
 // import { useState, useEffect } from "react";
 // import { Input } from "@/components/ui/input";
 // import { Button } from "@/components/ui/button";
-// import { Search, Calendar, Stethoscope } from "lucide-react";
+// import { Search, Calendar, Stethoscope, Loader2 } from "lucide-react";
 // import api from "@/api/axiosConfig";
 // import { combineFechaHoraForApi } from "@/modules/citas/utils/combineFechaHora";
-// import { agendarCita } from "@/services/citaService"; 
+// import { agendarCita, obtenerCitasPorFecha, type Cita } from "@/services/citaService"; 
 // import { consultarEmpleados } from "@/services/empleadoService"; 
 
 // export default function CitaRegistrar() {
@@ -14,6 +16,9 @@
 //   const [optometristas, setOptometristas] = useState<any[]>([]);
 //   const [seleccionadoId, setSeleccionadoId] = useState<number | null>(null);
 //   const [nombreSeleccionado, setNombreSeleccionado] = useState("");
+  
+//   const [horasBloqueadas, setHorasBloqueadas] = useState<string[]>([]);
+//   const [cargandoHorarios, setCargandoHorarios] = useState(false);
 
 //   const [formData, setFormData] = useState({
 //     cliente: null as number | null,
@@ -36,7 +41,6 @@
 //     const cargarOptometristas = async () => {
 //       try {
 //         const empleados = await consultarEmpleados();
-//         // Filtramos para asegurar que solo aparezcan optometristas
 //         const listaOpto = empleados.filter((item: any) => 
 //           item.rol_nombre?.toLowerCase() === "optometrista" || 
 //           item.rol?.toLowerCase() === "optometrista"
@@ -49,10 +53,9 @@
 //     cargarOptometristas();
 //   }, []);
 
-//   // 2. Búsqueda de clientes con Debounce de 500ms (Optimizado)
+//   // 2. Búsqueda de clientes con Debounce de 500ms
 //   useEffect(() => {
 //     const delayDebounceFn = setTimeout(async () => {
-//       // Si no hay búsqueda, traemos los recientes. Si hay, filtramos por ?search
 //       const endpoint = busqueda.trim() 
 //         ? `cliente/?search=${encodeURIComponent(busqueda)}` 
 //         : `cliente/`;
@@ -60,7 +63,6 @@
 //       try {
 //         const res = await api.get(endpoint);
 //         const data = Array.isArray(res.data) ? res.data : (res.data.results || []);
-//         // Limitamos a los primeros 8 para que el renderizado sea instantáneo
 //         setClientesFiltrados(data.slice(0, 8));
 //       } catch (err) {
 //         console.error("Error en la búsqueda:", err);
@@ -70,6 +72,68 @@
 //     return () => clearTimeout(delayDebounceFn);
 //   }, [busqueda]);
 
+//   // 3. CONTROL DE HORARIOS OCUPADOS Y PASADOS (Consumiendo el nuevo servicio limpio)
+//   // 3. CONTROL DE HORARIOS OCUPADOS Y PASADOS (Unificado y Corregido)
+//   // 3. CONTROL DE HORARIOS OCUPADOS (Versión definitiva sin bloqueos fantasma de hora local)
+//   useEffect(() => {
+//     if (!formData.fecha) {
+//       setHorasBloqueadas([]);
+//       return;
+//     }
+
+//     const verificarHorarios = async () => {
+//       // 🚀 PASO A: Bloqueo preventivo inmediato de todas las horas y reseteo de la hora elegida
+//       setCargandoHorarios(true);
+//       setFormData((prev) => ({ ...prev, hora: "" }));
+
+//       const bloqueadas: string[] = [];
+
+//       // REGLA ÚNICA: Consultar al Backend y bloquear estrictamente lo que ya esté ocupado
+//       try {
+//         const todasLasCitas = await obtenerCitasPorFecha(formData.fecha);
+
+//         todasLasCitas.forEach((cita: Cita) => {
+//           // Solo procesar si la cita NO está cancelada ('C')
+//           if (cita.fecha && cita.estado_cita !== "C") {
+            
+//             // Separamos el string ISO limpiamente ("2026-05-31T10:00:00-04:00")
+//             const [fechaCitaIso, tiempoCompleto] = cita.fecha.split('T'); 
+            
+//             // Si la cita no pertenece al día seleccionado, la ignoramos
+//             if (fechaCitaIso !== formData.fecha) return;
+
+//             // Si el usuario seleccionó un optometrista, solo bloqueamos las de ESE optometrista
+//             if (formData.usuario && Number(cita.usuario) !== Number(formData.usuario)) return;
+
+//             // Extraer hora y minutos directamente del fragmento de tiempo ("10:00:00...")
+//             const [horaRaw, minRaw] = tiempoCompleto.split(':');
+//             let horas = parseInt(horaRaw, 10);
+//             const minutos = minRaw;
+            
+//             // Conversión limpia a formato 12h respetando los dos dígitos del botón
+//             const ampm = horas >= 12 ? 'PM' : 'AM';
+//             horas = horas % 12;
+//             horas = horas ? horas : 12; // Si es 0 (medianoche o 12m), cambia a 12
+            
+//             // Forzar dos dígitos en la hora (ej: 8 -> "08") para hacer match perfecto con tu array
+//             const horaFormateada = `${horas.toString().padStart(2, '0')}:${minutos} ${ampm}`;
+            
+//             if (!bloqueadas.includes(horaFormateada)) {
+//               bloqueadas.push(horaFormateada);
+//             }
+//           }
+//         });
+//       } catch (err) {
+//         console.error("Error consultando citas existentes:", err);
+//       }
+
+//       // 🚀 PASO B: Actualizar estado con las horas bloqueadas reales de la DB y liberar UI
+//       setHorasBloqueadas(bloqueadas);
+//       setCargandoHorarios(false);
+//     };
+
+//     verificarHorarios();
+//   }, [formData.fecha, formData.usuario]);
 
 //   const handleSeleccionarCliente = (cliente: any) => {
 //     setSeleccionadoId(cliente.id);
@@ -98,16 +162,15 @@
 
 //       alert("¡Cita programada con éxito!");
       
-//       // Limpiar formulario tras éxito
 //       setFormData({ cliente: null, usuario: "", fecha: "", hora: "", motivo: "", estado_cita: "A" });
 //       setSeleccionadoId(null);
 //       setNombreSeleccionado("");
 //       setBusqueda("");
 //       setClientesFiltrados([]);
+//       setHorasBloqueadas([]); // Limpieza de bloqueos post-guardado
       
 //     } catch (err: any) {
-//       // Intenta capturar el error específico del backend (ej: "Esta hora ya está ocupada")
-//       const errorMsg = err?.response?.data?.fecha?.[0] || err?.response?.data?.detail || "Error al procesar la cita.";
+//       const errorMsg = err?.response?.data?.fecha?.[0] || err?.response?.data?.detail || err || "Error al procesar la cita.";
 //       alert(errorMsg);
 //     } finally {
 //       setLoading(false);
@@ -115,14 +178,14 @@
 //   };
 
 //   return (
-//     <div className="p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
+//     <div className="p-4 md:p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
 //       <div className="bg-white dark:bg-[#1a2a20] rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
         
 //         {/* HEADER */}
-//         <div className="bg-[#1a4731] p-8 text-white flex justify-between items-center">
+//         <div className="bg-[#1a4731] p-4 md:p-8 text-white flex flex-col md:flex-row justify-between md:items-center gap-4">
 //           <div>
-//             <h2 className="text-3xl font-black tracking-tight flex items-center gap-3">
-//               <Calendar className="w-10 h-10 text-green-400" />
+//             <h2 className="text-xl md:text-3xl font-black tracking-tight flex items-center gap-3">
+//               <Calendar className="w-8 md:w-10 h-8 md:h-10 text-green-400" />
 //               Gestión de Citas
 //             </h2>
 //             <p className="text-green-100/60 font-bold text-xs uppercase tracking-[0.3em]">Opti Samuel • 2026</p>
@@ -135,8 +198,8 @@
 //           )}
 //         </div>
 
-//         <div className="p-10">
-//           <form onSubmit={handleAuthSubmit} className="space-y-10">
+//         <div className="p-4 md:p-10">
+//           <form onSubmit={handleAuthSubmit} className="space-y-6 md:space-y-10">
             
 //             {/* BUSCADOR */}
 //             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -167,8 +230,8 @@
 //                               onClick={() => handleSeleccionarCliente(c)}
 //                               className={`rounded-xl px-5 h-9 font-black text-[10px] transition-all ${
 //                                 seleccionadoId === c.id 
-//                                  ? "bg-[#1a4731] dark:bg-emerald-900 text-white" 
-//                                  : "bg-transparent border-2 border-[#1a4731] dark:border-emerald-600 text-[#1a4731] dark:text-emerald-300 hover:bg-[#1a4731] dark:hover:bg-emerald-800 hover:text-white"
+//                                   ? "bg-[#1a4731] dark:bg-emerald-900 text-white" 
+//                                   : "bg-transparent border-2 border-[#1a4731] dark:border-emerald-600 text-[#1a4731] dark:text-emerald-300 hover:bg-[#1a4731] dark:hover:bg-emerald-800 hover:text-white"
 //                               }`}
 //                             >
 //                               {seleccionadoId === c.id ? "LISTO" : "SELECCIONAR"}
@@ -236,31 +299,45 @@
 //                 />
 //               </div>
 
-//               <div className="p-8 border-2 border-blue-50 dark:border-blue-800/30 rounded-[2.5rem] bg-blue-50/10 dark:bg-blue-900/10">
-//                 <label className="text-[10px] font-black uppercase text-blue-400 dark:text-blue-300 tracking-[0.2em] mb-4 block text-center">Bloque de Horario</label>
+//               <div className="p-8 border-2 border-blue-50 dark:border-blue-800/30 rounded-[2.5rem] bg-blue-50/10 dark:bg-blue-900/10 relative">
+                
+//                 <div className="flex items-center justify-center gap-2 mb-4">
+//                   <label className="text-[10px] font-black uppercase text-blue-400 dark:text-blue-300 tracking-[0.2em] block text-center">
+//                     Bloque de Horario
+//                   </label>
+//                   {cargandoHorarios && <Loader2 className="w-3 h-3 text-blue-500 animate-spin" />}
+//                 </div>
+
 //                 <div className="grid grid-cols-3 gap-3">
-//                   {horasPermitidas.map((h) => (
-//                     <button
-//                       key={h}
-//                       type="button"
-//                       onClick={() => setFormData({...formData, hora: h})}
-//                       className={`py-3 rounded-xl text-[11px] font-black transition-all border-2 ${
-//                         formData.hora === h 
-//                         ? "bg-blue-600 text-white border-blue-600 shadow-md scale-105" 
-//                         : "bg-white dark:bg-[#1a2a20] text-blue-600 dark:text-blue-300 border-blue-50 dark:border-blue-800/30 hover:border-blue-200 dark:hover:border-blue-500"
-//                       }`}
-//                     >
-//                       {h}
-//                     </button>
-//                   ))}
+//                   {horasPermitidas.map((h) => {
+//                     const estaBloqueada = cargandoHorarios || horasBloqueadas.includes(h);
+                    
+//                     return (
+//                       <button
+//                         key={h}
+//                         type="button"
+//                         disabled={estaBloqueada || !formData.fecha}
+//                         onClick={() => setFormData({...formData, hora: h})}
+//                         className={`py-3 rounded-xl text-[11px] font-black transition-all border-2 ${
+//                           formData.hora === h 
+//                             ? "bg-blue-600 text-white border-blue-600 shadow-md scale-105" 
+//                             : estaBloqueada 
+//                             ? "bg-gray-100 dark:bg-gray-800/50 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700/30 opacity-50 cursor-not-allowed line-through" 
+//                             : "bg-white dark:bg-[#1a2a20] text-blue-600 dark:text-blue-300 border-blue-50 dark:border-blue-800/30 hover:border-blue-200 dark:hover:border-blue-500"
+//                         }`}
+//                       >
+//                         {h}
+//                       </button>
+//                     );
+//                   })}
 //                 </div>
 //               </div>
 //             </div>
 
 //             <Button 
-//               disabled={loading || !seleccionadoId || !formData.usuario}
+//               disabled={loading || !seleccionadoId || !formData.usuario || !formData.hora || cargandoHorarios}
 //               type="submit" 
-//               className="w-full py-12 text-xl font-black bg-[#1a4731] hover:bg-[#0f2d1f] text-white rounded-[2rem] shadow-2xl transition-all active:scale-95 disabled:opacity-20"
+//               className="w-full py-6 md:py-12 text-lg md:text-xl font-black bg-[#1a4731] hover:bg-[#0f2d1f] text-white rounded-[2rem] shadow-2xl transition-all active:scale-95 disabled:opacity-20"
 //             >
 //               {loading ? "PROCESANDO..." : "CONFIRMAR Y AGENDAR CITA"}
 //             </Button>
@@ -302,6 +379,7 @@ export default function CitaRegistrar() {
 
   const getTodayString = () => new Date().toISOString().split('T')[0];
 
+  // 12h estricto para renderizado de botones
   const [horasPermitidas] = useState<string[]>([
     "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM",
     "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM"
@@ -343,9 +421,7 @@ export default function CitaRegistrar() {
     return () => clearTimeout(delayDebounceFn);
   }, [busqueda]);
 
-  // 3. CONTROL DE HORARIOS OCUPADOS Y PASADOS (Consumiendo el nuevo servicio limpio)
-  // 3. CONTROL DE HORARIOS OCUPADOS Y PASADOS (Unificado y Corregido)
-  // 3. CONTROL DE HORARIOS OCUPADOS (Versión definitiva sin bloqueos fantasma de hora local)
+  // 3. CONTROL DE HORARIOS OCUPADOS (Regla de Consultorio Único y Conversión Forzada)
   useEffect(() => {
     if (!formData.fecha) {
       setHorasBloqueadas([]);
@@ -353,40 +429,33 @@ export default function CitaRegistrar() {
     }
 
     const verificarHorarios = async () => {
-      // 🚀 PASO A: Bloqueo preventivo inmediato de todas las horas y reseteo de la hora elegida
       setCargandoHorarios(true);
       setFormData((prev) => ({ ...prev, hora: "" }));
 
       const bloqueadas: string[] = [];
 
-      // REGLA ÚNICA: Consultar al Backend y bloquear estrictamente lo que ya esté ocupado
       try {
         const todasLasCitas = await obtenerCitasPorFecha(formData.fecha);
 
         todasLasCitas.forEach((cita: Cita) => {
-          // Solo procesar si la cita NO está cancelada ('C')
-          if (cita.fecha && cita.estado_cita !== "C") {
+          // Procesar solo citas activas (no canceladas ni completadas)
+          if (cita.fecha && cita.estado_cita !== "C" && cita.estado_cita !== "COM") {
             
-            // Separamos el string ISO limpiamente ("2026-05-31T10:00:00-04:00")
             const [fechaCitaIso, tiempoCompleto] = cita.fecha.split('T'); 
             
-            // Si la cita no pertenece al día seleccionado, la ignoramos
             if (fechaCitaIso !== formData.fecha) return;
 
-            // Si el usuario seleccionó un optometrista, solo bloqueamos las de ESE optometrista
-            if (formData.usuario && Number(cita.usuario) !== Number(formData.usuario)) return;
-
-            // Extraer hora y minutos directamente del fragmento de tiempo ("10:00:00...")
+            // Extraer limpiamente los segmentos de tiempo ignorando la zona horaria del string
             const [horaRaw, minRaw] = tiempoCompleto.split(':');
             let horas = parseInt(horaRaw, 10);
             const minutos = minRaw;
             
-            // Conversión limpia a formato 12h respetando los dos dígitos del botón
+            // Conversión manual estricta a 12h sin depender de configuraciones del teléfono
             const ampm = horas >= 12 ? 'PM' : 'AM';
             horas = horas % 12;
-            horas = horas ? horas : 12; // Si es 0 (medianoche o 12m), cambia a 12
+            horas = horas ? horas : 12; // Mapea el 0 a 12
             
-            // Forzar dos dígitos en la hora (ej: 8 -> "08") para hacer match perfecto con tu array
+            // Construcción idéntica al formato de tu array local ("01:00 PM")
             const horaFormateada = `${horas.toString().padStart(2, '0')}:${minutos} ${ampm}`;
             
             if (!bloqueadas.includes(horaFormateada)) {
@@ -398,13 +467,12 @@ export default function CitaRegistrar() {
         console.error("Error consultando citas existentes:", err);
       }
 
-      // 🚀 PASO B: Actualizar estado con las horas bloqueadas reales de la DB y liberar UI
       setHorasBloqueadas(bloqueadas);
       setCargandoHorarios(false);
     };
 
     verificarHorarios();
-  }, [formData.fecha, formData.usuario]);
+  }, [formData.fecha]);
 
   const handleSeleccionarCliente = (cliente: any) => {
     setSeleccionadoId(cliente.id);
@@ -438,7 +506,7 @@ export default function CitaRegistrar() {
       setNombreSeleccionado("");
       setBusqueda("");
       setClientesFiltrados([]);
-      setHorasBloqueadas([]); // Limpieza de bloqueos post-guardado
+      setHorasBloqueadas([]); 
       
     } catch (err: any) {
       const errorMsg = err?.response?.data?.fecha?.[0] || err?.response?.data?.detail || err || "Error al procesar la cita.";

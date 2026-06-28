@@ -14,6 +14,8 @@ import { obtenerCitas } from "./citaService";
 import { obtenerTodasLasRecetas } from "./recetaService";
 import { obtenerPedido } from "./pedidoService";
 
+import * as XLSX from "xlsx";
+
 const pdfMake: any = pdfMakeModule;
 const vfsSources = (pdfFonts as any).pdfMake?.vfs || (pdfFonts as any).vfs || pdfFonts;
 pdfMake.vfs = vfsSources;
@@ -390,7 +392,7 @@ export const generarReporteRecetasPDF = async (desde: string, hasta: string): Pr
   descargarBlobPDF(doc, `Reporte_Recetas_${desde}_al_${hasta}.pdf`);
 };
 
-/* ───────────────── PEDIDOS ───────────────── */
+
 
 export const generarReportePedidosPDF = async (desde: string, hasta: string): Promise<void> => {
   const logo = await obtenerLogoBase64();
@@ -435,4 +437,123 @@ export const generarReportePedidosPDF = async (desde: string, hasta: string): Pr
   });
 
   descargarBlobPDF(doc, `Reporte_Pedidos_${desde}_al_${hasta}.pdf`);
+};
+
+
+
+export const descargarReportesClientesExcel = async (desde: string, hasta: string): Promise<void> => {
+  const clientes = await obtenerClientes();
+  const filtrados = clientes.filter((c: any) => dentroDelRango(c.registered_at, desde, hasta));
+
+  const datosExcel = filtrados.map((c: any) => ({
+    "Identificación": `${c.tipo_cliente}-${c.identificacion}`,
+    "Nombre Completo": `${c.nombre} ${c.apellido}`,
+    "Correo Electrónico": c.email || "—",
+    "Teléfono": c.telefono || "—",
+    "Género": c.genero === "M" ? "Masculino" : "Femenino",
+    "Fecha de Registro": formatearFecha(c.registered_at),
+    "Estado": c.estado_cliente === "A" ? "Activo" : "Inactivo",
+  }));
+
+  generarArchivoExcel(datosExcel, "Reporte_Clientes", desde, hasta, "Clientes");
+};
+
+export const generarReporteCitasExcel = async (desde: string, hasta: string): Promise<void> => {
+  const citas = await obtenerCitas();
+  const filtrados = citas.filter((c: any) => dentroDelRango(c.fecha, desde, hasta));
+
+  const estadoLabel = (e: string) => {
+    const m: Record<string, string> = { A: "Agendada", COM: "Completada", C: "Cancelada", P: "Pendiente" };
+    return m[e] || e;
+  };
+
+  const datosExcel = filtrados.map((c: any) => ({
+    "ID Cita": `#${c.id}`,
+    "Paciente": c.cliente_data ? `${c.cliente_data.nombre} ${c.cliente_data.apellido}` : `Cliente ${c.cliente}`,
+    "Optometrista": c.usuario_data?.first_name ? `Dr. ${c.usuario_data.first_name} ${c.usuario_data.last_name}` : `Usuario ${c.usuario}`,
+    "Fecha": formatearFecha(c.fecha),
+    "Motivo": c.motivo || "—",
+    "Estado de Cita": estadoLabel(c.estado_cita),
+  }));
+
+  generarArchivoExcel(datosExcel, "Reporte_Citas", desde, hasta, "Citas Médicas");
+};
+
+export const generarReporteRecetasExcel = async (desde: string, hasta: string): Promise<void> => {
+  const recetas = await obtenerTodasLasRecetas();
+  const filtrados = recetas.filter((r: any) =>
+    dentroDelRango(r.fecha_creacion || r.fecha_sistema, desde, hasta) 
+  );
+
+  const obtenerOjo = (r: any, alias: "OD" | "OI") => {
+    const d = r.rv_detalle_data?.find((x: any) => x.oculus?.alias === alias);
+    if (!d) return "—";
+    const esf = Number(d.oculus?.esfera || 0).toFixed(2);
+    const cil = Number(d.oculus?.cilindro || 0).toFixed(2);
+    const eje = d.oculus?.eje || 0;
+    const add = Number(d.adicion || 0).toFixed(2);
+    return `Esf:${esf} Cil:${cil} Eje:${eje}° Add:${add}`;
+  };
+
+  const datosExcel = filtrados.map((r: any) => ({
+    "ID Receta": `#${r.id}`,
+    "Paciente": r.cliente_data ? `${r.cliente_data.nombre} ${r.cliente_data.apellido}` : `Cliente ${r.cliente}`,
+    "Fecha Emisión": formatearFecha(r.fecha_creacion || r.fecha_sistema),
+    "Ojo Derecho (OD)": obtenerOjo(r, "OD"),
+    "Ojo Izquierdo (OI)": obtenerOjo(r, "OI"),
+    "Observaciones": r.observaciones || "—",
+  }));
+
+  generarArchivoExcel(datosExcel, "Reporte_Recetas", desde, hasta, "Recetas");
+};
+
+/* ───────────────── EXCEL: PEDIDOS ───────────────── */
+export const generarReportePedidosExcel = async (desde: string, hasta: string): Promise<void> => {
+  const pedidos = await obtenerPedido();
+  const filtrados = (pedidos as any[]).filter((p: any) =>
+    dentroDelRango(p.fecha_creacion || p.fecha_sistema || p.fecha, desde, hasta)
+  );
+
+  const tipoLabel = (t: string) => {
+    const m: Record<string, string> = { C: "Completo", SL: "Solo Lente", SM: "Solo Montura" };
+    return m[t] || t;
+  };
+
+  const estadoLabel = (e: string) => {
+    const m: Record<string, string> = { P: "Pendiente", L: "Listo", E: "Entregado", C: "Cancelado" };
+    return m[e] || e;
+  };
+
+  const datosExcel = filtrados.map((p: any) => ({
+    "ID Pedido": `#${p.id}`,
+    "Cliente": p.cliente_data ? `${p.cliente_data.nombre} ${p.cliente_data.apellido}` : `Cliente ${p.cliente}`,
+    "Tipo de Pedido": tipoLabel(p.tipo_pedido),
+    "Fecha": formatearFecha(p.fecha_creacion || p.fecha_sistema || p.fecha),
+    "Descripción": p.descripcion || "—",
+    "Estado del Envío/Pedido": estadoLabel(p.estado_pedido),
+  }));
+
+  generarArchivoExcel(datosExcel, "Reporte_Pedidos", desde, hasta, "Pedidos");
+};
+
+/* ───────────────── FUNCIÓN UTILDAD GENERADORA ───────────────── */
+const generarArchivoExcel = (
+  datos: any[], 
+  prefijoNombre: string, 
+  desde: string, 
+  hasta: string,
+  nombreHoja: string
+): void => {
+  if (datos.length === 0) {
+    alert("No hay registros en el período seleccionado para exportar a Excel.");
+    return;
+  }
+
+  const hoja = XLSX.utils.json_to_sheet(datos);
+  
+  const libro = XLSX.utils.book_new();
+  
+  XLSX.utils.book_append_sheet(libro, hoja, nombreHoja);
+  
+  XLSX.writeFile(libro, `${prefijoNombre}_${desde}_al_${hasta}.xlsx`);
 };

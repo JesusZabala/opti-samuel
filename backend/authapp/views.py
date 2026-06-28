@@ -13,7 +13,7 @@ from .permissions import HasRole
 
 class EmpleadoViewSet(viewsets.ModelViewSet):
     permission_classes = [HasRole]
-    required_roles = ["superadmin"]
+    required_roles = ["superadmin","optometrista","recepcionista"]
 
     queryset = User.objects.all()
     def get_serializer_class(self):

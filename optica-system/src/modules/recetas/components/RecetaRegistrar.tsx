@@ -416,7 +416,6 @@
 //   );
 // }
 
-
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -432,8 +431,8 @@ export default function RecetaRegistrar() {
     cita: null as number | null,
     cliente: null as number | null,
     observaciones: "",
-    od: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
-    oi: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
+    od: { esfera: 0 as any, cilindro: 0 as any, eje: 0, adicion: 0 as any, dp: 0 },
+    oi: { esfera: 0 as any, cilindro: 0 as any, eje: 0, adicion: 0 as any, dp: 0 },
   });
 
   const [citasCompletadas, setCitasCompletadas] = useState<any[]>([]);
@@ -474,108 +473,60 @@ export default function RecetaRegistrar() {
     else setFormData(prev => ({ ...prev, cliente: id, cita: null }));
   };
 
-  // CONTROL ESTRICTO DE INPUTS NUMÉRICOS
+  // CONTROL DE INPUTS CORREGIDO (Permite ingresar el signo menos y decimales de forma fluida)
   const handleInputChange = (ojo: "od" | "oi", campo: string, valor: string) => {
+    // Si se borra el campo por completo, guardamos string vacío temporal para no forzar un 0 molesto
     if (valor === "") {
       setFormData((prev) => ({
         ...prev,
-        [ojo]: { ...prev[ojo], [campo]: 0 },
+        [ojo]: { ...prev[ojo], [campo]: "" },
       }));
       return;
     }
 
-    const numeroParseado = parseFloat(valor);
+    // Normalizar la coma decimal por punto en teclados móviles
+    const valorNormalizado = valor.replace(",", ".");
 
-    if (!isNaN(numeroParseado)) {
+    // Expresión regular que permite validar números decimales positivos y negativos en construcción:
+    // Permite un "-" opcional, seguido de dígitos opcionales, un "." opcional y más dígitos opcionales.
+    if (/^-?\d*\.?\d*$/.test(valorNormalizado)) {
       setFormData((prev) => ({
         ...prev,
-        [ojo]: { ...prev[ojo], [campo]: numeroParseado },
+        [ojo]: { ...prev[ojo], [campo]: valorNormalizado },
       }));
     }
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (!seleccionadoId) return alert("Por favor, selecciona un cliente o cita primero.");
-
-  //   /* --- VALIDACIONES --- */
-  //   if (formData.od.adicion < 0 || formData.od.adicion > 3 || formData.oi.adicion < 0 || formData.oi.adicion > 3) {
-  //     return alert("La adición de ambos ojos debe estar entre un valor mínimo de 0 y un máximo de 3.");
-  //   }
-
-  //   if (formData.od.eje < 1 || formData.od.eje > 180 || formData.oi.eje < 1 || formData.oi.eje > 180) {
-  //     return alert("El eje de ambos ojos debe estar en un rango de 1° a 180°.");
-  //   }
-
-  //   if (formData.od.dp !== formData.oi.dp) {
-  //     return alert("La Distancia Pupilar (D.P.) debe ser exactamente igual para el Ojo Derecho y el Ojo Izquierdo.");
-  //   }
-
-  //   loading(true);
-  //   const payload = {
-  //     cita: modo === "CITA" ? formData.cita : null,
-  //     cliente: modo === "CLIENTE" ? formData.cliente : null,
-  //     observaciones: formData.observaciones,
-  //     rv_detalle_data: [
-  //       {
-  //         oculus: { descripcion: "Ojo Derecho", alias: "OD", esfera: formData.od.esfera, cilindro: formData.od.cilindro, eje: formData.od.eje },
-  //         adicion: formData.od.adicion,
-  //         distancia_pupilar: formData.od.dp
-  //       },
-  //       {
-  //         oculus: { descripcion: "Ojo Izquierdo", alias: "OI", esfera: formData.oi.esfera, cilindro: formData.oi.cilindro, eje: formData.oi.eje },
-  //         adicion: formData.oi.adicion,
-  //         distancia_pupilar: formData.oi.dp
-  //       }
-  //     ]
-  //   };
-
-  //   try {
-  //     await registrarRecetaCompleta(payload);
-  //     alert("Receta registrada con éxito en Opti-Samuel");
-  //     setFormData({
-  //       cita: null,
-  //       cliente: null,
-  //       observaciones: "",
-  //       od: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
-  //       oi: { esfera: 0, cilindro: 0, eje: 0, adicion: 0, dp: 0 },
-  //     });
-  //     setSeleccionadoId(null);
-  //     setBusqueda("");
-  //     setClientesFiltrados([]);
-  //     if (modo === "CITA") {
-  //       api
-  //         .get("cita/")
-  //         .then((res) => {
-  //           const completadas = res.data.filter((c: { estado_cita: string }) => c.estado_cita === "COM");
-  //           setCitasCompletadas(completadas);
-  //         })
-  //         .catch(() => console.error("Error al recargar citas"));
-  //     }
-  //   } catch (err) {
-  //     alert("Error al guardar la receta. Revisa los permisos.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!seleccionadoId) return alert("Por favor, selecciona un cliente o cita primero.");
 
+    // Sanitizar y parsear los valores antes de validar/enviar (si quedaron en "-", "" o "." se asumen como 0)
+    const odEsfera = parseFloat(formData.od.esfera) || 0;
+    const odCilindro = parseFloat(formData.od.cilindro) || 0;
+    const odAdicion = parseFloat(formData.od.adicion) || 0;
+    const odEje = parseFloat(formData.od.eje as any) || 0;
+    const odDp = parseFloat(formData.od.dp as any) || 0;
+
+    const oiEsfera = parseFloat(formData.oi.esfera) || 0;
+    const oiCilindro = parseFloat(formData.oi.cilindro) || 0;
+    const oiAdicion = parseFloat(formData.oi.adicion) || 0;
+    const oiEje = parseFloat(formData.oi.eje as any) || 0;
+    const oiDp = parseFloat(formData.oi.dp as any) || 0;
+
     /* --- VALIDACIONES --- */
-    if (formData.od.adicion < 0 || formData.od.adicion > 3 || formData.oi.adicion < 0 || formData.oi.adicion > 3) {
+    if (odAdicion < 0 || odAdicion > 3 || oiAdicion < 0 || oiAdicion > 3) {
       return alert("La adición de ambos ojos debe estar entre un valor mínimo de 0 y un máximo de 3.");
     }
 
-    if (formData.od.eje < 1 || formData.od.eje > 180 || formData.oi.eje < 1 || formData.oi.eje > 180) {
+    if (odEje < 1 || odEje > 180 || oiEje < 1 || oiEje > 180) {
       return alert("El eje de ambos ojos debe estar en un rango de 1° a 180°.");
     }
 
-    if (formData.od.dp !== formData.oi.dp) {
+    if (odDp !== oiDp) {
       return alert("La Distancia Pupilar (D.P.) debe ser exactamente igual para el Ojo Derecho y el Ojo Izquierdo.");
     }
 
-    // CORREGIDO: Usar la función modificadora del estado
     setLoading(true); 
 
     const payload = {
@@ -584,14 +535,14 @@ export default function RecetaRegistrar() {
       observaciones: formData.observaciones,
       rv_detalle_data: [
         {
-          oculus: { descripcion: "Ojo Derecho", alias: "OD", esfera: formData.od.esfera, cilindro: formData.od.cilindro, eje: formData.od.eje },
-          adicion: formData.od.adicion,
-          distancia_pupilar: formData.od.dp
+          oculus: { descripcion: "Ojo Derecho", alias: "OD", esfera: odEsfera, cilindro: odCilindro, eje: odEje },
+          adicion: odAdicion,
+          distancia_pupilar: odDp
         },
         {
-          oculus: { descripcion: "Ojo Izquierdo", alias: "OI", esfera: formData.oi.esfera, cilindro: formData.oi.cilindro, eje: formData.oi.eje },
-          adicion: formData.oi.adicion,
-          distancia_pupilar: formData.oi.dp
+          oculus: { descripcion: "Ojo Izquierdo", alias: "OI", esfera: oiEsfera, cilindro: oiCilindro, eje: oiEje },
+          adicion: oiAdicion,
+          distancia_pupilar: oiDp
         }
       ]
     };
@@ -600,7 +551,6 @@ export default function RecetaRegistrar() {
       await registrarRecetaCompleta(payload);
       alert("Receta registrada con éxito en Opti-Samuel");
       
-      // Reiniciar formulario...
       setFormData({
         cita: null,
         cliente: null,
@@ -631,7 +581,7 @@ export default function RecetaRegistrar() {
     <div className="p-3 md:p-10 max-w-7xl mx-auto dark:bg-[#0a0f0a]">
       <div className="bg-white dark:bg-[#1a2a20] rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
 
-        {/* HEADER (igual a CitasRegistrar) */}
+        {/* HEADER */}
         <div className="bg-[#1a4731] p-4 md:p-8 text-white flex flex-col md:flex-row justify-between md:items-center gap-4">
           <div>
             <h2 className="text-xl md:text-3xl font-black tracking-tight flex items-center gap-3">
@@ -649,7 +599,7 @@ export default function RecetaRegistrar() {
         </div>
 
         <div className="p-4 md:p-10">
-          {/* SELECTOR DE MODO PROFESIONAL */}
+          {/* SELECTOR DE MODO */}
           <div className="flex bg-gray-100 dark:bg-[#0f1a14] p-1.5 rounded-2xl w-full md:w-fit mb-6 md:mb-10 overflow-x-auto">
             <button
               type="button"
@@ -747,10 +697,10 @@ export default function RecetaRegistrar() {
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Esfera</label> 
                       <Input 
-                        type="number" 
-                        step="0.25" 
+                        type="text" 
+                        inputMode="text"
+                        pattern="[0-9.-]*"
                         value={formData.od.esfera ?? ""}
-                        onKeyDown={(e) => ["e", "E", "+"].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("od", "esfera", e.target.value)} 
                       /> 
@@ -758,10 +708,10 @@ export default function RecetaRegistrar() {
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Cilindro</label> 
                       <Input 
-                        type="number" 
-                        step="0.25" 
+                        type="text" 
+                        inputMode="text"
+                        pattern="[0-9.-]*"
                         value={formData.od.cilindro ?? ""}
-                        onKeyDown={(e) => ["e", "E", "+"].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("od", "cilindro", e.target.value)} 
                       /> 
@@ -769,12 +719,9 @@ export default function RecetaRegistrar() {
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Eje (°)</label> 
                       <Input 
-                        type="number" 
-                        min="0" 
-                        max="180" 
-                        step="15" 
+                        type="text" 
+                        inputMode="numeric"
                         value={formData.od.eje ?? ""}
-                        onKeyDown={(e) => ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("od", "eje", e.target.value)} 
                       /> 
@@ -784,12 +731,10 @@ export default function RecetaRegistrar() {
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Adición</label> 
                       <Input 
-                        type="number" 
-                        step="0.25" 
-                        min="0" 
-                        max="3" 
+                        type="text" 
+                        inputMode="text"
+                        pattern="[0-9.-]*"
                         value={formData.od.adicion ?? ""}
-                        onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("od", "adicion", e.target.value)} 
                       /> 
@@ -797,9 +742,9 @@ export default function RecetaRegistrar() {
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-blue-900/50 dark:text-blue-300/50 uppercase ml-1">Distancia Pupilar</label> 
                       <Input 
-                        type="number" 
+                        type="text" 
+                        inputMode="numeric"
                         value={formData.od.dp ?? ""}
-                        onKeyDown={(e) => ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-blue-100 dark:border-blue-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("od", "dp", e.target.value)} 
                       /> 
@@ -814,13 +759,12 @@ export default function RecetaRegistrar() {
                 <div className="p-4 md:p-8 pt-8 md:pt-10 border-2 border-green-100 dark:border-emerald-800/30 rounded-[1.5rem] md:rounded-[2rem] bg-green-50/5 dark:bg-emerald-900/10 space-y-6">
                   <div className="grid grid-cols-3 gap-2 md:gap-6">
                     <div className="space-y-1"> 
-                       
                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Esfera</label> 
                       <Input 
-                        type="number" 
-                        step="0.25" 
+                        type="text" 
+                        inputMode="text"
+                        pattern="[0-9.-]*"
                         value={formData.oi.esfera ?? ""}
-                        onKeyDown={(e) => ["e", "E", "+"].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("oi", "esfera", e.target.value)} 
                       /> 
@@ -828,10 +772,10 @@ export default function RecetaRegistrar() {
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Cilindro</label> 
                       <Input 
-                        type="number" 
-                        step="0.25" 
+                        type="text" 
+                        inputMode="text"
+                        pattern="[0-9.-]*"
                         value={formData.oi.cilindro ?? ""}
-                        onKeyDown={(e) => ["e", "E", "+"].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("oi", "cilindro", e.target.value)} 
                       /> 
@@ -839,12 +783,9 @@ export default function RecetaRegistrar() {
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Eje (°)</label> 
                       <Input 
-                        type="number" 
-                        min="0" 
-                        max="180" 
-                        step="15" 
+                        type="text" 
+                        inputMode="numeric"
                         value={formData.oi.eje ?? ""}
-                        onKeyDown={(e) => ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("oi", "eje", e.target.value)} 
                       /> 
@@ -854,12 +795,10 @@ export default function RecetaRegistrar() {
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Adición</label> 
                       <Input 
-                        type="number" 
-                        step="0.25" 
-                        min="0" 
-                        max="3" 
+                        type="text" 
+                        inputMode="text"
+                        pattern="[0-9.-]*"
                         value={formData.oi.adicion ?? ""}
-                        onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("oi", "adicion", e.target.value)} 
                       /> 
@@ -867,9 +806,9 @@ export default function RecetaRegistrar() {
                     <div className="space-y-1"> 
                       <label className="text-[10px] font-black text-green-900/50 dark:text-emerald-300/50 uppercase ml-1">Distancia Pupilar</label> 
                       <Input 
-                        type="number" 
+                        type="text" 
+                        inputMode="numeric"
                         value={formData.oi.dp ?? ""}
-                        onKeyDown={(e) => ["e", "E", "+", "-", "."].includes(e.key) && e.preventDefault()}
                         className="rounded-xl border-green-100 dark:border-emerald-800/30 focus:border-blue-500" 
                         onChange={(e) => handleInputChange("oi", "dp", e.target.value)} 
                       /> 
