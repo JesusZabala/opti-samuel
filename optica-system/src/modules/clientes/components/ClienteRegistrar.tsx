@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import { registrarCliente, type Cliente } from "@/services/clienteService";
+import { LoadingOverlay, BrandSpinner } from "@/components/ui/loading-overlay";
 
 export default function ClienteRegistrar() {
   const [cliente, setCliente] = useState<Cliente>({
@@ -78,8 +79,8 @@ export default function ClienteRegistrar() {
   };
 
   return (
-    <div className="p-3 md:p-10 max-w-5xl mx-auto dark:bg-[#0a0f0a]">
-      <div className="bg-white dark:bg-[#1a2a20] rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
+    <div className="p-3 md:p-8 max-w-5xl xl:max-w-none mx-auto">
+      <div className="relative bg-white dark:bg-[#1a2a20] rounded-[2rem] md:rounded-[2.5rem] xl:rounded-3xl shadow-2xl xl:shadow-xl border border-gray-100 dark:border-white/10 overflow-hidden">
 
         {/* HEADER */}
         <div className="bg-[#1a4731] p-4 md:p-8 text-white flex flex-col md:flex-row md:justify-between md:items-center gap-3">
@@ -92,8 +93,10 @@ export default function ClienteRegistrar() {
           </div>
         </div>
 
-        <div className="p-4 md:p-10">
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+        <LoadingOverlay show={loading} message="Registrando cliente..." />
+
+        <div className="p-4 md:p-10 xl:px-14 xl:py-12">
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 xl:gap-8">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest ml-1">Nombre</label>
               <Input
@@ -178,7 +181,7 @@ export default function ClienteRegistrar() {
 
             {/* Errores detallados */}
             {error && (
-              <div className="text-red-600 dark:text-red-400 md:col-span-2 text-sm bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800/30 animate-pulse">
+              <div className="text-red-600 dark:text-red-400 md:col-span-2 xl:col-span-3 text-sm bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800/30 animate-pulse">
                 {typeof error === 'object' ? (
                   Object.entries(error).map(([key, val]: any) => (
                     <p key={key} className="flex gap-2">
@@ -193,7 +196,7 @@ export default function ClienteRegistrar() {
             )}
 
             {message && (
-              <div className="text-green-700 dark:text-emerald-300 md:col-span-2 bg-green-50 dark:bg-emerald-900/20 p-4 rounded-xl border border-green-200 dark:border-emerald-800/30 font-medium flex items-center gap-2">
+              <div className="text-green-700 dark:text-emerald-300 md:col-span-2 xl:col-span-3 bg-green-50 dark:bg-emerald-900/20 p-4 rounded-xl border border-green-200 dark:border-emerald-800/30 font-medium flex items-center gap-2">
                 <span className="text-xl">✓</span> {message}
               </div>
             )}
@@ -201,9 +204,16 @@ export default function ClienteRegistrar() {
             <Button
               type="submit"
               disabled={loading}
-              className="mt-4 bg-[#1a4731] hover:bg-[#123122] md:col-span-2 h-14 text-lg font-black uppercase tracking-widest shadow-lg transition-all active:scale-95 rounded-2xl"
+              className="mt-4 bg-[#1a4731] hover:bg-[#123122] md:col-span-2 xl:col-span-3 h-14 text-lg font-black uppercase tracking-widest shadow-lg transition-all active:scale-95 rounded-2xl flex items-center justify-center gap-3"
             >
-              {loading ? "Registrando en Opti-Samuel..." : "Guardar Cliente"}
+              {loading ? (
+                <>
+                  <BrandSpinner size="sm" className="border-white/30 border-t-white" />
+                  Registrando en Opti-Samuel...
+                </>
+              ) : (
+                "Guardar Cliente"
+              )}
             </Button>
           </form>
         </div>
