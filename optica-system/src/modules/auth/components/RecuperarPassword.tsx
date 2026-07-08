@@ -4,11 +4,15 @@
 // import { authService } from "@/services/authService";
 
 // export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: () => void }) {
-//   const [email, setEmail] = useState("");
+//   // Inicializamos los estados recuperando de sessionStorage por si el móvil recargó la pestaña
+//   const [email, setEmail] = useState(() => sessionStorage.getItem("reset_email") || "");
 //   const [token, setToken] = useState("");
 //   const [password, setPassword] = useState("");
-//   const [showPassword, setShowPassword] = useState(false); // ✨ Estado para alternar visibilidad
-//   const [step, setStep] = useState(1);
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [step, setStep] = useState(() => {
+//     const savedStep = sessionStorage.getItem("reset_step");
+//     return savedStep ? parseInt(savedStep, 10) : 1;
+//   });
 //   const [loading, setLoading] = useState(false);
 //   const [error, setError] = useState<string | null>(null);
 
@@ -20,6 +24,12 @@
 //     especial: false,
 //   });
 //   const [esPasswordSegura, setEsPasswordSegura] = useState(false);
+
+//   // Sincronizar el paso y el email con sessionStorage para evitar pérdidas al salir de la app
+//   useEffect(() => {
+//     sessionStorage.setItem("reset_step", step.toString());
+//     sessionStorage.setItem("reset_email", email);
+//   }, [step, email]);
 
 //   // Evaluar la contraseña cada vez que cambie
 //   useEffect(() => {
@@ -37,6 +47,14 @@
 
 //     setEsPasswordSegura(tieneLongitud && tieneNumero && tieneMayuscula && tieneEspecial);
 //   }, [password]);
+
+//   // Limpiar el almacenamiento temporal al salir voluntariamente
+//   const handleCleanAndBack = () => {
+//     sessionStorage.removeItem("reset_step");
+//     sessionStorage.removeItem("reset_email");
+//     sessionStorage.removeItem("recuperando_active"); // Limpiamos el puente del padre
+//     onBackToLogin();
+//   };
 
 //   // --- LÓGICA PASO 1: ENVIAR CORREO ---
 //   const handleRequestReset = async (e?: FormEvent<HTMLFormElement>) => {
@@ -69,7 +87,15 @@
 //     setError(null);
 //     try {
 //       await authService.confirmPasswordReset(token, password);
+      
+//       // MODIFICACIÓN CRUCIAL: El alert bloquea el flujo. 
+//       // Al dar click en "Aceptar", se ejecutan las siguientes líneas evitando la pantalla en blanco.
 //       alert("¡Contraseña actualizada con éxito!");
+      
+//       sessionStorage.removeItem("reset_step");
+//       sessionStorage.removeItem("reset_email");
+//       sessionStorage.removeItem("recuperando_active");
+      
 //       onBackToLogin();
 //     } catch (err: any) {
 //       if (err.response && err.response.data) {
@@ -144,7 +170,7 @@
 //               {/* NOTIFICACIÓN DE ENVÍO EXITOSO */}
 //               <div className="flex items-center gap-2 text-green-300 text-xs bg-green-900/40 p-3 rounded-lg mb-2 border border-green-500/20">
 //                 <CheckCircle2 size={16} className="shrink-0" />
-//                 <span className="text-left font-medium">Verifique su correo electrónico. Le hemos enviado un código.</span>
+//                 <span className="text-left font-medium">Verifique su correo electrónico. Le hemos enviado un código a <strong>{email}</strong></span>
 //               </div>
               
 //               <input
@@ -157,7 +183,6 @@
 //               />
 
 //               <div className="space-y-3 text-left">
-//                 {/* ✨ Contenedor relativo para posicionar el ojito */}
 //                 <div className="relative">
 //                   <input
 //                     type={showPassword ? "text" : "password"}
@@ -211,12 +236,20 @@
 //               >
 //                 {loading ? <Loader2 className="animate-spin" size={20} /> : <><KeyRound size={20} /> Cambiar Clave</>}
 //               </button>
+              
+//               <button
+//                 type="button"
+//                 onClick={() => setStep(1)}
+//                 className="text-xs text-green-300/70 hover:text-green-300 underline block mx-auto pt-1"
+//               >
+//                 ¿No te llegó? Volver a ingresar correo
+//               </button>
 //             </>
 //           )}
 //         </form>
 
 //         <button
-//           onClick={onBackToLogin}
+//           onClick={handleCleanAndBack}
 //           className="flex items-center justify-center gap-2 text-green-200 hover:text-white transition text-sm w-full mt-6"
 //         >
 //           <ArrowLeft size={16} />
@@ -285,6 +318,7 @@ export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: ()
   const handleCleanAndBack = () => {
     sessionStorage.removeItem("reset_step");
     sessionStorage.removeItem("reset_email");
+    sessionStorage.removeItem("recuperando_active"); // Limpiamos el puente del padre
     onBackToLogin();
   };
 
@@ -306,6 +340,7 @@ export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: ()
   };
 
   // --- LÓGICA PASO 2: CAMBIAR CONTRASEÑA ---
+  // --- LÓGICA PASO 2: CAMBIAR CONTRASEÑA ---
   const handleConfirmReset = async (e?: FormEvent<HTMLFormElement>) => {
     if (e) e.preventDefault();
     if (!token || !password) return;
@@ -319,10 +354,21 @@ export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: ()
     setError(null);
     try {
       await authService.confirmPasswordReset(token, password);
-      alert("¡Contraseña actualizada con éxito!");
+      
+      // 1. Limpiamos primero el almacenamiento para que el padre no lea basura al cargar
       sessionStorage.removeItem("reset_step");
       sessionStorage.removeItem("reset_email");
-      onBackToLogin();
+      sessionStorage.removeItem("recuperando_active");
+
+      // 2. Mostramos la alerta bloqueante
+      alert("¡Contraseña actualizada con éxito!");
+      
+      // 3. CRUCIAL: Retrasamos la redirección una milésima de segundo.
+      // Esto libera el hilo de ejecución del alert y evita el bug de la pantalla oscura.
+      setTimeout(() => {
+        onBackToLogin();
+      }, 50);
+
     } catch (err: any) {
       if (err.response && err.response.data) {
         const data = err.response.data;
@@ -337,8 +383,7 @@ export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: ()
       } else {
         setError("El código (token) es inválido o ya expiró.");
       }
-    } finally {
-      setLoading(false);
+      setLoading(false); // Solo volvemos a poner loading en false si hubo un error real
     }
   };
 

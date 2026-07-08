@@ -924,7 +924,7 @@ export default function PedidoRegistrar() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest ml-1">Descripción</label>
-                <Input disabled={enviando} placeholder="Ej: Lente para lectura" value={formData.descripcion} onChange={(e) => setFormData({...formData, descripcion: e.target.value})} className="h-14 rounded-xl border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-[#0f1a14]/50 disabled:opacity-50" />
+                <Input required disabled={enviando} placeholder="Ej: Lente para lectura" value={formData.descripcion} onChange={(e) => setFormData({...formData, descripcion: e.target.value})} className="h-14 rounded-xl border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-[#0f1a14]/50 disabled:opacity-50" />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest ml-1">Observaciones</label>

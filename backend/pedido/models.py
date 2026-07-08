@@ -69,7 +69,7 @@ class Pedido(models.Model):
     fecha_emision = models.DateTimeField(blank=True, null=True,auto_now_add=True)
     fecha_sistema = models.DateTimeField(auto_now_add=True,blank=True, null=True)
     descripcion = models.CharField(max_length=255, blank=False, null=False)
-    observacion = models.CharField(max_length=255, blank=False, null=False)
+    observacion = models.CharField(max_length=255, blank=True, null=True)
     fecha_entrega = models.DateTimeField(blank=True, null=True)
     fecha_completado = models.DateTimeField(blank=True, null=True)
     fecha_entregado = models.DateTimeField(blank=True, null=True)

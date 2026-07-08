@@ -17,7 +17,7 @@ from optisamuel.logo_data import LOGO_BASE64
 # Create your views here.
 class RecetaVisualViewSet(viewsets.ModelViewSet):
     permission_classes = [HasRole]
-    required_roles = ["superadmin", "optometrista"]
+    required_roles = ["superadmin", "optometrista","recepcionista"]
     queryset = RecetaVisual.objects.all()
     serializer_class = RecetaVisualSerializer
 

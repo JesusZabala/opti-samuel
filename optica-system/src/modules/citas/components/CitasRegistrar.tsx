@@ -674,7 +674,7 @@ export default function CitaRegistrar() {
             </div>
 
             <Button 
-              disabled={loading || !seleccionadoId || !formData.usuario || !formData.hora || cargandoHorarios}
+              disabled={loading || !seleccionadoId || !formData.usuario || !formData.hora || !formData.motivo || cargandoHorarios}
               type="submit" 
               className="w-full py-6 md:py-12 text-lg md:text-xl font-black bg-[#1a4731] hover:bg-[#0f2d1f] text-white rounded-[2rem] shadow-2xl transition-all active:scale-95 disabled:opacity-20"
             >

@@ -732,7 +732,7 @@ export default function CitaEditar() {
                   </Button>
 
                   <Button 
-                    disabled={loading || !editando.fecha || !editando.hora || !editando.optometrista || cargandoHorarios}
+                    disabled={loading || !editando.fecha || !editando.hora || !editando.optometrista || !editando.motivo || cargandoHorarios}
                     type="submit" 
                     className="w-full sm:w-2/3 py-6 md:py-8 text-lg font-black bg-[#1a4731] hover:bg-[#0f2d1f] text-white rounded-[2rem] shadow-2xl transition-all active:scale-95 disabled:opacity-20"
                   >
