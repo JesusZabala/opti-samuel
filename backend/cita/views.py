@@ -88,7 +88,9 @@ class CitaViewSet(viewsets.ModelViewSet):
             "pedidosRecientes": lista_pedidos
         })
 
-    @action(detail=False, methods=['get'])
+    # @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], permission_classes=[HasRole], 
+            required_roles=["superadmin", "recepcionista", "optometrista"])
     def buscar_cliente(self, request):
         query = request.query_params.get('q','')
         if len(query) < 3:
@@ -105,7 +107,9 @@ class CitaViewSet(viewsets.ModelViewSet):
 
         return Response(data)
     
-    @action(detail=False, methods=['get'])
+    # @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], permission_classes=[HasRole], 
+            required_roles=["superadmin", "recepcionista", "optometrista"])
     def lista_optometrista(self, request):
         optos = User.objects.filter(groups__name='optometrista')
         data = [{
@@ -115,7 +119,9 @@ class CitaViewSet(viewsets.ModelViewSet):
 
         return Response(data)
 
-    @action(detail=False, methods=['get'])
+    # @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], permission_classes=[HasRole], 
+            required_roles=["superadmin", "recepcionista", "optometrista"])
     def descargar_reporte(self, request):
         desde = request.query_params.get('desde')
         hasta = request.query_params.get('hasta')

@@ -226,7 +226,7 @@ const DashboardHome = () => {
       {/* STATS CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         {[
-          { label: "Citas", val: stats.citas, sub: "Por atender", icon: "📅" },
+          { label: "Citas", val: stats.citas, sub: "Por atender hoy", icon: "📅" },
           { label: "Pacientes", val: stats.nuevos, sub: "Registrados", icon: "👥" },
           { label: "Recetas", val: stats.recetas, sub: "Exámenes", icon: "👁️" },
           { label: "Pedidos", val: stats.pedidos, sub: "Pendientes", icon: "📦" },
@@ -450,7 +450,7 @@ const DashboardHome = () => {
 
             <CardContent className="p-6 space-y-8">
               {/* CLIENTES */}
-              <div>
+              {/* <div>
                 <p className="text-[10px] uppercase tracking-[0.25em] font-black text-gray-400 dark:text-gray-500 mb-4">Nuevos ingresos</p>
                 <div className="flex -space-x-3">
                   {data?.clientesRecientes?.map((cl: any, i: number) => (
@@ -461,7 +461,7 @@ const DashboardHome = () => {
                     </Avatar>
                   ))}
                 </div>
-              </div>
+              </div> */}
 
               {/* PEDIDOS */}
               <div>
