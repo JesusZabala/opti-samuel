@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { obtenerClientes, type Cliente } from "@/services/clienteService";
+import { PageLoader } from "@/components/ui/loading-overlay";
 
 export default function ClienteConsultar() {
   /* -------- ESTADOS -------- */
@@ -62,7 +63,7 @@ export default function ClienteConsultar() {
 
         {/* LISTADO / TABLA */}
         {loading ? (
-          <p className="text-center text-gray-500 dark:text-gray-400 animate-pulse">Cargando base de datos...</p>
+          <PageLoader message="Cargando clientes..." />
         ) : error ? (
           <p className="text-center text-red-500 font-bold">{error}</p>
         ) : (

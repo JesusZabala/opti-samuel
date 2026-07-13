@@ -222,8 +222,9 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, User, Calendar, CheckCircle2, AlertCircle } from "lucide-react"; 
-import { registrarRecetaCompleta } from "@/services/recetaService"; 
-import api from "@/api/axiosConfig"; 
+import { registrarRecetaCompleta } from "@/services/recetaService";
+import api from "@/api/axiosConfig";
+import { notifyOk } from "@/lib/notify";
 
 export default function RecetaRegistrar() {
   const [modo, setModo] = useState<"CITA" | "CLIENTE">("CITA");
@@ -371,8 +372,8 @@ export default function RecetaRegistrar() {
 
     try {
       await registrarRecetaCompleta(payload);
-      alert("¡Receta registrada con éxito en Opti-Samuel!");
-      
+      notifyOk("¡Receta registrada con éxito en Opti-Samuel!");
+
       setFormData({
         cita: null,
         cliente: null,
@@ -473,8 +474,8 @@ export default function RecetaRegistrar() {
               </div>
 
               <div className="lg:col-span-2">
-                <div className="border rounded-2xl overflow-y-auto shadow-inner bg-gray-50 dark:bg-[#0f1a14] max-h-[250px]">
-                  <table className="w-full text-left border-collapse">
+                <div className="border rounded-2xl overflow-x-auto overflow-y-auto shadow-inner bg-gray-50 dark:bg-[#0f1a14] max-h-[250px]">
+                  <table className="w-full min-w-[420px] text-left border-collapse">
                     <thead className="bg-white dark:bg-[#1a2a20] sticky top-0 shadow-sm">
                       <tr>
                         <th className="p-4 text-xs font-black uppercase text-gray-400 dark:text-gray-300">Nombre Completo</th>
@@ -503,7 +504,7 @@ export default function RecetaRegistrar() {
                               type="button"
                               onClick={() => handleSeleccionar(item.id)}
                               variant={seleccionadoId === item.id ? "default" : "outline"}
-                              className={`rounded-full px-6 h-8 text-xs ${seleccionadoId === item.id ? 'bg-green-700' : 'border-green-700 text-green-700'}`}
+                              className={`rounded-full px-4 md:px-6 h-8 text-xs whitespace-nowrap ${seleccionadoId === item.id ? 'bg-green-700' : 'border-green-700 text-green-700'}`}
                             >
                               {seleccionadoId === item.id ? "Seleccionado" : "Elegir"}
                             </Button>

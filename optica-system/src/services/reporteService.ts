@@ -15,6 +15,7 @@ import { obtenerTodasLasRecetas } from "./recetaService";
 import { obtenerPedido } from "./pedidoService";
 
 import * as XLSX from "xlsx";
+import { notifyWarning } from "@/lib/notify";
 
 const pdfMake: any = pdfMakeModule;
 const vfsSources = (pdfFonts as any).pdfMake?.vfs || (pdfFonts as any).vfs || pdfFonts;
@@ -74,7 +75,7 @@ const construirDocumento = ({ titulo, desde, hasta, cuerpo, logoBase64, totalReg
 
   return {
     pageSize: "LETTER",
-    pageMargins: [40, 110, 40, 90],
+    pageMargins: [40, 125, 40, 90],
 
     // Header verde corporativo con logo
     header: () => ({
@@ -87,7 +88,7 @@ const construirDocumento = ({ titulo, desde, hasta, cuerpo, logoBase64, totalReg
               fillColor: "#1a4731",
               margin: [40, 18, 40, 18],
               columns: [
-                { image: logoBase64, width: 55, margin: [0, 0, 10, 0] },
+                { image: logoBase64, width: 78, margin: [0, 0, 12, 0] },
                 {
                   stack: [
                     { text: "OPTI-SAMUEL", color: "#ffffff", fontSize: 18, bold: true, characterSpacing: 2 },
@@ -545,7 +546,7 @@ const generarArchivoExcel = (
   nombreHoja: string
 ): void => {
   if (datos.length === 0) {
-    alert("No hay registros en el período seleccionado para exportar a Excel.");
+    notifyWarning("No hay registros en el período seleccionado para exportar a Excel.");
     return;
   }
 

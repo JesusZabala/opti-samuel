@@ -292,6 +292,7 @@ import { Search, Edit3, CheckCircle, Calendar, User, ClipboardList, Stethoscope,
 import { obtenerCitas, actualizarEstadoCita, obtenerCitasPorFecha, type Cita } from "@/services/citaService";
 import api from "@/api/axiosConfig";
 import { useNotifications } from "@/context/NotificationContext";
+import { notifyWarning } from "@/lib/notify";
 import { useNavigate } from "react-router-dom";
 
 export default function CitaEditar() {
@@ -476,7 +477,8 @@ export default function CitaEditar() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editando.fecha || !editando.hora || !editando.optometrista) {
-      return alert("Por favor complete todos los campos obligatorios.");
+      notifyWarning("Por favor complete todos los campos obligatorios.");
+      return;
     }
 
     try {

@@ -318,6 +318,7 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Calendar, User, Clock, AlertCircle, ArrowLeft, XCircle, FileText } from "lucide-react";
+import { PageLoader } from "@/components/ui/loading-overlay";
 // Importamos los servicios reales
 import { obtenerCitas, actualizarEstadoCita } from "@/services/citaService";
 
@@ -405,7 +406,7 @@ export default function CitaConsultar() {
     }
   };
 
-  if (loading) return <div className="p-10 text-center font-bold text-[#1a4731] dark:text-emerald-100 animate-pulse">Cargando agenda de Opti-Samuel...</div>;
+  if (loading) return <PageLoader message="Cargando agenda..." />;
 
   return (
     <div className="p-4 md:p-10 max-w-6xl mx-auto dark:bg-[#0a0f0a]">

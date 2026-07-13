@@ -214,6 +214,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { obtenerPedido, actualizarEstadoPedido } from "@/services/pedidoService";
+import { notifyOk, notifyError } from "@/lib/notify";
 
 type FiltroEstado = 'E' | 'L';
 
@@ -234,7 +235,7 @@ export default function PedidoEntregar() {
       setPedidos(pendientes);
     } catch (error) {
       console.error(error);
-      alert("Error al cargar los pedidos");
+      notifyError(error, "Error al cargar los pedidos.");
     } finally {
       setLoading(false);
     }
@@ -257,11 +258,11 @@ export default function PedidoEntregar() {
 
     try {
       await actualizarEstadoPedido(id, nuevoEstado);
-      alert(esEnviado ? "Pedido colocado en TIENDA correctamente" : "Pedido marcado como ENTREGADO correctamente");
+      notifyOk(esEnviado ? "Pedido colocado en TIENDA correctamente." : "Pedido marcado como ENTREGADO correctamente.");
       setSeleccionado(null);
       cargarPedidosPendientes(); // Refrescar lista general
     } catch (error) {
-      alert("No se pudo procesar el cambio de estado");
+      notifyError(error, "No se pudo procesar el cambio de estado.");
     }
   };
 

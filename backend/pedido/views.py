@@ -31,7 +31,7 @@ class PedidoViewSet(viewsets.ModelViewSet):
 
         return Response({
             "mensaje": "Pedido registrado correctamente",
-            "Cita": PedidoSerializer(pedido).data
+            "Pedido": PedidoSerializer(pedido).data
         }, status=status.HTTP_201_CREATED)
     
     # @action(detail=True, methods=['get'])

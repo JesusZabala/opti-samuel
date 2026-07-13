@@ -354,8 +354,9 @@ import { Button } from "@/components/ui/button";
 import { Search, Calendar, Stethoscope, Loader2 } from "lucide-react";
 import api from "@/api/axiosConfig";
 import { combineFechaHoraForApi } from "@/modules/citas/utils/combineFechaHora";
-import { agendarCita, obtenerCitasPorFecha, type Cita } from "@/services/citaService"; 
-import { consultarEmpleados } from "@/services/empleadoService"; 
+import { agendarCita, obtenerCitasPorFecha, type Cita } from "@/services/citaService";
+import { consultarEmpleados } from "@/services/empleadoService";
+import { notifyOk, notifyError, notifyWarning } from "@/lib/notify"; 
 
 export default function CitaRegistrar() {
   const [loading, setLoading] = useState(false);
@@ -484,7 +485,8 @@ export default function CitaRegistrar() {
     e.preventDefault();
     
     if (!formData.cliente || !formData.fecha || !formData.hora || !formData.usuario) {
-      return alert("Faltan datos: Asegúrate de elegir Paciente, Optometrista, Fecha y Hora.");
+      notifyWarning("Faltan datos: asegúrate de elegir Paciente, Optometrista, Fecha y Hora.");
+      return;
     }
 
     setLoading(true);
@@ -499,8 +501,8 @@ export default function CitaRegistrar() {
         estado_cita: formData.estado_cita as any,
       });
 
-      alert("¡Cita programada con éxito!");
-      
+      notifyOk("¡Cita programada con éxito!");
+
       setFormData({ cliente: null, usuario: "", fecha: "", hora: "", motivo: "", estado_cita: "A" });
       setSeleccionadoId(null);
       setNombreSeleccionado("");
@@ -509,8 +511,7 @@ export default function CitaRegistrar() {
       setHorasBloqueadas([]); 
       
     } catch (err: any) {
-      const errorMsg = err?.response?.data?.fecha?.[0] || err?.response?.data?.detail || err || "Error al procesar la cita.";
-      alert(errorMsg);
+      notifyError(err, "Error al procesar la cita.");
     } finally {
       setLoading(false);
     }

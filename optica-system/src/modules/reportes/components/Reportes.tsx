@@ -335,6 +335,7 @@ import {
   generarReporteRecetasExcel
 } from "@/services/reporteService";
 import logo from "@/assets/Logo.png";
+import { notifyWarning, notifyError } from "@/lib/notify";
 
 export default function ModuloReportes() {
   const [modulo, setModulo] = useState<string>("clientes");
@@ -358,7 +359,7 @@ export default function ModuloReportes() {
     if (!desde || !hasta) return;
 
     if (new Date(hasta) < new Date(desde)) {
-      alert("La fecha 'Hasta' no puede ser anterior a la fecha 'Desde'.");
+      notifyWarning("La fecha 'Hasta' no puede ser anterior a la fecha 'Desde'.");
       return;
     }
 
@@ -386,7 +387,7 @@ export default function ModuloReportes() {
       }
     } catch (error) {
       console.error("Error en la descarga:", error);
-      alert(`Hubo un error al generar el reporte en ${formatearFormato(formato)}.`);
+      notifyError(`Hubo un error al generar el reporte en ${formatearFormato(formato)}.`);
     } finally {
       setTimeout(() => {
         setCargando(false);

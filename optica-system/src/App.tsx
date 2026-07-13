@@ -28,7 +28,6 @@ import { authService } from "@/services/authService";
 import { setUnauthorizedHandler } from "@/auth/authEvents";
 import { authStorage } from "@/auth/authStorage";
 import { roleCanAccessPath } from "@/auth/routeAccess";
-import { Toaster } from "sonner";
 import { Menu } from "lucide-react";
 
 /** Evita mostrar la landing tras F5 si ya hay sesión o el usuario pasó a login. */
@@ -256,13 +255,6 @@ function App() {
         onLogout={handleLogout}
         goHomeAfterLogin={goHomeAfterLogin}
         onGoHomeConsumed={handleGoHomeConsumed}
-      />
-      <Toaster
-        position="top-center"
-        richColors
-        closeButton
-        duration={5000}
-        className="dark:!bg-[#1a2a20] dark:!text-gray-100 dark:!border dark:!border-white/10"
       />
     </BrowserRouter>
   );

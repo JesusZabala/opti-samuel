@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { consultarEmpleados, type Empleado } from "@/services/empleadoService"; 
+import { consultarEmpleados, type Empleado } from "@/services/empleadoService";
+import { PageLoader } from "@/components/ui/loading-overlay"; 
 
 export default function EmpleadoConsultar() {
   /* -------- ESTADOS -------- */
@@ -77,10 +78,7 @@ export default function EmpleadoConsultar() {
 
         {/* LISTADO / TABLA */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="w-10 h-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
-            <p className="mt-4 text-gray-500 dark:text-gray-400 font-medium italic">Sincronizando con el servidor...</p>
-          </div>
+          <PageLoader message="Cargando empleados..." />
         ) : error ? (
           <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-6 rounded-2xl border border-red-100 dark:border-red-800/30 text-center font-bold">
             {error}

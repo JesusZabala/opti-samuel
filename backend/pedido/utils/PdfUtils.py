@@ -25,10 +25,31 @@ def _get_logo_base64():
     return f"data:image/png;base64,{b64}"
 
 
+def _get_logo_watermark_base64(opacidad=0.06):
+    """
+    Genera una versión muy tenue del logo sobre fondo blanco para usarla como
+    marca de agua detrás del contenido del PDF. Devuelve un data URI PNG (RGB).
+    """
+    img = Image.open(LOGO_PATH).convert('RGBA')
+
+    # Reducimos el canal alfa para que el logo quede casi transparente
+    alpha = img.split()[3].point(lambda p: int(p * opacidad))
+
+    # Lo fundimos sobre blanco: queda un logo gris muy claro (efecto marca de agua)
+    fondo = Image.new('RGB', img.size, (255, 255, 255))
+    fondo.paste(img, mask=alpha)
+
+    buf = BytesIO()
+    fondo.save(buf, format='PNG')
+    b64 = base64.b64encode(buf.getvalue()).decode('ascii')
+    return f"data:image/png;base64,{b64}"
+
+
 def render_to_pdf(template_src, context_dict=None):
     if context_dict is None:
         context_dict = {}
     context_dict['logo_base64'] = _get_logo_base64()
+    context_dict.setdefault('logo_watermark', _get_logo_watermark_base64())
 
     try:
         template = get_template(template_src)

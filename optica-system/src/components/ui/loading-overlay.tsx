@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import Logo from "@/assets/Logo.png";
 
 type LoadingOverlayProps = {
   show: boolean;
@@ -48,6 +49,37 @@ export function BrandSpinner({ size = "md", className }: BrandSpinnerProps) {
       )}
       aria-hidden="true"
     />
+  );
+}
+
+/**
+ * Loader de página completa (o de sección) con el logo de la marca.
+ * Pensado para el estado de carga inicial al entrar a un módulo.
+ * Totalmente responsive y compatible con modo oscuro.
+ */
+export function PageLoader({ message = "Cargando módulo...", className }: { message?: string; className?: string }) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center gap-6 min-h-[60vh] w-full px-6 text-center",
+        className
+      )}
+      aria-live="polite"
+      role="status"
+    >
+      <div className="relative flex items-center justify-center">
+        {/* Anillo giratorio alrededor del logo */}
+        <span className="absolute w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-[#1a4731]/10 dark:border-emerald-300/10 border-t-[#1a4731] dark:border-t-emerald-300 animate-spin" />
+        <img
+          src={Logo}
+          alt="Opti-Samuel"
+          className="w-12 h-12 md:w-14 md:h-14 object-contain drop-shadow-sm animate-pulse"
+        />
+      </div>
+      <p className="text-[11px] md:text-xs font-black uppercase tracking-[0.3em] text-[#1a4731] dark:text-emerald-300">
+        {message}
+      </p>
+    </div>
   );
 }
 

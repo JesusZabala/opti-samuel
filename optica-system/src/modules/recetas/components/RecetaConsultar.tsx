@@ -6,6 +6,7 @@ import { Calendar, User, Eye, ArrowLeft, ClipboardList, Activity } from "lucide-
 // Importamos el servicio real
 import { obtenerTodasLasRecetas } from "@/services/recetaService";
 import { type RecetaVisual } from "@/services/recetaService";
+import { PageLoader } from "@/components/ui/loading-overlay";
 
 export default function RecetaConsultar() {
   /* -------- ESTADOS -------- */
@@ -50,9 +51,8 @@ export default function RecetaConsultar() {
 
   /* -------- UI DE CARGA -------- */
   if (loading) return (
-    <div className="p-4 md:p-10 text-center flex flex-col items-center gap-4">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1a4731]"></div>
-      <p className="text-[#1a4731] dark:text-emerald-100 font-bold">Cargando historial médico...</p>
+    <div className="p-4 md:p-10">
+      <PageLoader message="Cargando recetas..." />
     </div>
   );
 

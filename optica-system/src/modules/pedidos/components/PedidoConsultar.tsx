@@ -115,7 +115,7 @@
 //                       <Button 
 //                         onClick={() => {
 //                           void descargarFacturaPDF(p.id).catch(() =>
-//                             alert("No se pudo descargar el PDF. Verifica tu sesión.")
+//                             notifyError("No se pudo descargar el PDF. Verifica tu sesión.")
 //                           );
 //                         }} 
 //                         variant="outline"
@@ -224,6 +224,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react"; // Importamos icono para el PDF
 import { obtenerPedido, descargarFacturaPDF } from "@/services/pedidoService";
+import { PageLoader } from "@/components/ui/loading-overlay";
+import { notifyError } from "@/lib/notify";
 
 export default function PedidoConsultar() {
   const [pedidos, setPedidos] = useState<any[]>([]);
@@ -240,7 +242,7 @@ export default function PedidoConsultar() {
       setPedidos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error al obtener pedidos:", error);
-      alert("No se pudieron cargar los pedidos. Intenta de nuevo más tarde.");
+      notifyError(error, "No se pudieron cargar los pedidos. Intenta de nuevo más tarde.");
     } finally {
       setLoading(false);
     }
@@ -268,7 +270,7 @@ export default function PedidoConsultar() {
   });
 
   if (loading) {
-    return     <div className="p-10 text-center font-bold text-[#1a4731] text-xl animate-pulse">Cargando pedidos de Opti-Samuel...</div>;
+    return <PageLoader message="Cargando pedidos..." />;
   }
 
   return (
@@ -335,7 +337,7 @@ export default function PedidoConsultar() {
                       <Button 
                         onClick={() => {
                           void descargarFacturaPDF(p.id).catch(() =>
-                            alert("No se pudo descargar el PDF. Verifica tu sesión.")
+                            notifyError("No se pudo descargar el PDF. Verifica tu sesión.")
                           );
                         }} 
                         variant="outline"

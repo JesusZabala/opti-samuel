@@ -268,6 +268,7 @@ import { useState, type FormEvent, useEffect } from "react";
 import { ArrowLeft, Loader2, KeyRound, CheckCircle2, XCircle, Check, Eye, EyeOff } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { authService } from "@/services/authService";
+import { notifyOk } from "@/lib/notify";
 
 export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: () => void }) {
   // Inicializamos los estados recuperando de sessionStorage por si el móvil recargó la pestaña
@@ -360,8 +361,8 @@ export default function RecuperarPassword({ onBackToLogin }: { onBackToLogin: ()
       sessionStorage.removeItem("reset_email");
       sessionStorage.removeItem("recuperando_active");
 
-      // 2. Mostramos la alerta bloqueante
-      alert("¡Contraseña actualizada con éxito!");
+      // 2. Notificamos el éxito (el toast es global y persiste tras redirigir)
+      notifyOk("¡Contraseña actualizada con éxito!");
       
       // 3. CRUCIAL: Retrasamos la redirección una milésima de segundo.
       // Esto libera el hilo de ejecución del alert y evita el bug de la pantalla oscura.

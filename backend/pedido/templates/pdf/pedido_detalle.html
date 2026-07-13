@@ -115,9 +115,24 @@
             text-align: center; padding: 0 25px;
         }
         .footer-bar .motto { color: #a3d4b0; }
+
+        /* ─── MARCA DE AGUA (se pinta detrás del contenido) ─── */
+        .watermark {
+            position: absolute;
+            top: 300px;
+            left: 140px;
+            width: 330px;
+            z-index: -1;
+        }
+        .watermark img { width: 330px; height: auto; }
     </style>
 </head>
 <body>
+
+    <!-- ═══ MARCA DE AGUA ═══ -->
+    <div class="watermark">
+        <img src="{{ logo_watermark }}" alt="" />
+    </div>
 
     <!-- ═══ HEADER ═══ -->
     <table class="header-bar">

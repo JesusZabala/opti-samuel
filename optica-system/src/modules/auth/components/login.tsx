@@ -136,6 +136,7 @@ import logo from '@/assets/logo.png';
 import RecuperarPassword from './RecuperarPassword';
 import { authService } from '@/services/authService';
 import axios from 'axios';
+import { notifyError, notifyWarning } from '@/lib/notify';
 import { Eye, EyeOff } from "lucide-react";
 
 interface LoginProps {
@@ -157,7 +158,7 @@ const Login = ({ onLogin }: LoginProps) => {
     if (e) e.preventDefault();
 
     if (!username.trim() || !password) {
-      alert('Ingresa usuario y contraseña.');
+      notifyWarning('Ingresa usuario y contraseña.');
       return;
     }
 
@@ -171,11 +172,11 @@ const Login = ({ onLogin }: LoginProps) => {
           (error.response?.data as { detail?: string; non_field_errors?: string[] })?.detail ??
           (error.response?.data as { non_field_errors?: string[] })?.non_field_errors?.[0] ??
           error.message;
-        alert(typeof msg === 'string' ? msg : 'No se pudo iniciar sesión.');
+        notifyError(typeof msg === 'string' ? msg : 'No se pudo iniciar sesión.');
       } else if (error instanceof Error) {
-        alert(error.message);
+        notifyError(error.message);
       } else {
-        alert('No se pudo iniciar sesión.');
+        notifyError('No se pudo iniciar sesión.');
       }
     } finally {
       setSubmitting(false);

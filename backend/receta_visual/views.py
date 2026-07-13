@@ -32,7 +32,7 @@ class RecetaVisualViewSet(viewsets.ModelViewSet):
 
         return Response({
             "mensaje": "Receta visual registrada correctamente",
-            "Cita": RecetaVisualSerializer(receta_visual).data
+            "Receta": RecetaVisualSerializer(receta_visual).data
         }, status=status.HTTP_201_CREATED)
 
     from django.http import HttpResponse # Importante
