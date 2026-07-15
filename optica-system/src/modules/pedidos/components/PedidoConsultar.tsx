@@ -317,7 +317,10 @@ export default function PedidoConsultar() {
                   >
                     <div className="flex-1">
                       <p className="font-black text-gray-800 dark:text-gray-200 text-xl uppercase tracking-tight">
-                        {p.cliente_data ? `${p.cliente_data.nombre} ${p.cliente_data.apellido}` : "Sin Cliente"}
+                        {p.cliente_data ? `${p.cliente_data.nombre} ${p.cliente_data.apellido} C.I:${p.cliente_data.identificacion}` : "Sin Cliente"}
+                      </p>
+                      <p className="font-black text-gray-800 dark:text-gray-200 text-xl uppercase tracking-tight ">
+                        {`Fecha: ${p.fecha_emision ? new Date(p.fecha_emision).toLocaleDateString() : "N/A"}`}
                       </p>
                       <div className="flex gap-2 mt-2">
                         <span className="text-[10px] font-black uppercase bg-gray-100 dark:bg-[#0f1a14] px-3 py-1 rounded-full text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700">

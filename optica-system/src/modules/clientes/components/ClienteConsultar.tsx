@@ -75,7 +75,6 @@ export default function ClienteConsultar() {
                   <th className="p-4">Nombre Completo</th>
                   <th className="p-4">Contacto</th>
                   <th className="p-4">Tipo/Género</th>
-                  <th className="p-4 text-center">Estado</th>
                 </tr>
               </thead>
               <tbody>
@@ -103,15 +102,7 @@ export default function ClienteConsultar() {
                       <td className="p-4 text-sm">
                         {c.genero === 'M' ? 'Masculino' : 'Femenino'}
                       </td>
-                      <td className="p-4 text-center">
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${
-                          c.estado_cliente === 'A' 
-                            ? 'bg-green-100 text-green-700' 
-                            : 'bg-red-100 text-red-700'
-                        }`}>
-                          {c.estado_cliente === 'A' ? 'ACTIVO' : 'INACTIVO'}
-                        </span>
-                      </td>
+                      
                     </tr>
                   ))
                 )}

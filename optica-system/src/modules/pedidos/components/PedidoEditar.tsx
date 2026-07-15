@@ -350,7 +350,7 @@ export default function PedidoEntregar() {
                   >
                     <div className="min-w-0 flex-1">
                       <p className="font-bold text-gray-800 dark:text-gray-200 text-xl">
-                        {p.cliente_data?.nombre} {p.cliente_data?.apellido}
+                        {p.cliente_data?.nombre} {p.cliente_data?.apellido} {p.fecha_emision ? new Date(p.fecha_emision).toLocaleDateString() : "N/A"}
                       </p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         {getTipoLabel(p.tipo_pedido)} | <span className={filtroTab === 'E' ? "text-amber-600 font-bold" : "text-green-600 font-bold"}>

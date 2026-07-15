@@ -47,12 +47,31 @@ const formatearFecha = (iso?: string | null): string => {
   return d.toLocaleDateString("es-VE", { day: "2-digit", month: "2-digit", year: "numeric" });
 };
 
+// const dentroDelRango = (fecha: string | null | undefined, desde: string, hasta: string): boolean => {
+//   if (!fecha) return false;
+//   const f = new Date(fecha).getTime();
+//   const d = new Date(desde + "T00:00:00").getTime();
+//   const h = new Date(hasta + "T23:59:59").getTime();
+//   return f >= d && f <= h;
+// };
 const dentroDelRango = (fecha: string | null | undefined, desde: string, hasta: string): boolean => {
   if (!fecha) return false;
-  const f = new Date(fecha).getTime();
-  const d = new Date(desde + "T00:00:00").getTime();
-  const h = new Date(hasta + "T23:59:59").getTime();
-  return f >= d && f <= h;
+
+  // 1. Obtenemos el objeto Date de la cita
+  const fechaCitaObj = new Date(fecha);
+  if (isNaN(fechaCitaObj.getTime())) return false;
+
+  // 2. Extraemos el año, mes y día de la cita en hora LOCAL
+  const year = fechaCitaObj.getFullYear();
+  const month = String(fechaCitaObj.getMonth() + 1).padStart(2, "0");
+  const day = String(fechaCitaObj.getDate()).padStart(2, "0");
+
+  // Formato: "YYYY-MM-DD" de la cita
+  const fechaCitaFormatoString = `${year}-${month}-${day}`;
+
+  // 3. Como 'desde' y 'hasta' ya vienen en formato "YYYY-MM-DD" (de los inputs de tipo date)
+  // podemos hacer una comparación alfabética/numérica perfecta y segura
+  return fechaCitaFormatoString >= desde && fechaCitaFormatoString <= hasta;
 };
 
 const descargarBlobPDF = (docDefinition: TDocumentDefinitions, nombre: string) => {
@@ -312,7 +331,7 @@ export const generarReporteCitasPDF = async (desde: string, hasta: string): Prom
   const logo = await obtenerLogoBase64();
   const citas = await obtenerCitas();
 
-  const filtrados = citas.filter((c: any) => dentroDelRango(c.fecha, desde, hasta));
+  const filtrados = citas.filter((c: any) => dentroDelRango(c.fecha_creacion, desde, hasta));
 
   const estadoLabel = (e: string) => {
     const m: Record<string, string> = { A: "Agendada", COM: "Completada", C: "Cancelada", P: "Pendiente" };
@@ -461,7 +480,7 @@ export const descargarReportesClientesExcel = async (desde: string, hasta: strin
 
 export const generarReporteCitasExcel = async (desde: string, hasta: string): Promise<void> => {
   const citas = await obtenerCitas();
-  const filtrados = citas.filter((c: any) => dentroDelRango(c.fecha, desde, hasta));
+  const filtrados = citas.filter((c: any) => dentroDelRango(c.fecha_creacion, desde, hasta));
 
   const estadoLabel = (e: string) => {
     const m: Record<string, string> = { A: "Agendada", COM: "Completada", C: "Cancelada", P: "Pendiente" };
