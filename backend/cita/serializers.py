@@ -26,7 +26,10 @@ class CitaSerializer(serializers.ModelSerializer):
         read_only_fields = ('id','fecha_creacion',)
 
     def validate_fecha(self, value):
-        qs = Cita.objects.filter(fecha=value).exclude(estado_cita=Cita.EstadoCita.CANCELADA)
+    # Excluimos del chequeo de colisión las citas canceladas y las completadas
+        qs = Cita.objects.filter(fecha=value).exclude(
+            estado_cita__in=[Cita.EstadoCita.CANCELADA, Cita.EstadoCita.COMPLETADA]
+        )
 
         if self.instance:
             qs = qs.exclude(pk=self.instance.pk)

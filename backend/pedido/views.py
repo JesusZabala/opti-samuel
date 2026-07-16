@@ -23,6 +23,25 @@ class PedidoViewSet(viewsets.ModelViewSet):
     required_roles = ["superadmin", "optometrista","recepcionista"]
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
+
+    def get_queryset(self):
+        # 1. Obtenemos el QuerySet base de Pedido
+        queryset = Pedido.objects.all()
+        
+        # 2. Capturamos los parámetros que envías por la URL
+        desde = self.request.query_params.get('desde')
+        hasta = self.request.query_params.get('hasta')
+        estado = self.request.query_params.get('estado')
+
+        # 3. Filtramos por el rango de fecha_sistema si existen ambos parámetros
+        if desde and hasta:
+            queryset = queryset.filter(fecha_sistema__date__range=[desde, hasta])
+            
+        # 4. Filtramos por el campo correcto de tu base de datos: 'estado_pedido'
+        if estado:
+            queryset = queryset.filter(estado_pedido=estado)
+            
+        return queryset.order_by('-fecha_sistema')
     
     def create(self, request):
         serializer = PedidoSerializer(data=request.data)
