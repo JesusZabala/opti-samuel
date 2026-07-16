@@ -2,90 +2,83 @@
 // import {
 //   FileText, Calendar, Users, ClipboardList,
 //   Stethoscope, ShoppingBag, Download, AlertCircle,
-//   ChevronRight, Loader2
+//   ChevronRight, Loader2, FileSpreadsheet // 1. Añadido el icono de Excel
 // } from "lucide-react";
 // import { Button } from "@/components/ui/button";
 // import {
 //   descargarReportesClientesPDF,
 //   generarReporteCitasPDF,
 //   generarReportePedidosPDF,
-//   generarReporteRecetasPDF
+//   generarReporteRecetasPDF,
+//   // 2. Importamos las nuevas funciones espejo para Excel
+//   descargarReportesClientesExcel,
+//   generarReporteCitasExcel,
+//   generarReportePedidosExcel,
+//   generarReporteRecetasExcel
 // } from "@/services/reporteService";
 // import logo from "@/assets/Logo.png";
+// import { notifyWarning, notifyError } from "@/lib/notify";
 
 // export default function ModuloReportes() {
 //   const [modulo, setModulo] = useState<string>("clientes");
 //   const [desde, setDesde] = useState("");
 //   const [hasta, setHasta] = useState("");
 //   const [cargando, setCargando] = useState(false);
+//   // 3. Estado dinámico para saber qué tipo de archivo se está procesando
+//   const [tipoDescarga, setTipoDescarga] = useState<"pdf" | "excel" | null>(null);
 
 //   const opcionesModulo = [
-//     {
-//       id: "clientes",
-//       nombre: "Clientes",
-//       icon: Users,
-//       color: "text-blue-600",
-//       bg: "bg-blue-50"
-//     },
-//     {
-//       id: "citas",
-//       nombre: "Citas Médicas",
-//       icon: Stethoscope,
-//       color: "text-purple-600",
-//       bg: "bg-purple-50"
-//     },
-//     {
-//       id: "recetas",
-//       nombre: "Recetas Médicas",
-//       icon: ClipboardList,
-//       color: "text-orange-600",
-//       bg: "bg-orange-50"
-//     },
-//     {
-//       id: "pedidos",
-//       nombre: "Pedidos",
-//       icon: ShoppingBag,
-//       color: "text-green-600",
-//       bg: "bg-green-50"
-//     },
+//     { id: "clientes", nombre: "Clientes", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
+//     { id: "citas", nombre: "Citas Médicas", icon: Stethoscope, color: "text-purple-600", bg: "bg-purple-50" },
+//     { id: "recetas", nombre: "Recetas Médicas", icon: ClipboardList, color: "text-orange-600", bg: "bg-orange-50" },
+//     { id: "pedidos", nombre: "Pedidos", icon: ShoppingBag, color: "text-green-600", bg: "bg-green-50" },
 //   ];
 
 //   const moduloSeleccionado = opcionesModulo.find((m) => m.id === modulo);
 
-//   const handleDescargar = async () => {
+//   // 4. Modificamos la función para aceptar el tipo de formato solicitado
+//   const handleDescargar = async (formato: "pdf" | "excel") => {
 //     if (!desde || !hasta) return;
 
 //     if (new Date(hasta) < new Date(desde)) {
-//       alert("La fecha 'Hasta' no puede ser anterior a la fecha 'Desde'.");
+//       notifyWarning("La fecha 'Hasta' no puede ser anterior a la fecha 'Desde'.");
 //       return;
 //     }
 
 //     setCargando(true);
+//     setTipoDescarga(formato);
+
 //     try {
-//       switch (modulo) {
-//         case "clientes":
-//           await descargarReportesClientesPDF(desde, hasta);
-//           break;
-//         case "citas":
-//           await generarReporteCitasPDF(desde, hasta);
-//           break;
-//         case "recetas":
-//           await generarReporteRecetasPDF(desde, hasta);
-//           break;
-//         case "pedidos":
-//           await generarReportePedidosPDF(desde, hasta);
-//           break;
-//         default:
-//           console.warn("Modulo no implementado:", modulo);
-//           alert("Este reporte aun no esta disponible.");
+//       if (formato === "pdf") {
+//         switch (modulo) {
+//           case "clientes": await descargarReportesClientesPDF(desde, hasta); break;
+//           case "citas": await generarReporteCitasPDF(desde, hasta); break;
+//           case "recetas": await generarReporteRecetasPDF(desde, hasta); break;
+//           case "pedidos": await generarReportePedidosPDF(desde, hasta); break;
+//           default: console.warn("Módulo no implementado:", modulo);
+//         }
+//       } else {
+//         // Ejecución de las funciones de SheetJS mapeadas
+//         switch (modulo) {
+//           case "clientes": await descargarReportesClientesExcel(desde, hasta); break;
+//           case "citas": await generarReporteCitasExcel(desde, hasta); break;
+//           case "recetas": await generarReporteRecetasExcel(desde, hasta); break;
+//           case "pedidos": await generarReportePedidosExcel(desde, hasta); break;
+//           default: console.warn("Módulo no implementado:", modulo);
+//         }
 //       }
 //     } catch (error) {
 //       console.error("Error en la descarga:", error);
-//       alert("Hubo un error al generar el reporte.");
+//       notifyError(`Hubo un error al generar el reporte en ${formatearFormato(formato)}.`);
 //     } finally {
-//       setTimeout(() => setCargando(false), 500);
+//       setTimeout(() => {
+//         setCargando(false);
+//         setTipoDescarga(null);
+//       }, 500);
 //     }
 //   };
+
+//   const formatearFormato = (f: "pdf" | "excel") => f === "pdf" ? "PDF" : "Excel";
 
 //   return (
 //     <div className="p-3 md:p-10 max-w-6xl mx-auto dark:bg-[#0a0f0a]">
@@ -170,14 +163,16 @@
 //           </div>
 //         </section>
 
-//         {/* BOTÓN DE ACCIÓN */}
-//         <div>
+//         {/* 5. SECCIÓN DE ACCIONES: DOS BOTONES EN PARALELO */}
+//         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+//           {/* BOTÓN PDF */}
 //           <Button
-//             onClick={handleDescargar}
+//             onClick={() => handleDescargar("pdf")}
 //             disabled={!desde || !hasta || cargando}
-//             className="w-full py-8 bg-[#1a4731] hover:bg-[#143625] text-white rounded-2xl shadow-xl transition-all flex items-center justify-center gap-4 group disabled:opacity-30 disabled:cursor-not-allowed"
+//             className="w-full py-8 bg-[#1a4731] hover:bg-[#143625] text-white rounded-2xl shadow-md transition-all flex items-center justify-center gap-4 group disabled:opacity-30 disabled:cursor-not-allowed"
 //           >
-//             {cargando ? (
+//             {cargando && tipoDescarga === "pdf" ? (
 //               <Loader2 className="w-7 h-7 animate-spin text-green-400" />
 //             ) : (
 //               <div className="bg-green-400/20 p-3 rounded-xl group-hover:bg-green-400/40 transition-colors">
@@ -185,28 +180,51 @@
 //               </div>
 //             )}
 //             <div className="text-left">
-//               <p className="text-lg font-black uppercase tracking-tighter">
-//                 {cargando ? "Generando Reporte..." : "Descargar Reporte PDF"}
+//               <p className="text-base font-black uppercase tracking-tighter">
+//                 {cargando && tipoDescarga === "pdf" ? "Generando PDF..." : "Exportar a PDF"}
 //               </p>
-//               <p className="text-[10px] font-bold opacity-60 uppercase tracking-[0.1em]">
-//                 {modulo} • {desde || "..."} al {hasta || "..."}
+//               <p className="text-[9px] font-bold opacity-60 uppercase tracking-[0.1em]">
+//                 Formato de Impresión Documental
 //               </p>
 //             </div>
 //           </Button>
 
-//           {!desde || !hasta ? (
-//             <div className="mt-5 flex items-center justify-center gap-3 text-amber-600 dark:text-amber-400 animate-pulse bg-amber-50 dark:bg-amber-950/30 py-2 rounded-xl border border-amber-100 dark:border-amber-800/30">
-//               <AlertCircle className="w-4 h-4" />
-//               <span className="text-[10px] font-black uppercase tracking-widest">Selecciona las fechas para continuar</span>
+//           {/* BOTÓN EXCEL */}
+//           <Button
+//             onClick={() => handleDescargar("excel")}
+//             disabled={!desde || !hasta || cargando}
+//             className="w-full py-8 bg-[#15803d] hover:bg-[#166534] text-white rounded-2xl shadow-md transition-all flex items-center justify-center gap-4 group disabled:opacity-30 disabled:cursor-not-allowed"
+//           >
+//             {cargando && tipoDescarga === "excel" ? (
+//               <Loader2 className="w-7 h-7 animate-spin text-green-200" />
+//             ) : (
+//               <div className="bg-green-100/20 p-3 rounded-xl group-hover:bg-green-100/30 transition-colors">
+//                 <FileSpreadsheet className="w-6 h-6 text-green-200 group-hover:scale-110 transition-transform" />
+//               </div>
+//             )}
+//             <div className="text-left">
+//               <p className="text-base font-black uppercase tracking-tighter">
+//                 {cargando && tipoDescarga === "excel" ? "Generando Excel..." : "Exportar a Excel"}
+//               </p>
+//               <p className="text-[9px] font-bold opacity-60 uppercase tracking-[0.1em]">
+//                 Estructura de Datos Analítica (.xlsx)
+//               </p>
 //             </div>
-//           ) : null}
+//           </Button>
 //         </div>
+
+//         {!desde || !hasta ? (
+//           <div className="mt-5 flex items-center justify-center gap-3 text-amber-600 dark:text-amber-400 animate-pulse bg-amber-50 dark:bg-amber-950/30 py-2 rounded-xl border border-amber-100 dark:border-amber-800/30">
+//             <AlertCircle className="w-4 h-4" />
+//             <span className="text-[10px] font-black uppercase tracking-widest">Selecciona las fechas para continuar</span>
+//           </div>
+//         ) : null}
 //       </div>
 
-//       {/* ═══════ HOJA PREVIEW (parece un PDF vertical) ═══════ */}
+//       {/* ═══════ HOJA PREVIEW (Mantiene la previsualización del PDF intacta) ═══════ */}
 //       <div className="text-center mb-4">
 //         <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.3em]">
-//           Vista previa del documento
+//           Vista previa del documento corporativo
 //         </p>
 //       </div>
 
@@ -220,40 +238,22 @@
 //           overflowY: "auto",
 //         }}
 //       >
-//         {/* MARCA DE AGUA (logo centrado y tenue) */}
-//         <div
-//           className="pointer-events-none absolute inset-0 flex items-center justify-center"
-//           style={{ zIndex: 1 }}
-//         >
-//           <img
-//             src={logo}
-//             alt=""
-//             className="w-[300px] md:w-[420px] h-auto"
-//             style={{ opacity: 0.06 }}
-//           />
+//         {/* MARCA DE AGUA */}
+//         <div className="pointer-events-none absolute inset-0 flex items-center justify-center" style={{ zIndex: 1 }}>
+//           <img src={logo} alt="" className="w-[300px] md:w-[420px] h-auto" style={{ opacity: 0.06 }} />
 //         </div>
 
-//         {/* HEADER verde corporativo */}
-//         <div
-//           className="relative flex items-center px-8 md:px-10 text-white"
-//           style={{ backgroundColor: "#1a4731", height: "110px", zIndex: 2 }}
-//         >
+//         {/* HEADER */}
+//         <div className="relative flex items-center px-8 md:px-10 text-white" style={{ backgroundColor: "#1a4731", height: "110px", zIndex: 2 }}>
 //           <img src={logo} alt="Opti-Samuel" className="w-[70px] h-auto mr-5" />
 //           <div>
-//             <h1 className="text-2xl md:text-3xl font-black uppercase tracking-widest leading-tight">
-//               Opti-Samuel
-//             </h1>
-//             <p className="text-[#a3d4b0] text-[11px] md:text-xs font-bold tracking-[0.2em] uppercase mt-1">
-//               Sistema de Gestión Óptica
-//             </p>
+//             <h1 className="text-2xl md:text-3xl font-black uppercase tracking-widest leading-tight">Opti-Samuel</h1>
+//             <p className="text-[#a3d4b0] text-[11px] md:text-xs font-bold tracking-[0.2em] uppercase mt-1">Sistema de Gestión Óptica</p>
 //           </div>
 //         </div>
 
-//         {/* CUERPO del reporte (preview estática) */}
-//         <div
-//           className="relative px-10 md:px-14 py-10"
-//           style={{ zIndex: 2, minHeight: "calc(100% - 110px - 110px)" }}
-//         >
+//         {/* CUERPO */}
+//         <div className="relative px-10 md:px-14 py-10" style={{ zIndex: 2, minHeight: "calc(100% - 110px - 110px)" }}>
 //           <div className="text-center mb-8">
 //             <h2 className="text-2xl md:text-3xl font-black text-[#1a4731] uppercase tracking-widest">
 //               {moduloSeleccionado?.nombre || "Reporte"}
@@ -263,7 +263,6 @@
 //             </p>
 //           </div>
 
-//           {/* Métricas placeholder */}
 //           <div className="flex flex-wrap justify-center gap-3 mb-8">
 //             <div className="bg-[#f0f7f3] border border-[#d0e0d6] rounded-xl px-6 py-4 min-w-[140px] text-center">
 //               <p className="text-2xl font-black text-[#1a4731]">—</p>
@@ -279,20 +278,15 @@
 //             </div>
 //           </div>
 
-//           {/* Línea divisoria con texto */}
 //           <div className="border-t-2 border-dashed border-gray-200 pt-6 mt-4">
 //             <p className="text-center text-gray-400 text-xs italic">
-//               El documento PDF descargado contiene la tabla completa con los datos
-//               del período seleccionado en orientación vertical.
+//               Los documentos descargados procesan de forma analítica el filtrado por fecha del sistema operativo.
 //             </p>
 //           </div>
 //         </div>
 
-//         {/* FOOTER verde corporativo */}
-//         <div
-//           className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-8 md:px-10 text-white"
-//           style={{ backgroundColor: "#1a4731", height: "110px", zIndex: 2 }}
-//         >
+//         {/* FOOTER */}
+//         <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-8 md:px-10 text-white" style={{ backgroundColor: "#1a4731", height: "110px", zIndex: 2 }}>
 //           <div className="text-[10px] md:text-[11px] leading-tight">
 //             <p className="font-black uppercase">Opti-Samuel C.A.</p>
 //             <p>Rif: J-12345678-9</p>
@@ -309,18 +303,17 @@
 //       </div>
 
 //       <p className="text-center text-gray-400 dark:text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mt-6">
-//         El archivo se descargará automáticamente al presionar el botón
+//         El archivo se procesará de manera asíncrona según el formato elegido
 //       </p>
 //     </div>
 //   );
 // }
 
-
 import { useState } from "react";
 import {
   FileText, Calendar, Users, ClipboardList,
   Stethoscope, ShoppingBag, Download, AlertCircle,
-  ChevronRight, Loader2, FileSpreadsheet // 1. Añadido el icono de Excel
+  ChevronRight, Loader2, FileSpreadsheet, Layers
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -328,7 +321,6 @@ import {
   generarReporteCitasPDF,
   generarReportePedidosPDF,
   generarReporteRecetasPDF,
-  // 2. Importamos las nuevas funciones espejo para Excel
   descargarReportesClientesExcel,
   generarReporteCitasExcel,
   generarReportePedidosExcel,
@@ -337,13 +329,33 @@ import {
 import logo from "@/assets/Logo.png";
 import { notifyWarning, notifyError } from "@/lib/notify";
 
+// Mapeos de estados basados en tus modelos de Django
+const ESTADOS_CITAS = [
+  { valor: "", etiqueta: "Todos los Estados" },
+  { valor: "A", etiqueta: "Agendada" },
+  { valor: "C", etiqueta: "Cancelada" },
+  { valor: "COM", etiqueta: "Completada" },
+  { valor: "RR", etiqueta: "Receta Registrada" },
+  { valor: "NA", etiqueta: "No asistió" }
+];
+
+const ESTADOS_PEDIDOS = [
+  { valor: "", etiqueta: "Todos los Estados" },
+  { valor: "E", etiqueta: "Enviado" },
+  { valor: "L", etiqueta: "Listo" },
+  { valor: "EN", etiqueta: "Entregado" }
+];
+
 export default function ModuloReportes() {
   const [modulo, setModulo] = useState<string>("clientes");
   const [desde, setDesde] = useState("");
   const [hasta, setHasta] = useState("");
   const [cargando, setCargando] = useState(false);
-  // 3. Estado dinámico para saber qué tipo de archivo se está procesando
   const [tipoDescarga, setTipoDescarga] = useState<"pdf" | "excel" | null>(null);
+
+  // Estados independientes para almacenar los filtros seleccionados
+  const [estadoCita, setEstadoCita] = useState<string>("");
+  const [estadoPedido, setEstadoPedido] = useState<string>("");
 
   const opcionesModulo = [
     { id: "clientes", nombre: "Clientes", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
@@ -354,7 +366,14 @@ export default function ModuloReportes() {
 
   const moduloSeleccionado = opcionesModulo.find((m) => m.id === modulo);
 
-  // 4. Modificamos la función para aceptar el tipo de formato solicitado
+  // Limpiar filtros al cambiar de módulo para evitar que se arrastren valores basura
+  const handleCambioModulo = (nuevoModulo: string) => {
+    setModulo(nuevoModulo);
+    setEstadoCita("");
+    setEstadoPedido("");
+  };
+
+  // Manejo de la descarga enviando las fechas y los estados correspondientes
   const handleDescargar = async (formato: "pdf" | "excel") => {
     if (!desde || !hasta) return;
 
@@ -366,23 +385,53 @@ export default function ModuloReportes() {
     setCargando(true);
     setTipoDescarga(formato);
 
+    // Obtenemos el estado correspondiente de manera limpia según el módulo actual
+    const estadoFiltroCita = estadoCita.trim();
+    const estadoFiltroPedido = estadoPedido.trim();
+
+    // Log de desarrollo para que verifiques en consola si se envían los datos correctos
+    console.log(`[Reporte] Generando ${formato.toUpperCase()} - Módulo: ${modulo}`, {
+      desde,
+      hasta,
+      estadoCita: estadoFiltroCita || "Ninguno",
+      estadoPedido: estadoFiltroPedido || "Ninguno"
+    });
+
     try {
       if (formato === "pdf") {
         switch (modulo) {
-          case "clientes": await descargarReportesClientesPDF(desde, hasta); break;
-          case "citas": await generarReporteCitasPDF(desde, hasta); break;
-          case "recetas": await generarReporteRecetasPDF(desde, hasta); break;
-          case "pedidos": await generarReportePedidosPDF(desde, hasta); break;
-          default: console.warn("Módulo no implementado:", modulo);
+          case "clientes": 
+            await descargarReportesClientesPDF(desde, hasta); 
+            break;
+          case "citas": 
+            await generarReporteCitasPDF(desde, hasta, estadoFiltroCita); 
+            break;
+          case "recetas": 
+            await generarReporteRecetasPDF(desde, hasta); 
+            break;
+          case "pedidos": 
+            // Aquí se envía rigurosamente el estado del pedido actual
+            await generarReportePedidosPDF(desde, hasta, estadoFiltroPedido); 
+            break;
+          default: 
+            console.warn("Módulo no implementado:", modulo);
         }
       } else {
-        // Ejecución de las funciones de SheetJS mapeadas
         switch (modulo) {
-          case "clientes": await descargarReportesClientesExcel(desde, hasta); break;
-          case "citas": await generarReporteCitasExcel(desde, hasta); break;
-          case "recetas": await generarReporteRecetasExcel(desde, hasta); break;
-          case "pedidos": await generarReportePedidosExcel(desde, hasta); break;
-          default: console.warn("Módulo no implementado:", modulo);
+          case "clientes": 
+            await descargarReportesClientesExcel(desde, hasta); 
+            break;
+          case "citas": 
+            await generarReporteCitasExcel(desde, hasta, estadoFiltroCita); 
+            break;
+          case "recetas": 
+            await generarReporteRecetasExcel(desde, hasta); 
+            break;
+          case "pedidos": 
+            await generarReportePedidosExcel(desde, hasta, estadoFiltroPedido); 
+            break;
+          default: 
+            console.warn("Módulo no implementado:", modulo);
         }
       }
     } catch (error) {
@@ -421,7 +470,7 @@ export default function ModuloReportes() {
             {opcionesModulo.map((op) => (
               <button
                 key={op.id}
-                onClick={() => setModulo(op.id)}
+                onClick={() => handleCambioModulo(op.id)}
                 disabled={cargando}
                 className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-3 group relative ${
                   modulo === op.id
@@ -481,7 +530,48 @@ export default function ModuloReportes() {
           </div>
         </section>
 
-        {/* 5. SECCIÓN DE ACCIONES: DOS BOTONES EN PARALELO */}
+        {/* PASO INTERMEDIO DINÁMICO: FILTRO DE ESTADOS PARA CITAS O PEDIDOS */}
+        {(modulo === "citas" || modulo === "pedidos") && (
+          <section className="bg-gray-50/50 dark:bg-[#0f1a14]/50 p-6 rounded-2xl border border-gray-100 dark:border-white/10 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="flex items-center gap-2 mb-4">
+              <Layers className="w-5 h-5 text-[#1a4731] dark:text-emerald-400" />
+              <label className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest">
+                Filtrar por Estado del Registro
+              </label>
+            </div>
+            
+            <div className="w-full">
+              <p className="text-[10px] font-black text-gray-500 dark:text-gray-400 ml-1 uppercase mb-2">
+                Estado seleccionado
+              </p>
+              <select
+                value={modulo === "citas" ? estadoCita : estadoPedido}
+                onChange={(e) => {
+                  if (modulo === "citas") {
+                    setEstadoCita(e.target.value);
+                  } else {
+                    setEstadoPedido(e.target.value);
+                  }
+                }}
+                className="w-full h-12 rounded-xl border-2 border-white dark:border-white/10 px-4 outline-none focus:border-[#1a4731] dark:focus:border-emerald-500 bg-white dark:bg-[#1a2a20] dark:text-gray-100 shadow-sm transition-all font-bold text-gray-700"
+              >
+                {modulo === "citas"
+                  ? ESTADOS_CITAS.map((e) => (
+                      <option key={e.valor} value={e.valor}>
+                        {e.etiqueta}
+                      </option>
+                    ))
+                  : ESTADOS_PEDIDOS.map((e) => (
+                      <option key={e.valor} value={e.valor}>
+                        {e.etiqueta}
+                      </option>
+                    ))}
+              </select>
+            </div>
+          </section>
+        )}
+
+        {/* SECCIÓN DE ACCIONES: DOS BOTONES EN PARALELO */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           
           {/* BOTÓN PDF */}
@@ -539,7 +629,7 @@ export default function ModuloReportes() {
         ) : null}
       </div>
 
-      {/* ═══════ HOJA PREVIEW (Mantiene la previsualización del PDF intacta) ═══════ */}
+      {/* ═══════ HOJA PREVIEW ═══════ */}
       <div className="text-center mb-4">
         <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.3em]">
           Vista previa del documento corporativo
@@ -579,6 +669,16 @@ export default function ModuloReportes() {
             <p className="text-xs md:text-sm text-gray-500 mt-2 font-bold">
               Período: {desde || "—"} al {hasta || "—"}
             </p>
+            {/* Visualización del estado seleccionado en la hoja de previsualización */}
+            {(modulo === "citas" || modulo === "pedidos") && (
+              <p className="text-xs text-[#1a4731] mt-1 font-black uppercase tracking-wider">
+                Estado: {
+                  modulo === "citas" 
+                    ? (ESTADOS_CITAS.find(e => e.valor === estadoCita)?.etiqueta || "Todos") 
+                    : (ESTADOS_PEDIDOS.find(e => e.valor === estadoPedido)?.etiqueta || "Todos")
+                }
+              </p>
+            )}
           </div>
 
           <div className="flex flex-wrap justify-center gap-3 mb-8">

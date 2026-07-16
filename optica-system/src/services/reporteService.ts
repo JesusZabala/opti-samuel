@@ -13,6 +13,7 @@ import { obtenerClientes } from "./clienteService";
 import { obtenerCitas } from "./citaService";
 import { obtenerTodasLasRecetas } from "./recetaService";
 import { obtenerPedido } from "./pedidoService";
+import api from "@/api/axiosConfig";
 
 import * as XLSX from "xlsx";
 import { notifyWarning } from "@/lib/notify";
@@ -327,14 +328,65 @@ export const descargarReportesClientesPDF = async (desde: string, hasta: string)
 
 /* ───────────────── CITAS ───────────────── */
 
-export const generarReporteCitasPDF = async (desde: string, hasta: string): Promise<void> => {
+// export const generarReporteCitasPDF = async (desde: string, hasta: string): Promise<void> => {
+//   const logo = await obtenerLogoBase64();
+//   const citas = await obtenerCitas();
+
+//   const filtrados = citas.filter((c: any) => dentroDelRango(c.fecha_creacion, desde, hasta));
+
+//   const estadoLabel = (e: string) => {
+//     const m: Record<string, string> = { A: "Agendada", COM: "Completada", C: "Cancelada", P: "Pendiente" };
+//     return m[e] || e;
+//   };
+
+//   const filas = filtrados.map((c: any) => [
+//     `#${c.id}`,
+//     c.cliente_data ? `${c.cliente_data.nombre} ${c.cliente_data.apellido}` : `Cliente ${c.cliente}`,
+//     c.usuario_data?.first_name ? `Dr. ${c.usuario_data.first_name} ${c.usuario_data.last_name}` : `Usuario ${c.usuario}`,
+//     formatearFecha(c.fecha),
+//     c.motivo || "—",
+//     estadoLabel(c.estado_cita),
+//   ]);
+
+//   const cuerpo = construirTabla(
+//     ["ID", "Paciente", "Optometrista", "Fecha", "Motivo", "Estado"],
+//     filas,
+//     ["auto", "*", "*", "auto", "*", "auto"]
+//   );
+
+//   const doc = construirDocumento({
+//     titulo: "Reporte de Citas Médicas",
+//     desde,
+//     hasta,
+//     cuerpo,
+//     logoBase64: logo,
+//     totalRegistros: filtrados.length,
+//   });
+
+//   descargarBlobPDF(doc, `Reporte_Citas_${desde}_al_${hasta}.pdf`);
+// };
+
+export const generarReporteCitasPDF = async (desde: string, hasta: string, estado?: string): Promise<void> => {
   const logo = await obtenerLogoBase64();
   const citas = await obtenerCitas();
 
-  const filtrados = citas.filter((c: any) => dentroDelRango(c.fecha_creacion, desde, hasta));
+  // 1. Filtrar primero por rango de fechas
+  let filtrados = citas.filter((c: any) => dentroDelRango(c.fecha_creacion, desde, hasta));
 
+  // 2. Filtrar por estado si se seleccionó uno específico (si no es vacío "")
+  if (estado) {
+    filtrados = filtrados.filter((c: any) => c.estado_cita === estado);
+  }
+
+  // Mapeador de etiquetas de estado basado en tus constantes
   const estadoLabel = (e: string) => {
-    const m: Record<string, string> = { A: "Agendada", COM: "Completada", C: "Cancelada", P: "Pendiente" };
+    const m: Record<string, string> = { 
+      A: "Agendada", 
+      C: "Cancelada", 
+      COM: "Completada", 
+      RR: "Receta Registrada", 
+      NA: "No asistió" 
+    };
     return m[e] || e;
   };
 
@@ -353,8 +405,13 @@ export const generarReporteCitasPDF = async (desde: string, hasta: string): Prom
     ["auto", "*", "*", "auto", "*", "auto"]
   );
 
+  // Generamos un título dinámico si hay un estado filtrado
+  const tituloReporte = estado 
+    ? `Reporte de Citas Médicas (${estadoLabel(estado)})` 
+    : "Reporte de Citas Médicas";
+
   const doc = construirDocumento({
-    titulo: "Reporte de Citas Médicas",
+    titulo: tituloReporte,
     desde,
     hasta,
     cuerpo,
@@ -362,9 +419,12 @@ export const generarReporteCitasPDF = async (desde: string, hasta: string): Prom
     totalRegistros: filtrados.length,
   });
 
-  descargarBlobPDF(doc, `Reporte_Citas_${desde}_al_${hasta}.pdf`);
-};
+  const nombreArchivo = estado 
+    ? `Reporte_Citas_${estadoLabel(estado)}_${desde}_al_${hasta}.pdf`
+    : `Reporte_Citas_${desde}_al_${hasta}.pdf`;
 
+  descargarBlobPDF(doc, nombreArchivo);
+};
 /* ───────────────── RECETAS ───────────────── */
 
 export const generarReporteRecetasPDF = async (desde: string, hasta: string): Promise<void> => {
@@ -414,13 +474,80 @@ export const generarReporteRecetasPDF = async (desde: string, hasta: string): Pr
 
 
 
-export const generarReportePedidosPDF = async (desde: string, hasta: string): Promise<void> => {
-  const logo = await obtenerLogoBase64();
-  const pedidos = await obtenerPedido();
+// export const generarReportePedidosPDF = async (desde: string, hasta: string): Promise<void> => {
+//   const logo = await obtenerLogoBase64();
+//   const pedidos = await obtenerPedido();
 
-  const filtrados = (pedidos as any[]).filter((p: any) =>
-    dentroDelRango(p.fecha_creacion || p.fecha_sistema || p.fecha, desde, hasta)
-  );
+//   const filtrados = (pedidos as any[]).filter((p: any) =>
+//     dentroDelRango(p.fecha_creacion || p.fecha_sistema || p.fecha, desde, hasta)
+//   );
+
+//   const tipoLabel = (t: string) => {
+//     const m: Record<string, string> = { C: "Completo", SL: "Solo Lente", SM: "Solo Montura" };
+//     return m[t] || t;
+//   };
+
+//   const estadoLabel = (e: string) => {
+//     const m: Record<string, string> = { P: "Pendiente", L: "Listo", E: "Entregado", C: "Cancelado" };
+//     return m[e] || e;
+//   };
+
+//   const filas = filtrados.map((p: any) => [
+//     `#${p.id}`,
+//     p.cliente_data ? `${p.cliente_data.nombre} ${p.cliente_data.apellido}` : `Cliente ${p.cliente}`,
+//     tipoLabel(p.tipo_pedido),
+//     formatearFecha(p.fecha_creacion || p.fecha_sistema || p.fecha),
+//     p.descripcion || "—",
+//     estadoLabel(p.estado_pedido),
+//   ]);
+
+//   const cuerpo = construirTabla(
+//     ["ID", "Cliente", "Tipo", "Fecha", "Descripción", "Estado"],
+//     filas,
+//     ["auto", "*", "auto", "auto", "*", "auto"]
+//   );
+
+//   const doc = construirDocumento({
+//     titulo: "Reporte de Pedidos",
+//     desde,
+//     hasta,
+//     cuerpo,
+//     logoBase64: logo,
+//     totalRegistros: filtrados.length,
+//   });
+
+//   descargarBlobPDF(doc, `Reporte_Pedidos_${desde}_al_${hasta}.pdf`);
+// };
+
+export const generarReportePedidosPDF = async (desde: string, hasta: string, estado?: string): Promise<void> => {
+  const logo = await obtenerLogoBase64();
+
+  // 1. Construimos la URL con los parámetros idénticos al Excel
+  let url = `/pedido/?desde=${desde}&hasta=${hasta}`;
+  if (estado && estado.trim() !== "") {
+    url += `&estado=${estado}`;
+  }
+
+  // 2. Petición a la API
+  const response = await api.get(url);
+  const pedidos = response.data;
+  
+  // 3. Normalización de estados idéntica al Excel
+  const normalizarEstado = (est: string): string => {
+    if (!est) return "";
+    const e = est.trim().toUpperCase();
+
+    if (e === "EN" || e.startsWith("ENTREG")) {
+      return "EN";
+    }
+    if (e === "E" || e.startsWith("ENVI")) {
+      return "E";
+    }
+    if (e === "L" || e.startsWith("LIST")) {
+      return "L";
+    }
+    return e;
+  };
 
   const tipoLabel = (t: string) => {
     const m: Record<string, string> = { C: "Completo", SL: "Solo Lente", SM: "Solo Montura" };
@@ -428,17 +555,23 @@ export const generarReportePedidosPDF = async (desde: string, hasta: string): Pr
   };
 
   const estadoLabel = (e: string) => {
-    const m: Record<string, string> = { P: "Pendiente", L: "Listo", E: "Entregado", C: "Cancelado" };
-    return m[e] || e;
+    const estadoNormalizado = normalizarEstado(e);
+    const m: Record<string, string> = { 
+      E: "Enviado", 
+      L: "Listo", 
+      EN: "Entregado" 
+    };
+    return m[estadoNormalizado] || e;
   };
 
-  const filas = filtrados.map((p: any) => [
+  // 4. Mapeo de filas usando exactamente las mismas propiedades que Excel
+  const filas = (pedidos as any[]).map((p: any) => [
     `#${p.id}`,
     p.cliente_data ? `${p.cliente_data.nombre} ${p.cliente_data.apellido}` : `Cliente ${p.cliente}`,
     tipoLabel(p.tipo_pedido),
-    formatearFecha(p.fecha_creacion || p.fecha_sistema || p.fecha),
+    formatearFecha(p.fecha_sistema || p.fecha_emision),
     p.descripcion || "—",
-    estadoLabel(p.estado_pedido),
+    estadoLabel(p.estado_pedido), // <--- Copiado directo de Excel (p.estado_pedido)
   ]);
 
   const cuerpo = construirTabla(
@@ -447,18 +580,25 @@ export const generarReportePedidosPDF = async (desde: string, hasta: string): Pr
     ["auto", "*", "auto", "auto", "*", "auto"]
   );
 
+  const tituloReporte = estado && estado.trim() !== ""
+    ? `Reporte de Pedidos (${estadoLabel(estado)})` 
+    : "Reporte de Pedidos";
+
   const doc = construirDocumento({
-    titulo: "Reporte de Pedidos",
+    titulo: tituloReporte,
     desde,
     hasta,
     cuerpo,
     logoBase64: logo,
-    totalRegistros: filtrados.length,
+    totalRegistros: pedidos.length,
   });
 
-  descargarBlobPDF(doc, `Reporte_Pedidos_${desde}_al_${hasta}.pdf`);
-};
+  const nombreArchivo = estado && estado.trim() !== ""
+    ? `Reporte_Pedidos_${estadoLabel(estado)}_${desde}_al_${hasta}.pdf`
+    : `Reporte_Pedidos_${desde}_al_${hasta}.pdf`;
 
+  descargarBlobPDF(doc, nombreArchivo);
+};
 
 
 export const descargarReportesClientesExcel = async (desde: string, hasta: string): Promise<void> => {
@@ -478,12 +618,46 @@ export const descargarReportesClientesExcel = async (desde: string, hasta: strin
   generarArchivoExcel(datosExcel, "Reporte_Clientes", desde, hasta, "Clientes");
 };
 
-export const generarReporteCitasExcel = async (desde: string, hasta: string): Promise<void> => {
+// export const generarReporteCitasExcel = async (desde: string, hasta: string): Promise<void> => {
+//   const citas = await obtenerCitas();
+//   const filtrados = citas.filter((c: any) => dentroDelRango(c.fecha_creacion, desde, hasta));
+
+//   const estadoLabel = (e: string) => {
+//     const m: Record<string, string> = { A: "Agendada", COM: "Completada", C: "Cancelada", P: "Pendiente" };
+//     return m[e] || e;
+//   };
+
+//   const datosExcel = filtrados.map((c: any) => ({
+//     "ID Cita": `#${c.id}`,
+//     "Paciente": c.cliente_data ? `${c.cliente_data.nombre} ${c.cliente_data.apellido}` : `Cliente ${c.cliente}`,
+//     "Optometrista": c.usuario_data?.first_name ? `Dr. ${c.usuario_data.first_name} ${c.usuario_data.last_name}` : `Usuario ${c.usuario}`,
+//     "Fecha": formatearFecha(c.fecha),
+//     "Motivo": c.motivo || "—",
+//     "Estado de Cita": estadoLabel(c.estado_cita),
+//   }));
+
+//   generarArchivoExcel(datosExcel, "Reporte_Citas", desde, hasta, "Citas Médicas");
+// };
+
+export const generarReporteCitasExcel = async (desde: string, hasta: string, estado?: string): Promise<void> => {
   const citas = await obtenerCitas();
-  const filtrados = citas.filter((c: any) => dentroDelRango(c.fecha_creacion, desde, hasta));
+  
+  // 1. Filtrar primero por rango de fechas
+  let filtrados = citas.filter((c: any) => dentroDelRango(c.fecha_creacion, desde, hasta));
+
+  // 2. Filtrar por estado si se seleccionó uno específico (si no es vacío "")
+  if (estado) {
+    filtrados = filtrados.filter((c: any) => c.estado_cita === estado);
+  }
 
   const estadoLabel = (e: string) => {
-    const m: Record<string, string> = { A: "Agendada", COM: "Completada", C: "Cancelada", P: "Pendiente" };
+    const m: Record<string, string> = { 
+      A: "Agendada", 
+      C: "Cancelada", 
+      COM: "Completada", 
+      RR: "Receta Registrada", 
+      NA: "No asistió" 
+    };
     return m[e] || e;
   };
 
@@ -496,7 +670,15 @@ export const generarReporteCitasExcel = async (desde: string, hasta: string): Pr
     "Estado de Cita": estadoLabel(c.estado_cita),
   }));
 
-  generarArchivoExcel(datosExcel, "Reporte_Citas", desde, hasta, "Citas Médicas");
+  const nombreHoja = estado 
+    ? `Citas_${estadoLabel(estado)}` 
+    : "Citas Médicas";
+
+  const nombreArchivo = estado 
+    ? `Reporte_Citas_${estadoLabel(estado)}` 
+    : "Reporte_Citas";
+
+  generarArchivoExcel(datosExcel, nombreArchivo, desde, hasta, nombreHoja);
 };
 
 export const generarReporteRecetasExcel = async (desde: string, hasta: string): Promise<void> => {
@@ -527,12 +709,60 @@ export const generarReporteRecetasExcel = async (desde: string, hasta: string): 
   generarArchivoExcel(datosExcel, "Reporte_Recetas", desde, hasta, "Recetas");
 };
 
+// /* ───────────────── EXCEL: PEDIDOS ───────────────── */
+// // export const generarReportePedidosExcel = async (desde: string, hasta: string): Promise<void> => {
+// //   const pedidos = await obtenerPedido();
+// //   const filtrados = (pedidos as any[]).filter((p: any) =>
+// //     dentroDelRango(p.fecha_creacion || p.fecha_sistema || p.fecha, desde, hasta)
+// //   );
+
+// //   const tipoLabel = (t: string) => {
+// //     const m: Record<string, string> = { C: "Completo", SL: "Solo Lente", SM: "Solo Montura" };
+// //     return m[t] || t;
+// //   };
+
+// //   const estadoLabel = (e: string) => {
+// //     const m: Record<string, string> = { P: "Pendiente", L: "Listo", E: "Entregado", C: "Cancelado" };
+// //     return m[e] || e;
+// //   };
+
+// //   const datosExcel = filtrados.map((p: any) => ({
+// //     "ID Pedido": `#${p.id}`,
+// //     "Cliente": p.cliente_data ? `${p.cliente_data.nombre} ${p.cliente_data.apellido}` : `Cliente ${p.cliente}`,
+// //     "Tipo de Pedido": tipoLabel(p.tipo_pedido),
+// //     "Fecha": formatearFecha(p.fecha_creacion || p.fecha_sistema || p.fecha),
+// //     "Descripción": p.descripcion || "—",
+// //     "Estado del Envío/Pedido": estadoLabel(p.estado_pedido),
+// //   }));
+
+// //   generarArchivoExcel(datosExcel, "Reporte_Pedidos", desde, hasta, "Pedidos");
+// // };
+
 /* ───────────────── EXCEL: PEDIDOS ───────────────── */
-export const generarReportePedidosExcel = async (desde: string, hasta: string): Promise<void> => {
-  const pedidos = await obtenerPedido();
-  const filtrados = (pedidos as any[]).filter((p: any) =>
-    dentroDelRango(p.fecha_creacion || p.fecha_sistema || p.fecha, desde, hasta)
-  );
+export const generarReportePedidosExcel = async (desde: string, hasta: string, estado?: string): Promise<void> => {
+  let url = `/pedido/?desde=${desde}&hasta=${hasta}`;
+  if (estado && estado.trim() !== "") {
+    url += `&estado=${estado}`;
+  }
+
+  const response = await api.get(url);
+  const pedidos = response.data;
+
+  const normalizarEstado = (est: string): string => {
+    if (!est) return "";
+    const e = est.trim().toUpperCase();
+
+    if (e === "EN" || e.startsWith("ENTREG")) {
+      return "EN";
+    }
+    if (e === "E" || e.startsWith("ENVI")) {
+      return "E";
+    }
+    if (e === "L" || e.startsWith("LIST")) {
+      return "L";
+    }
+    return e;
+  };
 
   const tipoLabel = (t: string) => {
     const m: Record<string, string> = { C: "Completo", SL: "Solo Lente", SM: "Solo Montura" };
@@ -540,21 +770,34 @@ export const generarReportePedidosExcel = async (desde: string, hasta: string): 
   };
 
   const estadoLabel = (e: string) => {
-    const m: Record<string, string> = { P: "Pendiente", L: "Listo", E: "Entregado", C: "Cancelado" };
-    return m[e] || e;
+    const estadoNormalizado = normalizarEstado(e);
+    const m: Record<string, string> = { 
+      E: "Enviado", 
+      L: "Listo", 
+      EN: "Entregado" 
+    };
+    return m[estadoNormalizado] || e;
   };
 
-  const datosExcel = filtrados.map((p: any) => ({
+  const datosExcel = (pedidos as any[]).map((p: any) => ({
     "ID Pedido": `#${p.id}`,
     "Cliente": p.cliente_data ? `${p.cliente_data.nombre} ${p.cliente_data.apellido}` : `Cliente ${p.cliente}`,
     "Tipo de Pedido": tipoLabel(p.tipo_pedido),
-    "Fecha": formatearFecha(p.fecha_creacion || p.fecha_sistema || p.fecha),
+    "Fecha": formatearFecha(p.fecha_sistema || p.fecha_emision),
     "Descripción": p.descripcion || "—",
     "Estado del Envío/Pedido": estadoLabel(p.estado_pedido),
   }));
 
-  generarArchivoExcel(datosExcel, "Reporte_Pedidos", desde, hasta, "Pedidos");
+  const prefijoArchivo = estado && estado.trim() !== ""
+    ? `Reporte_Pedidos_${estadoLabel(estado)}`
+    : "Reporte_Pedidos";
+
+  generarArchivoExcel(datosExcel, prefijoArchivo, desde, hasta, "Pedidos");
 };
+
+
+
+
 
 /* ───────────────── FUNCIÓN UTILDAD GENERADORA ───────────────── */
 const generarArchivoExcel = (

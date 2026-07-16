@@ -937,7 +937,7 @@ export default function PedidoRegistrar() {
               type="submit"
               className="w-full py-6 md:py-12 text-sm md:text-xl font-black bg-[#1a4731] hover:bg-[#143625] rounded-2xl md:rounded-[2rem] shadow-2xl transition-all uppercase tracking-widest disabled:opacity-20 active:scale-95"
             >
-              {enviando ? "PROCESANDO..." : "GENERAR PEDIDO Y DESCARGAR FACTURA"}
+              {enviando ? "PROCESANDO..." : "GENERAR PEDIDO"}
             </Button>
           </form>
         </div>
