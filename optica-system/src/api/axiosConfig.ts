@@ -2,7 +2,7 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { authStorage } from '@/auth/authStorage';
 import { notifyUnauthorized } from '@/auth/authEvents';
 
-const baseURL = import.meta.env.VITE_API_BASE_URL ?? 'http://192.168.1.104:8000/api/';
+const baseURL = import.meta.env.VITE_API_BASE_URL ?? 'http://192.168.1.102:8000/api/';
 // http://192.168.1.102:8000/api/
 
 export const api = axios.create({
