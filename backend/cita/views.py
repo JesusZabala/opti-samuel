@@ -53,7 +53,7 @@ class CitaViewSet(viewsets.ModelViewSet):
         pedidos_pendientes = Pedido.objects.filter(estado_pedido='E').count()
 
         # 2. Listado "Hoy: Citas" (Centro)
-        citas_hoy_qs = Cita.objects.filter(fecha__date=hoy).select_related('cliente').order_by('fecha')
+        citas_hoy_qs = Cita.objects.filter(fecha__date=hoy, estado_cita='A').select_related('cliente').order_by('fecha')
 
         lista_citas = [{
             "name": f"{c.cliente.nombre} {c.cliente.apellido}" if c.cliente else "N/A",

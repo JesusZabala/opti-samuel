@@ -228,7 +228,7 @@ const DashboardHome = () => {
         {[
           { label: "Citas", val: stats.citas, sub: "Por atender hoy", icon: "📅" },
           { label: "Pacientes", val: stats.nuevos, sub: "Registrados", icon: "👥" },
-          { label: "Recetas", val: stats.recetas, sub: "Exámenes", icon: "👁️" },
+          { label: "Recetas", val: stats.recetas, sub: "Registradas", icon: "👁️" },
           { label: "Pedidos", val: stats.pedidos, sub: "Pendientes", icon: "📦" },
         ].map((item, idx) => (
           <Card
@@ -415,8 +415,43 @@ const DashboardHome = () => {
                         <div className="flex gap-3 items-center">
                           <div className="h-8 w-1 rounded-full bg-emerald-400" />
                           <div>
-                            <p className="font-bold text-gray-800 dark:text-emerald-100 text-sm">
+                            <p className="font-bold text-gray-800 dark:text-emerald-100 text-sm flex items-center flex-wrap gap-2">
                               {cita.cliente_data?.nombre} {cita.cliente_data?.apellido}
+
+                              {/* Estado: Agendada (Amarillo/Ámbar) */}
+                              {cita.estado_cita === "A" && (
+                                <span className="text-xs text-blue-600 dark:text-blue-400 font-bold ml-2">
+                                  [Agendada]
+                                </span>
+                              )}
+
+                              {/* Estado: Cancelada (Rojo) */}
+                              {cita.estado_cita === "C" && (
+                                <span className="text-xs text-rose-600 dark:text-rose-400 font-bold ml-2">
+                                  [Cancelada]
+                                </span>
+                              )}
+
+                              {/* Estado: Completada (Verde) */}
+                              {cita.estado_cita === "COM" && (
+                                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold ml-2">
+                                  [Completada]
+                                </span>
+                              )}
+
+                              {/* Estado: Receta Registrada (Azul) */}
+                              {cita.estado_cita === "RR" && (
+                                <span className="text-xs text-blue-600 dark:text-blue-400 font-bold ml-2">
+                                  [Receta Registrada]
+                                </span>
+                              )}
+
+                              {/* Estado: No Asistió (Gris) */}
+                              {cita.estado_cita === "NA" && (
+                                <span className="text-xs text-gray-500 dark:text-gray-400 font-bold ml-2">
+                                  [No asistió]
+                                </span>
+                              )}
                             </p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">{cita.motivo || "Consulta"}</p>
                           </div>
