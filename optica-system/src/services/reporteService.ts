@@ -305,13 +305,12 @@ export const descargarReportesClientesPDF = async (desde: string, hasta: string)
     c.telefono,
     c.genero === "M" ? "Masculino" : "Femenino",
     formatearFecha(c.registered_at),
-    c.estado_cliente === "A" ? "Activo" : "Inactivo",
   ]);
 
   const cuerpo = construirTabla(
-    ["Identificación", "Nombre Completo", "Correo", "Teléfono", "Género", "Registrado", "Estado"],
+    ["Identificación", "Nombre Completo", "Correo", "Teléfono", "Género", "Registrado"],
     filas,
-    ["auto", "*", "*", "auto", "auto", "auto", "auto"]
+    ["auto", "*", "*", "auto", "auto", "auto"]
   );
 
   const doc = construirDocumento({
@@ -612,7 +611,6 @@ export const descargarReportesClientesExcel = async (desde: string, hasta: strin
     "Teléfono": c.telefono || "—",
     "Género": c.genero === "M" ? "Masculino" : "Femenino",
     "Fecha de Registro": formatearFecha(c.registered_at),
-    "Estado": c.estado_cliente === "A" ? "Activo" : "Inactivo",
   }));
 
   generarArchivoExcel(datosExcel, "Reporte_Clientes", desde, hasta, "Clientes");
